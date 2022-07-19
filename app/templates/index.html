@@ -1,5 +1,23 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Hi, {{ current_user.username }}!</h1>
+    <div>
+        <img src="/static/images/default.svg" align="left" width="120" height="120">
+        <span font-size="500%">{{ current_user.username }}</span>
+        <br>
+        <span font-size="500%">У вас нет пары</span>
+    </div>
+    <div>
+        <button onclick="test()">Создать пару</button>
+        <button>Задачи</button>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script>
+        function test() {
+            alert("Test123");
+        }
+    </script>
 {% endblock %}
