@@ -1,6 +1,6 @@
 from flask import render_template, flash, redirect, url_for, request
 from app import app, db
-from app.forms import LoginForm, RegistrationForm
+from app.forms import LoginForm, RegistrationForm, SearchUserForm
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import Users
 from werkzeug.urls import url_parse
@@ -9,7 +9,6 @@ from werkzeug.urls import url_parse
 @app.route('/index')
 @login_required
 def index():
-    user = {'username': 'Dimasta'}
     return render_template('index.html', title='Home Page')
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -47,3 +46,29 @@ def register():
         flash('Congratulations, you are now a registered user!')
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
+
+@app.route('/user/<username>')
+@login_required
+def user(username):
+    user = Users.query.filter_by(username=username).first_or_404()
+    return render_template('user.html', user=user)
+
+@app.route('/search_user', methods=['GET', 'POST'])
+@login_required
+def search():
+    print("open form search user")
+    search_from = SearchUserForm()
+    if search_from.validate_on_submit():
+        print('submit')
+        user_partner = Users.query.filter_by(username=search_from.username.data).first()
+        if user_partner is None:
+            flash('User {} not found. Repeat search.'.format(search_from.username.data))
+            return redirect(url_for('search'))
+        if user_partner == current_user:
+            flash('You cannot create family only yourself!')
+            return redirect(url_for('search'))
+        current_user.create_family(user_partner)
+        db.session.commit()
+        flash('You are creating family with {}!'.format(user_partner.username))
+        return redirect(url_for('user', username=current_user.username))
+    return render_template('search_user.html', title='Search User', form=search_from)

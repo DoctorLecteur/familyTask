@@ -3,21 +3,11 @@
 {% block content %}
     <div>
         <img src="/static/images/default.svg" align="left" width="120" height="120">
-        <span font-size="500%">{{ current_user.username }}</span>
-        <br>
-        <span font-size="500%">У вас нет пары</span>
+        <p>{{ current_user.username }}</p>
     </div>
     <div>
-        <button onclick="test()">Создать пару</button>
-        <button>Задачи</button>
+        <form action="/show_task" method="POST">
+            <input type="submit" value="Задачи">
+        </form>
     </div>
-{% endblock %}
-
-{% block scripts %}
-    {{ super() }}
-    <script>
-        function test() {
-            alert("Test123");
-        }
-    </script>
 {% endblock %}

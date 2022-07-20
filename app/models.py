@@ -30,6 +30,19 @@ class Users(UserMixin, db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+    def create_family(self, user):
+        if not self.is_family(user):
+            self.families.append(user)
+
+    def destroy_family(self, user):
+        if self.is_family(user):
+            self.families.remove(user)
+
+    def is_family(self, user):
+        return self.families.filter(
+            family.c.id_partner == user.id).count() > 0
+
+
 @login.user_loader
 def load_user(id):
     return Users.query.get(int(id))
