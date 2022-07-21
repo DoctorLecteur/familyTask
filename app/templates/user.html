@@ -7,11 +7,11 @@
             <td>
                 <h1>User: {{ user.username }}</h1>
                 {% if current_user.is_authenticated %}
-                    {% if current_user.is_family(user) %}
+                    {% if not current_user.is_family(user) %}
                         <p>У вас нет семьи</p>
                         <p><a href="{{ url_for('search') }}">Search user</a></p>
                     {% else %}
-                        <p>У вас есть семья</p>
+                        <p>У вас есть семья c {{ current_user.get_partner(user) }}</p>
                     {% endif %}
                 {% endif %}
             </td>

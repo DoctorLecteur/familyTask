@@ -40,7 +40,11 @@ class Users(UserMixin, db.Model):
 
     def is_family(self, user):
         return self.families.filter(
-            family.c.id_partner == user.id).count() > 0
+            family.c.id_user == user.id).count() > 0
+
+    def get_partner(self, user):
+        return self.families.filter(
+            family.c.id_user == user.id).first_or_404().username
 
 
 @login.user_loader
