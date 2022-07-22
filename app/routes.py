@@ -56,10 +56,13 @@ def user(username):
 @app.route('/search_user', methods=['GET', 'POST'])
 @login_required
 def search():
-    print("open form search user")
     search_from = SearchUserForm()
+    if request.method == 'POST' and request.form.get('cancel') is not None:
+        return redirect(url_for('user', username=current_user.username))
     if search_from.validate_on_submit():
-        print('submit')
+        if search_from.username.data == "":
+            flash('Enter empty username. Repeat search.')
+            return redirect(url_for('search'))
         user_partner = Users.query.filter_by(username=search_from.username.data).first()
         if user_partner is None:
             flash('User {} not found. Repeat search.'.format(search_from.username.data))
@@ -68,6 +71,7 @@ def search():
             flash('You cannot create family only yourself!')
             return redirect(url_for('search'))
         current_user.create_family(user_partner)
+        user_partner.create_family(current_user)
         db.session.commit()
         flash('You are creating family with {}!'.format(user_partner.username))
         return redirect(url_for('user', username=current_user.username))

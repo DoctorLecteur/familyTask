@@ -1,16 +1,20 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
+from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Length
 from app.models import Users
 
 class LoginForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
+    username = StringField('Username',
+                           validators=[DataRequired(),
+                            Length(min=5, max=64, message='Name length must be between %(min)d and %(max)dcharacters')])
     password = PasswordField('Password', validators=[DataRequired()])
     remember_me = BooleanField('Remember me')
     submit = SubmitField('Sign In')
 
 class RegistrationForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
+    username = StringField('Username',
+                           validators=[DataRequired(),
+                                       Length(min=5, max=64, message='Name length must be between %(min)d and %(max)dcharacters')])
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
     password2 = PasswordField(
@@ -28,6 +32,6 @@ class RegistrationForm(FlaskForm):
             raise ValidationError('Please use a different email address.')
 
 class SearchUserForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
+    username = StringField('Username')
     submit = SubmitField('OK')
     cancel = SubmitField('Cancel')
