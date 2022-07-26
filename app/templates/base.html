@@ -1,33 +1,103 @@
-<!doctype html>
-<html>
+{% extends 'bootstrap/base.html' %}
+
+{% block title %}
+   {% if title %}{{ title }} - FamilyTask{% else %}Welcome to FamilyTask{% endif %}
+{% endblock %}
+
+{% block navbar %}
+    <nav class="navbar navbar-default">
+       <div class="container">
+           <div class="navbar-header">
+               <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-tagret="#bs-example-navbar-collapse-1" aria-expanded="false">
+                   <span class="sr-only">Toggle navigation</span>
+                   <span class="icon-bar"></span>
+                   <span class="icon-bar"></span>
+                   <span class="icon-bar"></span>
+               </button>
+               <a class="navbar-brand" href="{{ url_for('index') }}">FamilyTask</a>
+           </div>
+       </div>
+       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+           <ul class="nav navbar-nav">
+               <li><a href="{{ url_for('index') }}">FamilyTask</a></li>
+               {% if current_user.is_anonymous %}
+               <li><a href="{{ url_for('login') }}">Login</a></li>
+               {% else %}
+               <li><a href="{{ url_for('user', username=current_user.username) }}">Profile</a></li>
+               <li><a href="{{ url_for('logout') }}">Logout</a></li>
+               {% endif %}
+           </ul>
+       </div>
+    </nav>
+{% endblock %}
+
+{% block content %}
     <head>
-        {% if title %}
-        <title>{{ title }} - FamilyTask</title>
-        {% else %}
-        <title>Welcome to FamilyTask</title>
-        {% endif %}
-    </head>
-    <body>
-        <div>
-            FamilyTask:
-            <a href="{{ url_for('index') }}">Home</a>
-            {% if current_user.is_anonymous %}
-            <a href="{{ url_for('login') }}">Login</a>
-            {% else %}
-            <a href="{{ url_for('user', username=current_user.username) }}">Profile</a>
-            <a href="{{ url_for('logout') }}">Logout</a>
-            {% endif %}
+    <!-- Dynamic Modal -->
+    <div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="FormModal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+            </div>
         </div>
-        <hr>
+    </div>
+    <!-- End Dynamic Modal -->
+    </head>
+    <div class="container">
         {% with messages = get_flashed_messages() %}
         {% if messages %}
-        <ul>
             {% for message in messages %}
-            <li>{{ message }}</li>
+                <div class="alert alert-info" role="alert">{{ message }}</div>
             {% endfor %}
-        </ul>
         {% endif %}
         {% endwith %}
-        {% block content %}{% endblock %}
-    </body>
-</html>
+
+        {# содержимое приложения которое должно быть предоставлено в блоке app_content #}
+        {% block app_content %}{% endblock %}
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script>
+        $(document).ready(function () {
+            $('.edit-modal-opener').click(function () {
+                var url = $(this).data('whatever');
+                $.get(url, function (data) {
+                    $('#Modal .modal-content').html(data);
+                    $('#Modal').modal();
+
+                    $('#submit').click(function (event) {
+                        event.preventDefault();
+                        $.post(url, data = $('#ModalForm').serialize(),
+                        function(data) {
+
+                            if (data.status == 'ok') {
+
+                                $('#Modal').modal('hide');
+                                location.reload();
+
+                            } else {
+
+                                var obj = JSON.parse(data);
+                                for (var key in obj) {
+
+                                    if (obj.hasOwnProperty(key)) {
+                                        var value = obj[key];
+                                    }
+
+                                }
+
+                                $('.help-block').remove()
+                                $('<p class="help-block">' + value + '</p>').insertAfter('#' + key);
+                                $('.form-group').addClass('has-error')
+
+                            }
+
+                        })
+                    });
+                })
+            });
+        });
+    </script>
+{% endblock %}

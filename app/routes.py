@@ -56,6 +56,7 @@ def user(username):
 @app.route('/search_user', methods=['GET', 'POST'])
 @login_required
 def search():
+    print('search user')
     search_from = SearchUserForm()
     if request.method == 'POST' and request.form.get('cancel') is not None:
         return redirect(url_for('user', username=current_user.username))
@@ -75,4 +76,5 @@ def search():
         db.session.commit()
         flash('You are creating family with {}!'.format(user_partner.username))
         return redirect(url_for('user', username=current_user.username))
-    return render_template('search_user.html', title='Search User', form=search_from)
+    print('show modal form')
+    return render_template('_modal_search_user.html', title='Search User', form=search_from)

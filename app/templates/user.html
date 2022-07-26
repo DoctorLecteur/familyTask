@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from 'bootstrap/wtf.html' import wtf %}
 
 {% block content %}
     <table>
@@ -9,7 +10,8 @@
                 {% if current_user.is_authenticated %}
                     {% if not current_user.is_family(user) %}
                         <p>У вас нет семьи</p>
-                        <p><a href="{{ url_for('search') }}">Search user</a></p>
+                        <p><a class="edit-modal-opener" data-toggle="modal"
+                              data-whatever="{{ url_for('search') }}" href="#">Search user</a></p>
                     {% else %}
                         <p>У вас есть семья c {{ current_user.get_partner(user) }}</p>
                     {% endif %}

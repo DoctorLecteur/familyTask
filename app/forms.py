@@ -32,6 +32,8 @@ class RegistrationForm(FlaskForm):
             raise ValidationError('Please use a different email address.')
 
 class SearchUserForm(FlaskForm):
-    username = StringField('Username')
+    username = StringField('Username',
+                           validators=[DataRequired(),
+                                       Length(min=5, max=64, message='Name length must be between %(min)d and %(max)dcharacters')])
     submit = SubmitField('OK')
     cancel = SubmitField('Cancel')
