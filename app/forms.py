@@ -35,5 +35,7 @@ class SearchUserForm(FlaskForm):
     username = StringField('Username',
                            validators=[DataRequired(),
                                        Length(min=5, max=64, message='Name length must be between %(min)d and %(max)dcharacters')])
-    submit = SubmitField('OK')
-    cancel = SubmitField('Cancel')
+
+
+class EditProfileForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email()])

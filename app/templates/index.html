@@ -1,13 +1,9 @@
 {% extends "base.html" %}
 
-{% block content %}
-    <div>
-        <img src="/static/images/default.svg" align="left" width="120" height="120">
+{% block app_content %}
+    <img src="/static/images/default.svg" align="left" width="120" height="120">
         <p>{{ current_user.username }}</p>
-    </div>
-    <div>
-        <form action="/show_task" method="POST">
-            <input type="submit" value="Задачи">
-        </form>
-    </div>
+    <form action="/show_task" method="POST">
+        <input type="submit" value="Задачи">
+    </form>
 {% endblock %}

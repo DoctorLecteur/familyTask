@@ -16,33 +16,22 @@
                </button>
                <a class="navbar-brand" href="{{ url_for('index') }}">FamilyTask</a>
            </div>
-       </div>
-       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-           <ul class="nav navbar-nav">
-               <li><a href="{{ url_for('index') }}">FamilyTask</a></li>
-               {% if current_user.is_anonymous %}
-               <li><a href="{{ url_for('login') }}">Login</a></li>
-               {% else %}
-               <li><a href="{{ url_for('user', username=current_user.username) }}">Profile</a></li>
-               <li><a href="{{ url_for('logout') }}">Logout</a></li>
-               {% endif %}
-           </ul>
+           <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+               <ul class="nav navbar-nav">
+                   <li><a href="{{ url_for('index') }}">FamilyTask</a></li>
+                   {% if current_user.is_anonymous %}
+                   <li><a href="{{ url_for('login') }}">Login</a></li>
+                   {% else %}
+                   <li><a href="{{ url_for('user', username=current_user.username) }}">Profile</a></li>
+                   <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                   {% endif %}
+               </ul>
+           </div>
        </div>
     </nav>
 {% endblock %}
 
 {% block content %}
-    <head>
-    <!-- Dynamic Modal -->
-    <div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="FormModal" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-
-            </div>
-        </div>
-    </div>
-    <!-- End Dynamic Modal -->
-    </head>
     <div class="container">
         {% with messages = get_flashed_messages() %}
         {% if messages %}
@@ -61,14 +50,16 @@
     {{ super() }}
     <script>
         $(document).ready(function () {
-            $('.edit-modal-opener').click(function () {
+            $('.edit-modal-opener').click(function() {
                 var url = $(this).data('whatever');
                 $.get(url, function (data) {
+
                     $('#Modal .modal-content').html(data);
                     $('#Modal').modal();
 
                     $('#submit').click(function (event) {
                         event.preventDefault();
+                        data = $('#ModalForm').serialize();
                         $.post(url, data = $('#ModalForm').serialize(),
                         function(data) {
 
@@ -83,20 +74,24 @@
                                 for (var key in obj) {
 
                                     if (obj.hasOwnProperty(key)) {
+
                                         var value = obj[key];
+
                                     }
+
+                                    $('.help-block').remove();
+                                    $('<p class="help-block">' + value + '</p>').insertAfter('#' + key);
+                                    $('.form-group').addClass('has-error');
 
                                 }
 
-                                $('.help-block').remove()
-                                $('<p class="help-block">' + value + '</p>').insertAfter('#' + key);
-                                $('.form-group').addClass('has-error')
-
                             }
 
-                        })
+                        });
+
                     });
-                })
+
+                });
             });
         });
     </script>

@@ -1,13 +1,24 @@
 {% extends "base.html" %}
 {% from 'bootstrap/wtf.html' import wtf %}
 
-{% block content %}
+{% block app_content %}
+    <!-- Dynamic Modal -->
+    <div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="FormModal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+            </div>
+        </div>
+    </div>
+    <!-- End Dynamic Modal -->
     <table>
         <tr valign="top">
             <td><img src="/static/images/default.svg" width="120" height="120"></td>
             <td>
                 <h1>User: {{ user.username }}</h1>
                 {% if current_user.is_authenticated %}
+                    <a class="edit-modal-opener" data-toggle="modal"
+                              data-whatever="{{ url_for('edit_profile') }}" href="#">Edit Profile</a>
                     {% if not current_user.is_family(user) %}
                         <p>У вас нет семьи</p>
                         <p><a class="edit-modal-opener" data-toggle="modal"
