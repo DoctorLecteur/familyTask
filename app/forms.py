@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, DateTimeField, IntegerField, TextAreaField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Length
 from app.models import Users
 
@@ -39,3 +39,13 @@ class SearchUserForm(FlaskForm):
 
 class EditProfileForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
+
+class AddTaskForm(FlaskForm):
+    type_task = IntegerField('Type task')
+    title = StringField('Title',
+                        validators=[DataRequired(),
+                                    Length(min=5, max=64, message='Name length must be between %(min)d and %(max)dcharacters')])
+    priority = IntegerField('Priority')
+    deadline = DateTimeField('Deadline', validators=[DataRequired()], format='%Y-%m-%d %H:%M:%S')
+    description = TextAreaField('Description', validators=[DataRequired(),
+                                                         Length(min=5, max=1024, message='Name length must be between %(min)d and %(max)dcharacters')])

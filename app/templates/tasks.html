@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+    <!-- Dynamic Modal -->
+    <div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="FormModal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+            </div>
+        </div>
+    </div>
+    <!-- End Dynamic Modal -->
+    <h1>Tasks</h1>
+    <a class="edit-modal-opener btn btn-primary" data-toggle="modal"
+       data-whatever="{{ url_for('add_task') }}" href="#">Add Task</a>
+{% endblock %}

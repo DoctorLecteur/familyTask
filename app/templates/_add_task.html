@@ -1,0 +1,63 @@
+<form id="ModalForm" name="stepForm" class="form" method="post">
+
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h4 class="modal-title">{{ title }}</h4>
+  </div>
+  <div class="modal-body">
+
+    {{ form.hidden_tag() }}
+      <p>
+        {{ form.type_task.label }}<br>
+        <select name="type_task" readonly>
+          {% for type_task in typies_task %}
+            {% if type_task.name == "Задача" %}
+              <option disabled selected value="{{ type_task.id }}">{{ type_task.name }}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+        {% for error in form.type_task.errors %}
+          <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+      </p>
+      <p>
+        {{ form.title.label }}<br>
+        {{ form.title(size=64) }}<br>
+        {% for error in form.title.errors %}
+          <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+      </p>
+      <p>
+        {{ form.priority.label }}<br>
+        <select name="priority">
+          {% for priority in priorities %}
+            <option value="{{ priority.id }}">{{ priority.name }}</option>
+          {% endfor %}
+        </select>
+        {% for error in form.priority.errors %}
+          <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+      </p>
+      <p>
+        {{ form.deadline.label }}<br>
+        {{ form.deadline(size=64) }}<br>
+        {% for error in form.deadline.errors %}
+          <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+      </p>
+      <p>
+        {{ form.description.label }}<br>
+        {{ form.description(size=100) }}<br>
+        {% for error in form.description.errors %}
+          <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+      </p>
+
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+    <button id="submit" type="submit" class="btn btn-success">OK</button>
+  </div>
+</form>

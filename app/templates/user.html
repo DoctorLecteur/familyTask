@@ -17,12 +17,12 @@
             <td>
                 <h1>User: {{ user.username }}</h1>
                 {% if current_user.is_authenticated %}
-                    <a class="edit-modal-opener" data-toggle="modal"
+                    <a class="edit-modal-opener btn btn-primary" data-toggle="modal"
                               data-whatever="{{ url_for('edit_profile') }}" href="#">Edit Profile</a>
                     {% if not current_user.is_family(user) %}
-                        <p>У вас нет семьи</p>
-                        <p><a class="edit-modal-opener" data-toggle="modal"
+                        <p><a class="edit-modal-opener btn btn-primary" data-toggle="modal"
                               data-whatever="{{ url_for('search') }}" href="#">Search user</a></p>
+                        <p>У вас нет семьи</p>
                     {% else %}
                         <p>У вас есть семья c {{ current_user.get_partner(user) }}</p>
                     {% endif %}

@@ -1,15 +1,20 @@
+import datetime
 import json
 from flask import render_template, flash, redirect, url_for, request, jsonify, make_response, session
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, SearchUserForm, EditProfileForm
+from app.forms import LoginForm, RegistrationForm, SearchUserForm, EditProfileForm, AddTaskForm
 from flask_login import current_user, login_user, logout_user, login_required
-from app.models import Users
+from app.models import Users, TypeTask, Priority
 from werkzeug.urls import url_parse
 
 @app.route('/')
 @app.route('/index')
 @login_required
 def index():
+    if current_user.is_authenticated and current_user.is_family(current_user):
+        return redirect(url_for('tasks'))
+    elif current_user.is_authenticated and not current_user.is_family(current_user):
+        return redirect(url_for('user', username=current_user.username))
     return render_template('index.html', title='Home Page')
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -96,3 +101,42 @@ def edit_profile():
         data = json.dumps(form.errors, ensure_ascii=True)
         return jsonify(data)
     return render_template('_form_edit.html', title='Edit Profile', form=form)
+
+@app.route('/family', methods=['GET'])
+@login_required
+def family():
+    return render_template('family.html', title='Family')
+
+@app.route('/tasks', methods=['GET'])
+@login_required
+def tasks():
+    return render_template('tasks.html', title='Tasks')
+
+#функция для получения всех доступных видов задач
+def get_type_task():
+    type_task = TypeTask.query.all()
+    list_type_task = []
+    for t in type_task:
+        type_task_dict = {"id": t.id, "name": t.name}
+        list_type_task.append(type_task_dict)
+    return list_type_task
+
+#фукнция для получения всех доступных приоритетов
+def get_priotity():
+    priority = Priority.query.all()
+    list_priority = []
+    for p in priority:
+        priority_dict = {"id": p.id, "name": p.name}
+        list_priority.append(priority_dict)
+    return list_priority
+
+@app.route('/add_task', methods=['GET', 'POSTS'])
+@login_required
+def add_task():
+    type_task = get_type_task()
+    priority = get_priotity()
+    form = AddTaskForm()
+    if request.method == 'GET':
+        form.deadline.data = datetime.datetime.now()
+    return render_template('_add_task.html', title='Add Task', form=form, typies_task=type_task, priorities=priority)
+

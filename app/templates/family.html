@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+    <h1>Family</h1>
+    <table>
+        <tr valign="top">
+            <td><img src="/static/images/default.svg" width="40" height="40"></td>
+            <td><span>Family member№1 (You): {{ current_user.username }}</span></td>
+        </tr>
+        <tr valign="top">
+            <td><img src="/static/images/default.svg" width="40" height="40"></td>
+            <td><span>Family member№2: {{ current_user.get_partner(current_user) }}</span></td>
+        </tr>
+    </table>
+{% endblock %}
