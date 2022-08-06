@@ -4,7 +4,7 @@ from flask import render_template, flash, redirect, url_for, request, jsonify, m
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, SearchUserForm, EditProfileForm, AddTaskForm
 from flask_login import current_user, login_user, logout_user, login_required
-from app.models import Users, TypeTask, Priority
+from app.models import Users, TypeTask, Priority, Status, Tasks
 from werkzeug.urls import url_parse
 
 @app.route('/')
@@ -130,13 +130,38 @@ def get_priotity():
         list_priority.append(priority_dict)
     return list_priority
 
-@app.route('/add_task', methods=['GET', 'POSTS'])
+#функция для получения всех доступных статусов
+def get_status():
+    status = Status.query.all()
+    list_status = []
+    for s in status:
+        status_dict = {"id": s.id, "name": s.name}
+        list_status.append(status_dict)
+    return list_status
+
+@app.route('/add_task', methods=['GET', 'POST'])
 @login_required
 def add_task():
+    form = AddTaskForm()
     type_task = get_type_task()
     priority = get_priotity()
-    form = AddTaskForm()
-    if request.method == 'GET':
-        form.deadline.data = datetime.datetime.now()
-    return render_template('_add_task.html', title='Add Task', form=form, typies_task=type_task, priorities=priority)
+    status = get_status()
+    if form.validate_on_submit():
 
+       if form.type_task.data is None:
+           form.type_task.data = 1
+
+       user_partner = current_user.get_partner(current_user)
+       user_partner_id = Users.query.filter_by(username=user_partner).first()
+       task = Tasks(id_type_task=type_task[0]["id"], title=form.title.data, id_priority=form.priority.data,
+                    id_status=status[0]["id"], id_users=user_partner_id.id, deadline=form.deadline.data, description=form.description.data)
+       db.session.add(task)
+       db.session.commit()
+       flash('Task success added.')
+       return jsonify(status='ok')
+    elif request.method == 'GET':
+        form.deadline.data = datetime.datetime.now()
+    else:
+        data = json.dumps(form.errors, ensure_ascii=True)
+        return jsonify(data)
+    return render_template('_add_task.html', title='Add Task', form=form, typies_task=type_task, priorities=priority)

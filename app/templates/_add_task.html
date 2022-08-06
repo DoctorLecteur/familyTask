@@ -42,7 +42,7 @@
       </p>
       <p>
         {{ form.deadline.label }}<br>
-        {{ form.deadline(size=64) }}<br>
+        {{ form.deadline(size=64, class="datepicker") }}<br>
         {% for error in form.deadline.errors %}
           <span style="color: red;">[{{ error }}]</span>
         {% endfor %}

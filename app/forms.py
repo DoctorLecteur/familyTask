@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, DateTimeField, IntegerField, TextAreaField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, DateTimeField, DateField, IntegerField, TextAreaField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Length
 from app.models import Users
 
@@ -14,7 +14,7 @@ class LoginForm(FlaskForm):
 class RegistrationForm(FlaskForm):
     username = StringField('Username',
                            validators=[DataRequired(),
-                                       Length(min=5, max=64, message='Name length must be between %(min)d and %(max)dcharacters')])
+                                       Length(min=5, max=64, message='Name length must be between %(min)d and %(max)d characters')])
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
     password2 = PasswordField(
@@ -34,7 +34,7 @@ class RegistrationForm(FlaskForm):
 class SearchUserForm(FlaskForm):
     username = StringField('Username',
                            validators=[DataRequired(),
-                                       Length(min=5, max=64, message='Name length must be between %(min)d and %(max)dcharacters')])
+                                       Length(min=5, max=64, message='Name length must be between %(min)d and %(max)d characters')])
 
 
 class EditProfileForm(FlaskForm):
@@ -46,6 +46,7 @@ class AddTaskForm(FlaskForm):
                         validators=[DataRequired(),
                                     Length(min=5, max=64, message='Name length must be between %(min)d and %(max)dcharacters')])
     priority = IntegerField('Priority')
-    deadline = DateTimeField('Deadline', validators=[DataRequired()], format='%Y-%m-%d %H:%M:%S')
+    #format='%Y-%m-%d %H:%M:%S'
+    deadline = DateField('Deadline', format='%Y-%m-%d')
     description = TextAreaField('Description', validators=[DataRequired(),
-                                                         Length(min=5, max=1024, message='Name length must be between %(min)d and %(max)dcharacters')])
+                                                         Length(min=5, max=1024, message='Name length must be between %(min)d and %(max)d characters')])
