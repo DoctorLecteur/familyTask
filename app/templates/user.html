@@ -17,6 +17,7 @@
             <td>
                 <h1>User: {{ user.username }}</h1>
                 {% if current_user.is_authenticated %}
+                    <p>Email: {{ user.email }}</p>
                     <a class="edit-modal-opener btn btn-primary" data-toggle="modal"
                               data-whatever="{{ url_for('edit_profile') }}" href="#">Edit Profile</a>
                     {% if not current_user.is_family(user) %}

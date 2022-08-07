@@ -14,4 +14,14 @@
     <h1>Tasks</h1>
     <a class="edit-modal-opener btn btn-primary" data-toggle="modal"
        data-whatever="{{ url_for('add_task') }}" href="#">Add Task</a>
+    <br>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+            {% for item_status in status %}
+                <th> {{ item_status.name }} </th>
+            {% endfor %}
+            </thead>
+        </table>
+    </div>
 {% endblock %}

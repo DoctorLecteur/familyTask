@@ -50,3 +50,6 @@ class AddTaskForm(FlaskForm):
     deadline = DateField('Deadline', format='%Y-%m-%d')
     description = TextAreaField('Description', validators=[DataRequired(),
                                                          Length(min=5, max=1024, message='Name length must be between %(min)d and %(max)d characters')])
+
+class EmptyForm(FlaskForm):
+    submit = SubmitField('Submit')

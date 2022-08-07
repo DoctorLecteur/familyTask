@@ -2,7 +2,7 @@ import datetime
 import json
 from flask import render_template, flash, redirect, url_for, request, jsonify, make_response, session
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, SearchUserForm, EditProfileForm, AddTaskForm
+from app.forms import LoginForm, RegistrationForm, SearchUserForm, EditProfileForm, AddTaskForm, EmptyForm
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import Users, TypeTask, Priority, Status, Tasks
 from werkzeug.urls import url_parse
@@ -110,7 +110,9 @@ def family():
 @app.route('/tasks', methods=['GET'])
 @login_required
 def tasks():
-    return render_template('tasks.html', title='Tasks')
+    form = EmptyForm()
+    status = get_status()
+    return render_template('tasks.html', title='Tasks', form=form, status=status)
 
 #функция для получения всех доступных видов задач
 def get_type_task():
