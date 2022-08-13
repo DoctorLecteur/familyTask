@@ -46,6 +46,9 @@ class Users(UserMixin, db.Model):
         return self.families.filter(
             family.c.id_user == user.id).first_or_404().username
 
+    def get_user(self, id):
+        return self.query.filter_by(id=id).first_or_404().username
+
 
 @login.user_loader
 def load_user(id):

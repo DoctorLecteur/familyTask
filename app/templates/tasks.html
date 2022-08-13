@@ -14,9 +14,11 @@
     <h1>Tasks</h1>
     <a class="edit-modal-opener btn btn-primary" data-toggle="modal"
        data-whatever="{{ url_for('add_task') }}" href="#">Add Task</a>
+    <a class="btn btn-warning" href="#">To Work</a>
+    <a class="btn btn-success" href="#">Done</a>
     <br>
-    <div class="table-responsive">
-        <table class="table">
+    <div class="table-responsive ">
+        <table class="table table-bordered border-primary table-hover">
             <thead>
                 {% for item_status in status %}
                     <th> {{ item_status.name }} </th>
@@ -27,7 +29,7 @@
                     <tr>
                         {% for task_td in task_tr %}
                             {% if task_td != 0 %}
-                                <td>Title: {{ task_td.title }}</td>
+                                <td>{% include '_task.html' %}</td>
                             {% else %}
                                 <td></td>
                             {% endif %}
@@ -35,6 +37,13 @@
                     </tr>
                 {% endfor %}
             </tbody>
+            <tfoot>
+                <tr>
+                    <td>Total: {{ count_tasks.count_backlog }}</td>
+                    <td>Total: {{ count_tasks.count_work }}</td>
+                    <td>Total: {{ count_tasks.count_done }}</td>
+                </tr>
+            </tfoot>
         </table>
     </div>
 {% endblock %}

@@ -123,22 +123,33 @@ def tasks():
     #инициализация пустой таблицы с задачами для последующего заполнения
     list_tasks = [0] * len_max
     for i in range(0, len_max):
-       list_tasks[i] = [0] * 3
-
+       list_tasks[i] = [0] * len(status)
+    #переменные для подсчета кол-ва задач
+    count_backlog = 0
+    count_work = 0
+    count_done = 0
     #заполнение таблицы с задачами
     for j in range(0, len(tasks)):
         for tr in range(0, len(list_tasks)):
             if list_tasks[tr][0] == 0 and tasks[j].id_status == 1:
                 list_tasks[tr][0] = tasks[j]
+                count_backlog = count_backlog + 1
                 break
             if list_tasks[tr][1] == 0 and tasks[j].id_status == 2:
                 list_tasks[tr][1] = tasks[j]
+                count_work = count_work + 1
                 break
             if list_tasks[tr][2] == 0 and tasks[j].id_status == 3:
                 list_tasks[tr][2] = tasks[j]
+                count_done = count_done + 1
                 break
 
-    return render_template('tasks.html', title='Tasks', form=form, status=status, tasks=list_tasks)
+    count_dict = {
+        'count_backlog': count_backlog,
+        'count_work': count_work,
+        'count_done': count_done
+    }
+    return render_template('tasks.html', title='Tasks', form=form, status=status, tasks=list_tasks, count_tasks=count_dict)
 
 #функция для получения всех доступных видов задач
 def get_type_task():

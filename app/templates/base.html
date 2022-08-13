@@ -53,6 +53,7 @@
     {{ super() }}
     <script>
         $(document).ready(function () {
+            //добавиление задачи и редактирование профиля
             $('.edit-modal-opener').click(function() {
                 var url = $(this).data('whatever');
                 $.get(url, function (data) {
@@ -96,6 +97,21 @@
 
                 });
             });
+
+            //действия при наведение курсора на блок с задачей
+            $('.div-hover').mouseenter(function() {
+
+                $('.btn-warning').show();
+                $('.btn-success').show();
+
+            })
+            .mouseleave(function() {
+
+                $('.btn-warning').hide();
+                $('.btn-success').hide();
+
+            });
+
         });
     </script>
 {% endblock %}
