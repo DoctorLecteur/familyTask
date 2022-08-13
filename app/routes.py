@@ -6,6 +6,7 @@ from app.forms import LoginForm, RegistrationForm, SearchUserForm, EditProfileFo
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import Users, TypeTask, Priority, Status, Tasks
 from werkzeug.urls import url_parse
+from operator import itemgetter
 
 @app.route('/')
 @app.route('/index')
@@ -112,7 +113,32 @@ def family():
 def tasks():
     form = EmptyForm()
     status = get_status()
-    return render_template('tasks.html', title='Tasks', form=form, status=status)
+    tasks = Tasks.query.order_by(Tasks.id_status.asc()).all()
+    len_max = 0
+    for i_status in range(0, len(status)): #проверяем в каком статусе задач больше всего для получения кол-ва строк в таблице
+        status_count = Tasks.query.filter_by(id_status=status[i_status]["id"]).count()
+        if status_count > len_max:
+            len_max = status_count
+
+    #инициализация пустой таблицы с задачами для последующего заполнения
+    list_tasks = [0] * len_max
+    for i in range(0, len_max):
+       list_tasks[i] = [0] * 3
+
+    #заполнение таблицы с задачами
+    for j in range(0, len(tasks)):
+        for tr in range(0, len(list_tasks)):
+            if list_tasks[tr][0] == 0 and tasks[j].id_status == 1:
+                list_tasks[tr][0] = tasks[j]
+                break
+            if list_tasks[tr][1] == 0 and tasks[j].id_status == 2:
+                list_tasks[tr][1] = tasks[j]
+                break
+            if list_tasks[tr][2] == 0 and tasks[j].id_status == 3:
+                list_tasks[tr][2] = tasks[j]
+                break
+
+    return render_template('tasks.html', title='Tasks', form=form, status=status, tasks=list_tasks)
 
 #функция для получения всех доступных видов задач
 def get_type_task():

@@ -18,10 +18,23 @@
     <div class="table-responsive">
         <table class="table">
             <thead>
-            {% for item_status in status %}
-                <th> {{ item_status.name }} </th>
-            {% endfor %}
+                {% for item_status in status %}
+                    <th> {{ item_status.name }} </th>
+                {% endfor %}
             </thead>
+            <tbody>
+                {% for task_tr in tasks %}
+                    <tr>
+                        {% for task_td in task_tr %}
+                            {% if task_td != 0 %}
+                                <td>Title: {{ task_td.title }}</td>
+                            {% else %}
+                                <td></td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
         </table>
     </div>
 {% endblock %}
