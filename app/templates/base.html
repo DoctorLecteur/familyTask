@@ -97,18 +97,73 @@
 
                 });
             });
-
+            var idTask = 0;//переменная для id задач для перевода задачи по статусу
+            //скрытие кнопок при отображении задач
+            $('.btn-warning').hide();
+            $('.btn-success').hide();
+            $('.btn-danger').hide();
             //действия при наведение курсора на блок с задачей
-            $('.div-hover').mouseenter(function() {
-
-                $('.btn-warning').show();
-                $('.btn-success').show();
-
-            })
-            .mouseleave(function() {
-
+            $('.div-hover').click(function() {
                 $('.btn-warning').hide();
                 $('.btn-success').hide();
+                $('.btn-danger').hide();
+                var url = '/check_task';
+                idTask = this["id"];
+                $.post(url, {
+                    id_task: idTask
+                }).done(function(response) {
+
+                    if (response == "В куче") {
+                        $('.btn-warning').show();
+                        $('.btn-success').hide();
+                        $('.btn-danger').show();
+                    }
+
+                    if (response == "В работе") {
+                        $('.btn-warning').hide();
+                        $('.btn-success').show();
+                        $('.btn-danger').show();
+                    }
+
+                    if (response == "Готово") {
+                        $('.btn-warning').hide();
+                        $('.btn-success').hide();
+                        $('.btn-danger').hide();
+                    }
+
+                }).fail(function() {
+                    console.log('fail');
+                });
+
+            });
+            //функция для перевода задачи на следующий статус
+            function doNextStatus(strUrl, numIdTask) {
+
+                $.post(strUrl, {
+                    id_task: numIdTask
+                }).done(function(response) {
+                    location.reload();
+                }).fail(function() {
+                    console.log('fail');
+                });
+
+            }
+            //действие при нажатии кнопки в работу
+            $('.btn-warning').click(function() {
+
+                doNextStatus('/next_status', idTask);
+
+            });
+            //действие при нажатии кнопки готово
+            $('.btn-success').click(function() {
+
+                doNextStatus('/next_status', idTask);
+
+            });
+            //действие при нажатии кнопки стрелочки
+            $('.btn-danger').click(function() {
+
+                doNextStatus('/next_status', idTask);
 
             });
 

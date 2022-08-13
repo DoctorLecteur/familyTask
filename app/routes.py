@@ -204,3 +204,21 @@ def add_task():
         data = json.dumps(form.errors, ensure_ascii=True)
         return jsonify(data)
     return render_template('_add_task.html', title='Add Task', form=form, typies_task=type_task, priorities=priority)
+
+@app.route('/check_task', methods=['POST'])
+@login_required
+def check_task():
+    task_id = request.form['id_task']
+    task = Tasks.query.filter_by(id=task_id).first()
+    status = Status.query.filter_by(id=task.id_status).first()
+    return make_response(status.name)
+
+@app.route('/next_status', methods=['POST'])
+@login_required
+def next_status():
+    task_id = request.form['id_task']
+    task = Tasks.query.filter_by(id=task_id).first()
+    task.id_status = task.id_status + 1
+    db.session.commit()
+    flash('Task {} success update'.format(task.title))
+    return make_response('success')
