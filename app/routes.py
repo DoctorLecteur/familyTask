@@ -6,7 +6,6 @@ from app.forms import LoginForm, RegistrationForm, SearchUserForm, EditProfileFo
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import Users, TypeTask, Priority, Status, Tasks
 from werkzeug.urls import url_parse
-from operator import itemgetter
 
 @app.route('/')
 @app.route('/index')
@@ -130,6 +129,8 @@ def tasks():
     count_done = 0
     #заполнение таблицы с задачами
     for j in range(0, len(tasks)):
+        tasks[j].create_date = tasks[j].create_date.strftime('%d.%m.%Y') #преобразование даты
+        tasks[j].deadline = tasks[j].deadline.strftime('%d.%m.%Y')  # преобразование даты
         for tr in range(0, len(list_tasks)):
             if list_tasks[tr][0] == 0 and tasks[j].id_status == 1:
                 list_tasks[tr][0] = tasks[j]

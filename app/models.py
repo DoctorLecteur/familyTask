@@ -13,7 +13,6 @@ class Users(UserMixin, db.Model):
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
-    tasks = db.relationship('Tasks', backref='author', lazy='dynamic')
 
     families = db.relationship(
         'Users', secondary=family,
@@ -77,14 +76,16 @@ class TypeTask(db.Model):
 
 
 class Tasks(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, index=True)
     id_type_task = db.Column(db.Integer, db.ForeignKey('type_task.id'))
     title = db.Column(db.String(64), index=True)
     id_priority = db.Column(db.Integer, db.ForeignKey('priority.id'))
-    id_status = db.Column(db.Integer, db.ForeignKey('status.id'))
+    id_status = db.Column(db.Integer, db.ForeignKey('status.id'), index=True)
     id_users = db.Column(db.Integer, db.ForeignKey('users.id'))
     deadline = db.Column(db.DateTime, default=datetime.utcnow)
     description = db.Column(db.String(1024))
+    create_user = db.Column(db.Integer, db.ForeignKey('users.id'))
+    create_date = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
         return '<Tasks {}>'.format(self.title)
