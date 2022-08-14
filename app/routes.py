@@ -6,6 +6,7 @@ from app.forms import LoginForm, RegistrationForm, SearchUserForm, EditProfileFo
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import Users, TypeTask, Priority, Status, Tasks
 from werkzeug.urls import url_parse
+from datetime import datetime
 
 @app.route('/')
 @app.route('/index')
@@ -194,13 +195,14 @@ def add_task():
        user_partner = current_user.get_partner(current_user)
        user_partner_id = Users.query.filter_by(username=user_partner).first()
        task = Tasks(id_type_task=type_task[0]["id"], title=form.title.data, id_priority=form.priority.data,
-                    id_status=status[0]["id"], id_users=user_partner_id.id, deadline=form.deadline.data, description=form.description.data)
+                    id_status=status[0]["id"], id_users=user_partner_id.id, deadline=form.deadline.data,
+                    description=form.description.data, create_user=current_user.id, create_date=datetime.today().strftime("%d-%m-%Y %H:%M:%S"))
        db.session.add(task)
        db.session.commit()
        flash('Task success added.')
        return jsonify(status='ok')
     elif request.method == 'GET':
-        form.deadline.data = datetime.datetime.now()
+        form.deadline.data = datetime.now()
     else:
         data = json.dumps(form.errors, ensure_ascii=True)
         return jsonify(data)

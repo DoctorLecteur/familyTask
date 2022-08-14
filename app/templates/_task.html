@@ -1,5 +1,7 @@
 <style>
     .div-hover {
+        width: 100%;
+        height: 100%;
         border: 3px solid #fff; /* Белая рамка */
         border-radius: 10px; /* Радиус скругления */
         display: inline-block;
@@ -11,9 +13,17 @@
     }
 </style>
 <div id="{{ task_td.id }}" class="div-hover">
-    <a href="#">{{ task_td.title }}</a>
+    {% if task_td.id_status == 1 %}
+        <a style="color: #092eb3; font-size: 110%; font-weight: bold;" href="#">{{ task_td.title }}</a>
+    {% endif %}
+    {% if task_td.id_status == 2 %}
+        <a style="color: #cf8c08; font-size: 110%; font-weight: bold;" href="#">{{ task_td.title }}</a>
+    {% endif %}
+    {% if task_td.id_status == 3 %}
+        <a class="text-success" style="font-size: 110%; font-weight: bold;" href="#">{{ task_td.title }}</a>
+    {% endif %}
     {% if task_td.id_status != 3 %}
-        <span style="position: relative; left: 100px;">{{ task_td.create_date }}</span>
+        <span style="float: right;">{{ task_td.create_date }}</span>
     {% endif %}
     <br>
     <span>Performer: <img src="/static/images/default.svg" width="20" height="20">{{ current_user.get_user(task_td.id_users) }}</span><br>
