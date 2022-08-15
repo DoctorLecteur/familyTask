@@ -113,10 +113,22 @@ def family():
 def tasks():
     form = EmptyForm()
     status = get_status()
-    tasks = Tasks.query.order_by(Tasks.id_status.asc()).all()
+    flag_id_users = False #флаг для использования поля id_users при поиске задач по статусу
+    flag_create_user = False #флаг для использования поля create_user при поиске задач по статусу
+    tasks = Tasks.query.filter_by(id_users=current_user.id).order_by(Tasks.deadline.asc()).all()
+    if len(tasks) == 0:
+        tasks = Tasks.query.filter_by(create_user=current_user.id).order_by(Tasks.deadline.asc()).all()
+        if len(tasks) > 0:
+            flag_create_user = True
+    else:
+        flag_id_users = True
+
     len_max = 0
     for i_status in range(0, len(status)): #проверяем в каком статусе задач больше всего для получения кол-ва строк в таблице
-        status_count = Tasks.query.filter_by(id_status=status[i_status]["id"]).count()
+        if flag_id_users:
+            status_count = Tasks.query.filter_by(id_status=status[i_status]["id"], id_users=current_user.id).count()
+        if flag_create_user:
+            status_count = Tasks.query.filter_by(id_status=status[i_status]["id"], create_user=current_user.id).count()
         if status_count > len_max:
             len_max = status_count
 

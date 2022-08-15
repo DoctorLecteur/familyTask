@@ -18,33 +18,35 @@
     <a class="btn btn-success" href="#">Done</a>
     <a class="btn btn-danger" href="#">&rarr;</a>
     <br>
-    <div class="table-responsive ">
-        <table class="table table-bordered border-primary table-hover">
-            <thead>
-                {% for item_status in status %}
-                    <th> {{ item_status.name }} </th>
-                {% endfor %}
-            </thead>
-            <tbody>
-                {% for task_tr in tasks %}
+    {% if count_tasks.count_backlog > 0 or count_tasks.count_work > 0 or count_tasks.count_done > 0 %}
+        <div class="table-responsive ">
+            <table class="table table-bordered border-primary table-hover">
+                <thead>
+                    {% for item_status in status %}
+                        <th> {{ item_status.name }} </th>
+                    {% endfor %}
+                </thead>
+                <tbody>
+                    {% for task_tr in tasks %}
+                        <tr>
+                            {% for task_td in task_tr %}
+                                {% if task_td != 0 %}
+                                    <td>{% include '_task.html' %}</td>
+                                {% else %}
+                                    <td></td>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
                     <tr>
-                        {% for task_td in task_tr %}
-                            {% if task_td != 0 %}
-                                <td>{% include '_task.html' %}</td>
-                            {% else %}
-                                <td></td>
-                            {% endif %}
-                        {% endfor %}
+                        <td>Total: {{ count_tasks.count_backlog }}</td>
+                        <td>Total: {{ count_tasks.count_work }}</td>
+                        <td>Total: {{ count_tasks.count_done }}</td>
                     </tr>
-                {% endfor %}
-            </tbody>
-            <tfoot>
-                <tr>
-                    <td>Total: {{ count_tasks.count_backlog }}</td>
-                    <td>Total: {{ count_tasks.count_work }}</td>
-                    <td>Total: {{ count_tasks.count_done }}</td>
-                </tr>
-            </tfoot>
-        </table>
-    </div>
+                </tfoot>
+            </table>
+        </div>
+    {% endif %}
 {% endblock %}

@@ -48,6 +48,9 @@ class Users(UserMixin, db.Model):
     def get_user(self, id):
         return self.query.filter_by(id=id).first_or_404().username
 
+    def get_id_by_username(self, username):
+        return self.query.filter_by(username=username).first_or_404().id
+
 
 @login.user_loader
 def load_user(id):

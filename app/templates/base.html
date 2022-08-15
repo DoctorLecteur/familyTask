@@ -97,7 +97,8 @@
 
                 });
             });
-            var idTask = 0;//переменная для id задач для перевода задачи по статусу
+            let idTask = 0;//переменная для id задач для перевода задачи по статусу
+            let prevIdTask = 0; //переменная для id предыдущей задачи по клику или курсору
             //скрытие кнопок при отображении задач
             $('.btn-warning').hide();
             $('.btn-success').hide();
@@ -107,8 +108,13 @@
                 $('.btn-warning').hide();
                 $('.btn-success').hide();
                 $('.btn-danger').hide();
-                var url = '/check_task';
+                let url = '/check_task';
+                //добавляем рамку на текущий блок с задачей и убираем с предыдущего
+                $(this).css("border", "2px solid #21c1cc");
+                (prevIdTask > 0) ? $("#" + prevIdTask).css("border", ""): "";
+
                 idTask = this["id"];
+                prevIdTask = idTask;
                 $.post(url, {
                     id_task: idTask
                 }).done(function(response) {
@@ -136,6 +142,7 @@
                 });
 
             });
+
             //функция для перевода задачи на следующий статус
             function doNextStatus(strUrl, numIdTask) {
 

@@ -9,7 +9,6 @@
     }
     .div-hover:hover {
         border: 2px solid #21c1cc; /* рамка */
-
     }
 </style>
 <div id="{{ task_td.id }}" class="div-hover">
@@ -22,12 +21,8 @@
     {% if task_td.id_status == 3 %}
         <a class="text-success" style="font-size: 110%; font-weight: bold;" href="#">{{ task_td.title }}</a>
     {% endif %}
-    {% if task_td.id_status != 3 %}
-        <span style="float: right;">{{ task_td.create_date }}</span>
-    {% endif %}
+    <span style="float: right;">{{ task_td.create_date }}</span>
     <br>
     <span>Performer: <img src="/static/images/default.svg" width="20" height="20">{{ current_user.get_user(task_td.id_users) }}</span><br>
-    {% if task_td.id_status != 3 %}
-        <span>Deadline: {{ task_td.deadline }} </span>
-    {% endif %}
+    <span>Deadline: {{ task_td.deadline }} </span>
 </div>
