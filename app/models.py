@@ -89,6 +89,7 @@ class Tasks(db.Model):
     description = db.Column(db.String(1024))
     create_user = db.Column(db.Integer, db.ForeignKey('users.id'))
     create_date = db.Column(db.DateTime, default=datetime.utcnow)
+    date_completion = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
         return '<Tasks {}>'.format(self.title)

@@ -7,6 +7,7 @@ from flask_login import current_user, login_user, logout_user, login_required
 from app.models import Users, TypeTask, Priority, Status, Tasks
 from werkzeug.urls import url_parse
 from datetime import datetime
+from sqlalchemy import select, or_, text
 
 @app.route('/')
 @app.route('/index')
@@ -113,22 +114,15 @@ def family():
 def tasks():
     form = EmptyForm()
     status = get_status()
-    flag_id_users = False #флаг для использования поля id_users при поиске задач по статусу
-    flag_create_user = False #флаг для использования поля create_user при поиске задач по статусу
-    tasks = Tasks.query.filter_by(id_users=current_user.id).order_by(Tasks.deadline.asc()).all()
-    if len(tasks) == 0:
-        tasks = Tasks.query.filter_by(create_user=current_user.id).order_by(Tasks.deadline.asc()).all()
-        if len(tasks) > 0:
-            flag_create_user = True
-    else:
-        flag_id_users = True
+    tasks_by_create_user = Tasks.query.filter_by(create_user=current_user.id)
+    tasks_by_id_users = Tasks.query.filter_by(id_users=current_user.id)
+    tasks = tasks_by_create_user.union(tasks_by_id_users).order_by(Tasks.deadline.asc()).all()
 
     len_max = 0
     for i_status in range(0, len(status)): #проверяем в каком статусе задач больше всего для получения кол-ва строк в таблице
-        if flag_id_users:
-            status_count = Tasks.query.filter_by(id_status=status[i_status]["id"], id_users=current_user.id).count()
-        if flag_create_user:
-            status_count = Tasks.query.filter_by(id_status=status[i_status]["id"], create_user=current_user.id).count()
+        status_by_create_user = Tasks.query.filter_by(id_status=status[i_status]["id"], create_user=current_user.id)
+        status_by_id_users = Tasks.query.filter_by(id_status=status[i_status]["id"], id_users=current_user.id)
+        status_count = status_by_create_user.union(status_by_id_users).count()
         if status_count > len_max:
             len_max = status_count
 
@@ -142,8 +136,10 @@ def tasks():
     count_done = 0
     #заполнение таблицы с задачами
     for j in range(0, len(tasks)):
-        tasks[j].create_date = tasks[j].create_date.strftime('%d.%m.%Y') #преобразование даты
-        tasks[j].deadline = tasks[j].deadline.strftime('%d.%m.%Y')  # преобразование даты
+        tasks[j].create_date = tasks[j].create_date.strftime('%d.%m.%y %H:%M') #преобразование даты
+        tasks[j].deadline = tasks[j].deadline.strftime('%d.%m.%y')  # преобразование даты
+        if tasks[j].date_completion is not None:
+            tasks[j].date_completion = tasks[j].date_completion.strftime('%d.%m.%y %H:%M')  # преобразование даты
         for tr in range(0, len(list_tasks)):
             if list_tasks[tr][0] == 0 and tasks[j].id_status == 1:
                 list_tasks[tr][0] = tasks[j]
@@ -204,11 +200,9 @@ def add_task():
        if form.type_task.data is None:
            form.type_task.data = 1
 
-       user_partner = current_user.get_partner(current_user)
-       user_partner_id = Users.query.filter_by(username=user_partner).first()
        task = Tasks(id_type_task=type_task[0]["id"], title=form.title.data, id_priority=form.priority.data,
-                    id_status=status[0]["id"], id_users=user_partner_id.id, deadline=form.deadline.data,
-                    description=form.description.data, create_user=current_user.id, create_date=datetime.today().strftime("%d-%m-%Y %H:%M:%S"))
+                    id_status=status[0]["id"], deadline=form.deadline.data, description=form.description.data,
+                    create_user=current_user.id, create_date=datetime.today().strftime("%d-%m-%Y %H:%M:%S"))
        db.session.add(task)
        db.session.commit()
        flash('Task success added.')
@@ -233,7 +227,12 @@ def check_task():
 def next_status():
     task_id = request.form['id_task']
     task = Tasks.query.filter_by(id=task_id).first()
+    old_id_status = task.id_status
     task.id_status = task.id_status + 1
+    if old_id_status == 1 and task.id_status == 2: #заполняем исполнителя, если перевели в работу
+        task.id_users = current_user.id
+    elif old_id_status == 2 and task.id_status == 3:
+        task.date_completion = datetime.today()
     db.session.commit()
     flash('Task {} success update'.format(task.title))
     return make_response('success')

@@ -21,8 +21,16 @@
     {% if task_td.id_status == 3 %}
         <a class="text-success" style="font-size: 110%; font-weight: bold;" href="#">{{ task_td.title }}</a>
     {% endif %}
-    <span style="float: right;">{{ task_td.create_date }}</span>
+    <span style="float: right; font-size: 90%; color: #7a7a7a; font-family: monospace;">{{ task_td.create_date }}</span>
     <br>
-    <span>Performer: <img src="/static/images/default.svg" width="20" height="20">{{ current_user.get_user(task_td.id_users) }}</span><br>
-    <span>Deadline: {{ task_td.deadline }} </span>
+    {% if task_td.id_users %}
+        <span>Performer: <img src="/static/images/default.svg" width="20" height="20">{{ current_user.get_user(task_td.id_users) }}</span><br>
+    {% endif %}
+    {% if task_td.id_status == 3 and task_td.date_completion %}
+        <span>Done: {{ task_td.date_completion }} </span>
+    {% else %}
+        {% if task_td.id_status != 3 %}
+            <span>Deadline: {{ task_td.deadline }} </span>
+        {% endif %}
+    {% endif %}
 </div>

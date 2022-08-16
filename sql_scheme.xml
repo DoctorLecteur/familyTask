@@ -129,6 +129,9 @@
 <row name="create_date" null="0" autoincrement="0">
 <datatype>DATETIME</datatype>
 <default>'NULL'</default></row>
+<row name="date_completion" null="1" autoincrement="0">
+<datatype>DATETIME</datatype>
+<default>NULL</default></row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
