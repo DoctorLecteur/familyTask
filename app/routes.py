@@ -75,6 +75,10 @@ def search():
             errors.update({'username': 'You cannot create family only yourself!'})
             data = json.dumps(errors, ensure_ascii=True)
             return jsonify(data)
+        if user_partner.is_family(user_partner) > 0:
+            errors.update({'username': 'User {} have family!'.format(search_from.username.data)})
+            data = json.dumps(errors, ensure_ascii=True)
+            return jsonify(data)
         current_user.create_family(user_partner)
         user_partner.create_family(current_user)
         db.session.commit()
@@ -114,15 +118,26 @@ def tasks():
     form = EmptyForm()
     status = get_status()
 
+    user_partner = current_user.get_partner(current_user)
+    user_partner_id = current_user.get_id_by_username(user_partner)
+
     tasks_by_create_user = Tasks.query.filter_by(create_user=current_user.id)
     tasks_by_id_users = Tasks.query.filter_by(id_users=current_user.id)
-    tasks = tasks_by_create_user.union(tasks_by_id_users).order_by(Tasks.deadline.asc()).all()
+
+    tasks_by_partner_create_user = Tasks.query.filter_by(create_user=user_partner_id)
+    tasks_by_partner_id_users = Tasks.query.filter_by(id_users=user_partner_id)
+
+    tasks = tasks_by_create_user.union(tasks_by_id_users, tasks_by_partner_create_user, tasks_by_partner_id_users).order_by(Tasks.deadline.asc()).all()
 
     len_max = 0
     for i_status in range(0, len(status)): #проверяем в каком статусе задач больше всего для получения кол-ва строк в таблице
         status_by_create_user = Tasks.query.filter_by(id_status=status[i_status]["id"], create_user=current_user.id)
         status_by_id_users = Tasks.query.filter_by(id_status=status[i_status]["id"], id_users=current_user.id)
-        status_count = status_by_create_user.union(status_by_id_users).count()
+
+        status_by_partner_create_user = Tasks.query.filter_by(id_status=status[i_status]["id"], create_user=user_partner_id)
+        status_by_partner_id_users = Tasks.query.filter_by(id_status=status[i_status]["id"], id_users=user_partner_id)
+
+        status_count = status_by_create_user.union(status_by_id_users, status_by_partner_create_user, status_by_partner_id_users).count()
         if status_count > len_max:
             len_max = status_count
 
