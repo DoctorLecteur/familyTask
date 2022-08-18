@@ -90,6 +90,14 @@ class Tasks(db.Model):
     create_user = db.Column(db.Integer, db.ForeignKey('users.id'))
     create_date = db.Column(db.DateTime, default=datetime.utcnow)
     date_completion = db.Column(db.DateTime, default=datetime.utcnow)
+    id_complexity = db.Column(db.Integer, db.ForeignKey('complexity.id'))
 
     def __repr__(self):
         return '<Tasks {}>'.format(self.title)
+
+class Complexity(db.Model):
+    id = db.Column(db.Integer, primary_key=True, index=True)
+    name = db.Column(db.String(64), unique=True)
+
+    def __repr__(self):
+        return '<Complexity {}>'.format(self.name)

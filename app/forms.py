@@ -46,6 +46,7 @@ class AddTaskForm(FlaskForm):
                         validators=[DataRequired(),
                                     Length(min=5, max=64, message='Name length must be between %(min)d and %(max)dcharacters')])
     priority = IntegerField('Priority')
+    complexity = IntegerField('Complexity')
     #format='%Y-%m-%d %H:%M:%S'
     deadline = DateField('Deadline', format='%Y-%m-%d')
     description = TextAreaField('Description', validators=[DataRequired(),

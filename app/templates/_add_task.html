@@ -41,6 +41,17 @@
         {% endfor %}
       </p>
       <p>
+        {{ form.complexity.label }}<br>
+        <select name="complexity">
+          {% for complexity in complexities %}
+            <option value="{{ complexity.id }}">{{ complexity.name }}</option>
+          {% endfor %}
+        </select>
+        {% for error in form.complexity.errors %}
+          <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+      </p>
+      <p>
         {{ form.deadline.label }}<br>
         {{ form.deadline(size=64, class="datepicker") }}<br>
         {% for error in form.deadline.errors %}

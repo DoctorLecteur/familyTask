@@ -13,6 +13,13 @@
 </style>
 <div id="{{ task_td.id }}" class="div-hover">
     {% if task_td.id_status == 1 %}
+        {% if task_td.id_complexity == 1 %}
+            <span style="border-radius: 100%; background: green; opacity: .7;">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        {% elif task_td.id_complexity == 2 %}
+            <span style="border-radius: 100%; background: #dbc500; opacity: .7;">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        {% elif task_td.id_complexity == 3 %}
+            <span style="border-radius: 100%; background: red; opacity: .7;">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        {% endif %}
         <a style="color: #092eb3; font-size: 110%; font-weight: bold;" href="#">{{ task_td.title }}</a>
     {% endif %}
     {% if task_td.id_status == 2 %}

@@ -4,10 +4,9 @@ from flask import render_template, flash, redirect, url_for, request, jsonify, m
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, SearchUserForm, EditProfileForm, AddTaskForm, EmptyForm
 from flask_login import current_user, login_user, logout_user, login_required
-from app.models import Users, TypeTask, Priority, Status, Tasks
+from app.models import Users, TypeTask, Priority, Status, Tasks, Complexity
 from werkzeug.urls import url_parse
 from datetime import datetime
-from sqlalchemy import select, or_, text
 
 @app.route('/')
 @app.route('/index')
@@ -114,6 +113,7 @@ def family():
 def tasks():
     form = EmptyForm()
     status = get_status()
+
     tasks_by_create_user = Tasks.query.filter_by(create_user=current_user.id)
     tasks_by_id_users = Tasks.query.filter_by(id_users=current_user.id)
     tasks = tasks_by_create_user.union(tasks_by_id_users).order_by(Tasks.deadline.asc()).all()
@@ -188,6 +188,15 @@ def get_status():
         list_status.append(status_dict)
     return list_status
 
+#функция для получения всех доступных сложностей
+def get_complexity():
+    complexity = Complexity.query.all()
+    list_complexity = []
+    for c in complexity:
+        complexity_dict = {"id": c.id, "name": c.name}
+        list_complexity.append(complexity_dict)
+    return list_complexity
+
 @app.route('/add_task', methods=['GET', 'POST'])
 @login_required
 def add_task():
@@ -195,6 +204,8 @@ def add_task():
     type_task = get_type_task()
     priority = get_priotity()
     status = get_status()
+    complexity = get_complexity()
+
     if form.validate_on_submit():
 
        if form.type_task.data is None:
@@ -202,7 +213,8 @@ def add_task():
 
        task = Tasks(id_type_task=type_task[0]["id"], title=form.title.data, id_priority=form.priority.data,
                     id_status=status[0]["id"], deadline=form.deadline.data, description=form.description.data,
-                    create_user=current_user.id, create_date=datetime.today().strftime("%d-%m-%Y %H:%M:%S"))
+                    create_user=current_user.id, create_date=datetime.today().strftime("%d-%m-%Y %H:%M:%S"),
+                    id_complexity=form.complexity.data)
        db.session.add(task)
        db.session.commit()
        flash('Task success added.')
@@ -212,7 +224,7 @@ def add_task():
     else:
         data = json.dumps(form.errors, ensure_ascii=True)
         return jsonify(data)
-    return render_template('_add_task.html', title='Add Task', form=form, typies_task=type_task, priorities=priority)
+    return render_template('_add_task.html', title='Add Task', form=form, typies_task=type_task, priorities=priority, complexities=complexity)
 
 @app.route('/check_task', methods=['POST'])
 @login_required
