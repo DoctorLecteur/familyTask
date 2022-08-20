@@ -41,7 +41,6 @@
                        {% if task.id_users == current_user.id %}
                            <a href="{{ url_for('edit_task', id_task=task.id,
                                     id_user=current_user.get_id_by_username(current_user.get_partner(current_user)),
-                                    title_task_by_form=form.title.data
                                     ) }}">Assign partner</a>
                        {% elif task.id_users != current_user.id %}
                            <a href="{{ url_for('edit_task', id_task=task.id, id_user=current_user.id) }}">Assign me</a>
