@@ -20,7 +20,7 @@
         {% elif task_td.id_complexity == 3 %}
             <span style="border-radius: 100%; background: red; opacity: .7;">&nbsp;&nbsp;&nbsp;&nbsp;</span>
         {% endif %}
-        <a style="color: #092eb3; font-size: 110%; font-weight: bold;" href="#">{{ task_td.title }}</a>
+        <a style="color: #092eb3; font-size: 110%; font-weight: bold;" href="{{ url_for('edit_task', id_task=task_td.id) }}">{{ task_td.title }}</a>
     {% endif %}
     {% if task_td.id_status == 2 %}
         {% if task_td.id_complexity == 1 %}
@@ -30,7 +30,7 @@
         {% elif task_td.id_complexity == 3 %}
             <span style="border-radius: 100%; background: red; opacity: .7;">&nbsp;&nbsp;&nbsp;&nbsp;</span>
         {% endif %}
-        <a style="color: #cf8c08; font-size: 110%; font-weight: bold;" href="#">{{ task_td.title }}</a>
+        <a style="color: #cf8c08; font-size: 110%; font-weight: bold;" href="{{ url_for('edit_task', id_task=task_td.id) }}">{{ task_td.title }}</a>
     {% endif %}
     {% if task_td.id_status == 3 %}
         {% if task_td.id_complexity == 1 %}
@@ -40,7 +40,7 @@
         {% elif task_td.id_complexity == 3 %}
             <span style="border-radius: 100%; background: red; opacity: .7;">&nbsp;&nbsp;&nbsp;&nbsp;</span>
         {% endif %}
-        <a class="text-success" style="font-size: 110%; font-weight: bold;" href="#">{{ task_td.title }}</a>
+        <a class="text-success" style="font-size: 110%; font-weight: bold;" href="{{ url_for('edit_task', id_task=task_td.id) }}">{{ task_td.title }}</a>
     {% endif %}
     <span style="float: right; font-size: 90%; color: #7a7a7a; font-family: monospace;">{{ task_td.create_date }}</span>
     <br>

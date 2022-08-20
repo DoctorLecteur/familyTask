@@ -2,7 +2,7 @@ import datetime
 import json
 from flask import render_template, flash, redirect, url_for, request, jsonify, make_response, session
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, SearchUserForm, EditProfileForm, AddTaskForm, EmptyForm
+from app.forms import LoginForm, RegistrationForm, SearchUserForm, EditProfileForm, AddTaskForm, EmptyForm, ShowTaskForm
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import Users, TypeTask, Priority, Status, Tasks, Complexity
 from werkzeug.urls import url_parse
@@ -256,10 +256,50 @@ def next_status():
     task = Tasks.query.filter_by(id=task_id).first()
     old_id_status = task.id_status
     task.id_status = task.id_status + 1
-    if old_id_status == 1 and task.id_status == 2: #заполняем исполнителя, если перевели в работу
+    if old_id_status == 1 and task.id_status == 2 and task.id_users is None: #заполняем исполнителя, если перевели в работу и исполнитель еще не указан
         task.id_users = current_user.id
     elif old_id_status == 2 and task.id_status == 3:
         task.date_completion = datetime.today()
     db.session.commit()
     flash('Task {} success update'.format(task.title))
     return make_response('success')
+
+@app.route('/edit_task/<id_task>', methods=['GET', 'POST'])
+@login_required
+def edit_task(id_task):
+    task = Tasks.query.filter_by(id=id_task).first()
+    if task is not None:
+        priority = get_priotity()
+        complexity = get_complexity()
+        status = get_status()
+        form = ShowTaskForm()
+        if request.method == 'GET':
+            #отображение статуса по задаче
+            for s in range(0, len(status)):
+                if status[s]["id"] == task.id_status:
+                    form.status.data = status[s]["name"]
+
+            form.title.data = task.title
+            form.description.data = task.description
+            #заполнение исполнителя
+            if request.args.get('id_user') is not None:
+                task.id_users = int(request.args.get('id_user'))
+            if task.id_users is not None:
+                form.user.data = current_user.get_user(task.id_users)
+
+            form.deadline.data = task.deadline
+            return render_template('show_task.html', title='Task', form=form, task=task, priorities=priority, complexities=complexity)
+
+        elif request.method == 'POST':
+            if form.validate_on_submit():
+                task.title = form.title.data
+                task.description = form.description.data
+                task.id_users = current_user.get_id_by_username(form.user.data)
+                task.id_priority = form.priority.data
+                task.deadline = form.deadline.data
+                task.id_complexity = form.complexity.data
+                db.session.commit()
+                flash('Task {} success update'.format(task.title))
+            return render_template('show_task.html', title='Task', form=form, task=task, priorities=priority, complexities=complexity)
+
+    return redirect(url_for('tasks'))

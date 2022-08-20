@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <a class="btn btn-info" href="{{ url_for('tasks') }}">Back</a>
+        {{ form.submit() }}
+        <div class="container">
+           <div style="float: left;">
+               <p>
+                   {{ form.title.label }}<br>
+                   {{ form.title(size=64) }}
+                   {% for error in form.title.errors %}
+                       <span style="color: red;">[{{ error }}]</span>
+                   {% endfor %}
+               </p>
+               <p>
+                   {{ form.status.label }}<br>
+                   {{ form.status(size=16, readonly=True) }}
+                   {% for error in form.status.errors %}
+                       <span style="color: red;">[{{ error }}]</span>
+                   {% endfor %}
+               </p>
+               <p>
+                   {{ form.description.label }}<br>
+                   {{ form.description(size=100) }}<br>
+                   {% for error in form.description.errors %}
+                      <span style="color: red;">[{{ error }}]</span>
+                   {% endfor %}
+               </p>
+           </div>
+           <div style="float: right;">
+               <p>
+                   {{ form.user.label }}<br>
+                   {% if task.id_users %}
+                       <img src="/static/images/default.svg" width="20" height="20">
+                   {% endif %}
+                   {{ form.user(size=24) }}<br>
+                   {% if task.id_users %}
+                       {% if task.id_users == current_user.id %}
+                           <a href="{{ url_for('edit_task', id_task=task.id,
+                                    id_user=current_user.get_id_by_username(current_user.get_partner(current_user)),
+                                    title_task_by_form=form.title.data
+                                    ) }}">Assign partner</a>
+                       {% elif task.id_users != current_user.id %}
+                           <a href="{{ url_for('edit_task', id_task=task.id, id_user=current_user.id) }}">Assign me</a>
+                       {% endif %}
+                   {% else %}
+                        <a href="{{ url_for('edit_task', id_task=task.id, id_user=current_user.id) }}">Assign me</a>|<a href="{{ url_for('edit_task', id_task=task.id, id_user=current_user.get_id_by_username(current_user.get_partner(current_user))) }}">Assign partner</a>
+                   {% endif %}
+                   {% for error in form.user.errors %}
+                       <span style="color: red;">[{{ error }}]</span>
+                   {% endfor %}
+               </p>
+               <p>
+                   {{ form.priority.label }}<br>
+                   <select name="priority">
+                   {% for priority in priorities %}
+                       {% if priority.id == task.id_priority %}
+                           <option selected value="{{ priority.id }}">{{ priority.name }}</option>
+                       {% else %}
+                           <option value="{{ priority.id }}">{{ priority.name }}</option>
+                       {% endif %}
+                   {% endfor %}
+                   </select>
+                   {% for error in form.priority.errors %}
+                       <span style="color: red;">[{{ error }}]</span>
+                   {% endfor %}
+               </p>
+               <p>
+                   {{ form.complexity.label }}<br>
+                   <select name="complexity">
+                       {% for complexity in complexities %}
+                           {% if complexity.id == task.id_complexity %}
+                               <option selected value="{{ complexity.id }}">{{ complexity.name }}</option>
+                           {% else %}
+                               <option value="{{ complexity.id }}">{{ complexity.name }}</option>
+                           {% endif %}
+                      {% endfor %}
+                   </select>
+                   {% for error in form.complexity.errors %}
+                       <span style="color: red;">[{{ error }}]</span>
+                   {% endfor %}
+               </p>
+               <p>
+                   {{ form.deadline.label }}<br>
+                   {{ form.deadline(size=24) }}
+                   {% for error in form.deadline.errors %}
+                       <span style="color: red;">[{{ error }}]</span>
+                   {% endfor %}
+               </p>
+           </div>
+        </div>
+    </form>
+{% endblock %}

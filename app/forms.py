@@ -54,3 +54,18 @@ class AddTaskForm(FlaskForm):
 
 class EmptyForm(FlaskForm):
     submit = SubmitField('Submit')
+
+class ShowTaskForm(FlaskForm):
+    title = StringField('Title',
+                        validators=[DataRequired(),
+                                    Length(min=5, max=64,
+                                           message='Name length must be between %(min)d and %(max)dcharacters')])
+    status = StringField('Status')
+    description = TextAreaField('Description', validators=[DataRequired(),
+                                                           Length(min=5, max=1024,
+                                                                  message='Name length must be between %(min)d and %(max)d characters')])
+    user = StringField('Performer')
+    priority = StringField('Priority')
+    complexity = StringField('Complexity')
+    deadline = DateField('Deadline', format='%Y-%m-%d')
+    submit = SubmitField('Save')
