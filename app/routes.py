@@ -274,6 +274,10 @@ def edit_task(id_task):
         status = get_status()
         form = ShowTaskForm()
         if request.method == 'GET':
+            # заполнение исполнителя
+            if task.id_users is not None:
+                form.user.data = current_user.get_user(task.id_users)
+
             #отображение статуса по задаче
             for s in range(0, len(status)):
                 if status[s]["id"] == task.id_status:
@@ -281,12 +285,6 @@ def edit_task(id_task):
 
             form.title.data = task.title
             form.description.data = task.description
-            #заполнение исполнителя
-            if request.args.get('id_user') is not None:
-                task.id_users = int(request.args.get('id_user'))
-            if task.id_users is not None:
-                form.user.data = current_user.get_user(task.id_users)
-
             form.deadline.data = task.deadline
             return render_template('show_task.html', title='Task', form=form, task=task, priorities=priority, complexities=complexity)
 

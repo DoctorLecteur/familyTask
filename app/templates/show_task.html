@@ -2,11 +2,10 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
-    <form action="" method="post">
+    <form id="editTask" method="post">
         {{ form.hidden_tag() }}
         <a class="btn btn-info" href="{{ url_for('tasks') }}">Back</a>
-        {{ form.submit() }}
-        <div class="container">
+        <div>
            <div style="float: left;">
                <p>
                    {{ form.title.label }}<br>
@@ -24,7 +23,7 @@
                </p>
                <p>
                    {{ form.description.label }}<br>
-                   {{ form.description(size=100) }}<br>
+                   {{ form.description(rows=4, cols=65) }}<br>
                    {% for error in form.description.errors %}
                       <span style="color: red;">[{{ error }}]</span>
                    {% endfor %}
@@ -39,14 +38,12 @@
                    {{ form.user(size=24) }}<br>
                    {% if task.id_users %}
                        {% if task.id_users == current_user.id %}
-                           <a href="{{ url_for('edit_task', id_task=task.id,
-                                    id_user=current_user.get_id_by_username(current_user.get_partner(current_user)),
-                                    ) }}">Assign partner</a>
+                           <a id="link1" href="#">Assign partner</a>
                        {% elif task.id_users != current_user.id %}
-                           <a href="{{ url_for('edit_task', id_task=task.id, id_user=current_user.id) }}">Assign me</a>
+                           <a id="link2" href="#">Assign me</a>
                        {% endif %}
                    {% else %}
-                        <a href="{{ url_for('edit_task', id_task=task.id, id_user=current_user.id) }}">Assign me</a>|<a href="{{ url_for('edit_task', id_task=task.id, id_user=current_user.get_id_by_username(current_user.get_partner(current_user))) }}">Assign partner</a>
+                        <a id="link3" href="#">Assign me</a>|<a id="link4" href="#">Assign partner</a>
                    {% endif %}
                    {% for error in form.user.errors %}
                        <span style="color: red;">[{{ error }}]</span>
@@ -92,4 +89,155 @@
            </div>
         </div>
     </form>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script>
+        //функция для обновления задачи
+        function doPostUpdateTask(newValue, oldValue) {
+
+            if (newValue !== oldValue) {
+
+                $.post('/edit_task/{{ task.id }}', $('#editTask').serialize()
+                ).done(function(response) {
+
+                    const elem = '<div class="alert alert-info" role="alert">Task ' + $('#title').val() + ' success update</div>';
+                    $('#editTask').before(elem);
+                    setTimeout(
+                        function() {
+
+                            $('.alert-info').remove();
+
+                        },
+                    3000);
+
+                }).fail(function() {
+                    console.log("fail");
+                });
+
+            }
+
+        }
+
+        $("#link1").click(
+            function() {
+
+                const oldUser = $('#user').val();
+                const newUser = "{{ current_user.get_partner(current_user) }}";
+                $('#user').val(newUser);
+                doPostUpdateTask(newUser, oldUser);
+                setTimeout(
+                    function() {
+
+                        location.reload();
+
+                    },
+                1000);
+
+            }
+        );
+        $("#link2").click(
+            function() {
+
+                const oldUser = $('#user').val();
+                const newUser = "{{ current_user.get_user(current_user.id) }}";
+                $('#user').val(newUser);
+                doPostUpdateTask(newUser, oldUser);
+                setTimeout(
+                    function() {
+
+                        location.reload();
+
+                    },
+                1000);
+
+            }
+
+        );
+        $("#link3").click(
+            function() {
+
+                const oldUser = $('#user').val();
+                const newUser = "{{ current_user.get_user(current_user.id) }}";
+                $('#user').val(newUser);
+                doPostUpdateTask(newUser, oldUser);
+                setTimeout(
+                    function() {
+
+                        location.reload();
+
+                    },
+                1000);
+
+            }
+        );
+        $("#link4").click(
+            function() {
+
+                const oldUser = $('#user').val();
+                const newUser = "{{ current_user.get_partner(current_user) }}";
+                $('#user').val(newUser);
+                doPostUpdateTask(newUser, oldUser);
+                setTimeout(
+                    function() {
+
+                        location.reload();
+
+                    },
+                1000);
+
+            }
+        );
+        //обновление заголовка
+        let oldTitle = $('#title').val();
+        $("#title").mouseleave(
+            function() {
+
+                doPostUpdateTask($(this).val(), oldTitle);
+                oldTitle = $(this).val();
+
+            }
+        );
+        //обновление описания
+        let oldDescr = $('#description').val();
+        $("#description").mouseleave(
+            function() {
+
+                doPostUpdateTask($(this).val(), oldDescr);
+                oldDescr = $(this).val();
+
+            }
+        );
+        //обновление приоритета
+        let oldPriority = $('select[name=priority]').val();
+        $('select[name=priority]').change(
+            function() {
+
+                doPostUpdateTask($(this).val(), oldPriority);
+                oldPriority = $(this).val();
+
+            }
+        );
+        //обновление сложности
+        let oldComplexity = $('select[name=complexity]').val();
+        $('select[name=complexity]').change(
+            function() {
+
+                doPostUpdateTask($(this).val(), oldComplexity);
+                oldComplexity = $(this).val();
+
+            }
+        );
+        //обновление деадлайна
+        let oldDeadline = $('#deadline').val();
+        $('#deadline').change(
+            function() {
+
+                doPostUpdateTask($(this).val(), oldDeadline);
+                oldDeadline = $(this).val();
+
+            }
+        );
+    </script>
 {% endblock %}
