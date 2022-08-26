@@ -292,7 +292,10 @@ def edit_task(id_task):
             if form.validate_on_submit():
                 task.title = form.title.data
                 task.description = form.description.data
-                task.id_users = current_user.get_id_by_username(form.user.data)
+
+                if form.user.data is not None and form.user.data != "":
+                    task.id_users = current_user.get_id_by_username(form.user.data)
+
                 task.id_priority = form.priority.data
                 task.deadline = form.deadline.data
                 task.id_complexity = form.complexity.data

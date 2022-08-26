@@ -5,6 +5,9 @@
     <form id="editTask" method="post">
         {{ form.hidden_tag() }}
         <a class="btn btn-info" href="{{ url_for('tasks') }}">Back</a>
+        <a class="btn btn-warning" href="#">To Work</a>
+        <a class="btn btn-success" href="#">Done</a>
+        <a class="btn btn-danger" href="#">&rarr;</a>
         <div>
            <div style="float: left;">
                <p>
@@ -94,6 +97,63 @@
 {% block scripts %}
     {{ super() }}
     <script>
+        //отображение кнопок и перевод задач по статусам с помощью кнопок
+        $(document).ready(
+            function () {
+
+                $('.btn-warning').hide();
+                $('.btn-success').hide();
+                $('.btn-danger').hide();
+
+                const nTaskStatusId = {{ task.id_status }}
+                if (nTaskStatusId === 1) {
+
+                    $('.btn-warning').show();
+                    $('.btn-danger').show();
+
+                }
+                if (nTaskStatusId === 2) {
+
+                    $('.btn-success').show();
+                    $('.btn-danger').show();
+
+                }
+
+            }
+        );
+
+        //функция для перевода задачи на следующий статус
+        function doNextStatus(strUrl, numIdTask) {
+
+            $.post(strUrl, {
+                id_task: numIdTask
+            }).done(function(response) {
+                location.reload();
+            }).fail(function() {
+                console.log('fail');
+            });
+
+        }
+        const idTask = {{ task.id }}
+        //действие при нажатии кнопки в работу
+        $('.btn-warning').click(function() {
+
+            doNextStatus('/next_status', idTask);
+
+        });
+        //действие при нажатии кнопки готово
+        $('.btn-success').click(function() {
+
+            doNextStatus('/next_status', idTask);
+
+        });
+        //действие при нажатии кнопки стрелочки
+        $('.btn-danger').click(function() {
+
+            doNextStatus('/next_status', idTask);
+
+        });
+
         //функция для обновления задачи
         function doPostUpdateTask(newValue, oldValue) {
 
@@ -119,38 +179,32 @@
             }
 
         }
+        //изменение исполнителя
+        function doUpdatePerformer(oldUser, newUser) {
+
+            $('#user').val(newUser);
+            doPostUpdateTask(newUser, oldUser);
+            setTimeout(
+                function() {
+
+                    location.reload();
+
+                },
+            1000);
+
+        }
 
         $("#link1").click(
             function() {
 
-                const oldUser = $('#user').val();
-                const newUser = "{{ current_user.get_partner(current_user) }}";
-                $('#user').val(newUser);
-                doPostUpdateTask(newUser, oldUser);
-                setTimeout(
-                    function() {
-
-                        location.reload();
-
-                    },
-                1000);
+                doUpdatePerformer($('#user').val(), "{{ current_user.get_partner(current_user) }}");
 
             }
         );
         $("#link2").click(
             function() {
 
-                const oldUser = $('#user').val();
-                const newUser = "{{ current_user.get_user(current_user.id) }}";
-                $('#user').val(newUser);
-                doPostUpdateTask(newUser, oldUser);
-                setTimeout(
-                    function() {
-
-                        location.reload();
-
-                    },
-                1000);
+                doUpdatePerformer($('#user').val(), "{{ current_user.get_user(current_user.id) }}");
 
             }
 
@@ -158,34 +212,14 @@
         $("#link3").click(
             function() {
 
-                const oldUser = $('#user').val();
-                const newUser = "{{ current_user.get_user(current_user.id) }}";
-                $('#user').val(newUser);
-                doPostUpdateTask(newUser, oldUser);
-                setTimeout(
-                    function() {
-
-                        location.reload();
-
-                    },
-                1000);
+                doUpdatePerformer($('#user').val(), "{{ current_user.get_user(current_user.id) }}");
 
             }
         );
         $("#link4").click(
             function() {
 
-                const oldUser = $('#user').val();
-                const newUser = "{{ current_user.get_partner(current_user) }}";
-                $('#user').val(newUser);
-                doPostUpdateTask(newUser, oldUser);
-                setTimeout(
-                    function() {
-
-                        location.reload();
-
-                    },
-                1000);
+                doUpdatePerformer($('#user').val(), "{{ current_user.get_partner(current_user) }}");
 
             }
         );
