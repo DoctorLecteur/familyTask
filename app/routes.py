@@ -264,6 +264,20 @@ def next_status():
     flash('Task {} success update'.format(task.title))
     return make_response('success')
 
+@app.route('/previous_status', methods=['POST'])
+@login_required
+def previous_status():
+    task_id = request.form['id_task']
+    task = Tasks.query.filter_by(id=task_id).first()
+    old_id_status = task.id_status
+    task.id_status = task.id_status - 1
+    if old_id_status == 3 and task.id_status == 2:
+        task.date_completion = None
+    db.session.commit()
+    flash('Task {} success update'.format(task.title))
+    return make_response('success')
+
+
 @app.route('/edit_task/<id_task>', methods=['GET', 'POST'])
 @login_required
 def edit_task(id_task):
@@ -286,6 +300,10 @@ def edit_task(id_task):
             form.title.data = task.title
             form.description.data = task.description
             form.deadline.data = task.deadline
+
+            if task.date_completion is not None:
+                task.date_completion = task.date_completion.strftime('%d.%m.%y %H:%M')  # преобразование даты
+
             return render_template('show_task.html', title='Task', form=form, task=task, priorities=priority, complexities=complexity)
 
         elif request.method == 'POST':

@@ -5,17 +5,21 @@
     <form id="editTask" method="post">
         {{ form.hidden_tag() }}
         <a class="btn btn-info" href="{{ url_for('tasks') }}">Back</a>
+        <a class="btn btn-danger" href="#">&larr;</a>
         <a class="btn btn-warning" href="#">To Work</a>
         <a class="btn btn-success" href="#">Done</a>
-        <a class="btn btn-danger" href="#">&rarr;</a>
         <div>
            <div style="float: left;">
                <p>
                    {{ form.title.label }}<br>
-                   {{ form.title(size=64) }}
-                   {% for error in form.title.errors %}
-                       <span style="color: red;">[{{ error }}]</span>
-                   {% endfor %}
+                   {% if task.id_status == 3 %}
+                       {{ form.title(size=64, readonly=True) }}
+                   {% else %}
+                       {{ form.title(size=64) }}
+                       {% for error in form.title.errors %}
+                           <span style="color: red;">[{{ error }}]</span>
+                       {% endfor %}
+                   {% endif %}
                </p>
                <p>
                    {{ form.status.label }}<br>
@@ -89,6 +93,12 @@
                        <span style="color: red;">[{{ error }}]</span>
                    {% endfor %}
                </p>
+               {% if task.id_status == 3 %}
+               <p>
+                   <label for="date_completion">Date Completion</label><br>
+                   <input id="date_completion" name="date_completion" size="12" type="text" value="{{ task.date_completion }}">
+               </p>
+               {% endif %}
            </div>
         </div>
     </form>
@@ -109,7 +119,8 @@
                 if (nTaskStatusId === 1) {
 
                     $('.btn-warning').show();
-                    $('.btn-danger').show();
+                    $('.btn-danger').hide();
+
 
                 }
                 if (nTaskStatusId === 2) {
@@ -118,12 +129,17 @@
                     $('.btn-danger').show();
 
                 }
+                if (nTaskStatusId === 3) {
+
+                    $('.btn-danger').show();
+
+                }
 
             }
         );
 
         //функция для перевода задачи на следующий статус
-        function doNextStatus(strUrl, numIdTask) {
+        function doUpdateStatus(strUrl, numIdTask) {
 
             $.post(strUrl, {
                 id_task: numIdTask
@@ -138,19 +154,19 @@
         //действие при нажатии кнопки в работу
         $('.btn-warning').click(function() {
 
-            doNextStatus('/next_status', idTask);
+            doUpdateStatus('/next_status', idTask);
 
         });
         //действие при нажатии кнопки готово
         $('.btn-success').click(function() {
 
-            doNextStatus('/next_status', idTask);
+            doUpdateStatus('/next_status', idTask);
 
         });
         //действие при нажатии кнопки стрелочки
         $('.btn-danger').click(function() {
 
-            doNextStatus('/next_status', idTask);
+            doUpdateStatus('/previous_status', idTask);
 
         });
 

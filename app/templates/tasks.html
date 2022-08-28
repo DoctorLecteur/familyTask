@@ -14,9 +14,9 @@
     <h1>Tasks</h1>
     <a class="edit-modal-opener btn btn-primary" data-toggle="modal"
        data-whatever="{{ url_for('add_task') }}" href="#">Add Task</a>
+    <a class="btn btn-danger" href="#">&larr;</a>
     <a class="btn btn-warning" href="#">To Work</a>
     <a class="btn btn-success" href="#">Done</a>
-    <a class="btn btn-danger" href="#">&rarr;</a>
     <br>
     {% if count_tasks.count_backlog > 0 or count_tasks.count_work > 0 or count_tasks.count_done > 0 %}
         <div class="table-responsive ">
@@ -79,7 +79,7 @@
             if (response == "В куче") {
                 $('.btn-warning').show();
                 $('.btn-success').hide();
-                $('.btn-danger').show();
+                $('.btn-danger').hide();
             }
 
             if (response == "В работе") {
@@ -91,7 +91,7 @@
             if (response == "Готово") {
                 $('.btn-warning').hide();
                 $('.btn-success').hide();
-                $('.btn-danger').hide();
+                $('.btn-danger').show();
             }
 
         }).fail(function() {
@@ -100,8 +100,8 @@
 
     });
 
-    //функция для перевода задачи на следующий статус
-    function doNextStatus(strUrl, numIdTask) {
+    //функция для перевода задачи по статусам
+    function doUpdateStatus(strUrl, numIdTask) {
 
         $.post(strUrl, {
             id_task: numIdTask
@@ -115,19 +115,19 @@
     //действие при нажатии кнопки в работу
     $('.btn-warning').click(function() {
 
-        doNextStatus('/next_status', idTask);
+        doUpdateStatus('/next_status', idTask);
 
     });
     //действие при нажатии кнопки готово
     $('.btn-success').click(function() {
 
-        doNextStatus('/next_status', idTask);
+        doUpdateStatus('/next_status', idTask);
 
     });
     //действие при нажатии кнопки стрелочки
     $('.btn-danger').click(function() {
 
-        doNextStatus('/next_status', idTask);
+        doUpdateStatus('/previous_status', idTask);
 
     });
     </script>
