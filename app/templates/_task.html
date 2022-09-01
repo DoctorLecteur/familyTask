@@ -5,13 +5,20 @@
         border: 3px solid #fff; /* Белая рамка */
         border-radius: 10px; /* Радиус скругления */
         display: inline-block;
-        border: 2px solid transparent; /* Невидимая рамка */
+        border: 2px solid transparent; /* Невидимая рамка */,
+        cursor: move;
     }
     .div-hover:hover {
         border: 2px solid #21c1cc; /* рамка */
     }
+    .div-hover:active {
+        cursor: grabbing;
+    }
+    .selected {
+        opacity: 0.6;
+    }
 </style>
-<div id="{{ task_td.id }}" class="div-hover">
+<div id="{{ task_td.id }}" class="div-hover" draggable="true">
     {% if task_td.id_status == 1 %}
         {% if task_td.id_complexity == 1 %}
             <span style="border-radius: 100%; background: green; opacity: .7;">&nbsp;&nbsp;&nbsp;&nbsp;</span>

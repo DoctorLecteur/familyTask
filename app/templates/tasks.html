@@ -130,5 +130,73 @@
         doUpdateStatus('/previous_status', idTask);
 
     });
+    //действие при перетаскивании блока с задачей
+    const taskTable = document.querySelector('.table-responsive ');
+    taskTable.addEventListener('dragstart', (evt) => {
+
+        evt.target.classList.add('selected');
+
+    });
+    let currentTask = null;//переменная для задачи, над которой перетаскивает другую задачу
+    taskTable.addEventListener('dragover', (evt) => {
+
+        evt.preventDefault();
+
+        const activeTask = taskTable.querySelector('.selected');
+        currentTask = evt.target;
+        //возращает блок с задачей назад, если блок перенесли за таблицу
+        const bIsMoveable = activeTask !== currentTask && currentTask.classList.contains('div-hover');
+        if (!bIsMoveable) {
+            return;
+        }
+
+    });
+    //обновление статуса по задаче, когда её отпустили после перемещения
+    taskTable.addEventListener('dragend', (evt) => {
+
+        const numIdTaskMove = evt.target.getAttribute("id"); //id задачи, которую двигают
+        if (numIdTaskMove) {
+
+            evt.target.classList.remove('selected');
+            let cellIndex = null; //id столбца со следующем статусом для задачи
+            if (currentTask.parentNode.cellIndex !== undefined) {
+
+                cellIndex = currentTask.parentNode.cellIndex;
+
+            } else {
+
+                cellIndex = currentTask.cellIndex;
+
+            }
+
+            let cellIndexMove = evt.target.parentNode.cellIndex; //id столбца с текущем статусом для задачи
+            let sUrl = null; //переменная для перемещения задачи по статусам
+            if (cellIndexMove !== cellIndex && cellIndexMove !== undefined && cellIndex !== undefined) {
+
+                if (cellIndexMove < cellIndex) {
+
+                    sUrl = '/next_status';
+
+                } else {
+
+                    sUrl = '/previous_status';
+
+                }
+
+            }
+
+            if (sUrl && numIdTaskMove) {
+
+                doUpdateStatus(sUrl, numIdTaskMove);
+
+            }
+
+        } else {
+
+            evt.target.classList.remove('selected');
+
+        }
+
+    });
     </script>
 {% endblock %}

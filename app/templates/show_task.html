@@ -30,10 +30,14 @@
                </p>
                <p>
                    {{ form.description.label }}<br>
-                   {{ form.description(rows=4, cols=65) }}<br>
-                   {% for error in form.description.errors %}
-                      <span style="color: red;">[{{ error }}]</span>
-                   {% endfor %}
+                   {% if task.id_status == 3 %}
+                       {{ form.description(rows=4, cols=65, readonly=True) }}<br>
+                   {% else %}
+                       {{ form.description(rows=4, cols=65) }}<br>
+                       {% for error in form.description.errors %}
+                          <span style="color: red;">[{{ error }}]</span>
+                       {% endfor %}
+                   {% endif %}
                </p>
            </div>
            <div style="float: right;">
@@ -43,57 +47,83 @@
                        <img src="/static/images/default.svg" width="20" height="20">
                    {% endif %}
                    {{ form.user(size=24) }}<br>
-                   {% if task.id_users %}
-                       {% if task.id_users == current_user.id %}
-                           <a id="link1" href="#">Assign partner</a>
-                       {% elif task.id_users != current_user.id %}
-                           <a id="link2" href="#">Assign me</a>
+                   {% if task.id_status != 3 %}
+                       {% if task.id_users %}
+                           {% if task.id_users == current_user.id %}
+                               <a id="link1" href="#">Assign partner</a>
+                           {% elif task.id_users != current_user.id %}
+                               <a id="link2" href="#">Assign me</a>
+                           {% endif %}
+                       {% else %}
+                            <a id="link3" href="#">Assign me</a>|<a id="link4" href="#">Assign partner</a>
                        {% endif %}
-                   {% else %}
-                        <a id="link3" href="#">Assign me</a>|<a id="link4" href="#">Assign partner</a>
+                       {% for error in form.user.errors %}
+                           <span style="color: red;">[{{ error }}]</span>
+                       {% endfor %}
                    {% endif %}
-                   {% for error in form.user.errors %}
-                       <span style="color: red;">[{{ error }}]</span>
-                   {% endfor %}
                </p>
                <p>
                    {{ form.priority.label }}<br>
-                   <select name="priority">
-                   {% for priority in priorities %}
-                       {% if priority.id == task.id_priority %}
-                           <option selected value="{{ priority.id }}">{{ priority.name }}</option>
-                       {% else %}
-                           <option value="{{ priority.id }}">{{ priority.name }}</option>
-                       {% endif %}
-                   {% endfor %}
-                   </select>
+                   {% if task.id_status == 3 %}
+                       <select name="priority" readonly>
+                       {% for priority in priorities %}
+                           {% if priority.id == task.id_priority %}
+                               <option disabled selected value="{{ priority.id }}">{{ priority.name }}</option>
+                           {% endif %}
+                       {% endfor %}
+                       </select>
+                   {% else %}
+                       <select name="priority">
+                       {% for priority in priorities %}
+                           {% if priority.id == task.id_priority %}
+                               <option selected value="{{ priority.id }}">{{ priority.name }}</option>
+                           {% else %}
+                               <option value="{{ priority.id }}">{{ priority.name }}</option>
+                           {% endif %}
+                       {% endfor %}
+                       </select>
+                   {% endif %}
                    {% for error in form.priority.errors %}
                        <span style="color: red;">[{{ error }}]</span>
                    {% endfor %}
                </p>
                <p>
                    {{ form.complexity.label }}<br>
-                   <select name="complexity">
-                       {% for complexity in complexities %}
-                           {% if complexity.id == task.id_complexity %}
-                               <option selected value="{{ complexity.id }}">{{ complexity.name }}</option>
-                           {% else %}
-                               <option value="{{ complexity.id }}">{{ complexity.name }}</option>
-                           {% endif %}
-                      {% endfor %}
-                   </select>
-                   {% for error in form.complexity.errors %}
-                       <span style="color: red;">[{{ error }}]</span>
-                   {% endfor %}
+                   {% if task.id_status == 3 %}
+                       <select name="complexity" readonly>
+                           {% for complexity in complexities %}
+                               {% if complexity.id == task.id_complexity %}
+                                   <option disabled selected value="{{ complexity.id }}">{{ complexity.name }}</option>
+                               {% endif %}
+                          {% endfor %}
+                       </select>
+                   {% else %}
+                       <select name="complexity">
+                           {% for complexity in complexities %}
+                               {% if complexity.id == task.id_complexity %}
+                                   <option selected value="{{ complexity.id }}">{{ complexity.name }}</option>
+                               {% else %}
+                                   <option value="{{ complexity.id }}">{{ complexity.name }}</option>
+                               {% endif %}
+                          {% endfor %}
+                       </select>
+                       {% for error in form.complexity.errors %}
+                           <span style="color: red;">[{{ error }}]</span>
+                       {% endfor %}
+                   {% endif %}
                </p>
                <p>
                    {{ form.deadline.label }}<br>
-                   {{ form.deadline(size=24) }}
-                   {% for error in form.deadline.errors %}
-                       <span style="color: red;">[{{ error }}]</span>
-                   {% endfor %}
+                   {% if task.id_status == 3 %}
+                       {{ form.deadline(size=24, readonly=True) }}
+                   {% else %}
+                       {{ form.deadline(size=24) }}
+                       {% for error in form.deadline.errors %}
+                           <span style="color: red;">[{{ error }}]</span>
+                       {% endfor %}
+                   {% endif %}
                </p>
-               {% if task.id_status == 3 %}
+               {% if task.id_status == 3 and task.date_completion %}
                <p>
                    <label for="date_completion">Date Completion</label><br>
                    <input id="date_completion" name="date_completion" size="12" type="text" value="{{ task.date_completion }}">
