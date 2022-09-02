@@ -53,9 +53,17 @@
     {{ super() }}
     <script>
         $(document).ready(function () {
+
+            const nIdMovePreviousTask = sessionStorage.getItem("IdMovePreviousTask");
+            if (nIdMovePreviousTask) {
+
+                $("#" + nIdMovePreviousTask).css("border", "2px solid #21c1cc");
+
+            }
+
             //добавиление задачи и редактирование профиля
             $('.edit-modal-opener').click(function() {
-                var url = $(this).data('whatever');
+                const url = $(this).data('whatever');
                 $.get(url, function (data) {
 
                     $('#Modal .modal-content').html(data);
@@ -63,7 +71,6 @@
 
                     $('#submit').click(function (event) {
                         event.preventDefault();
-                        data = $('#ModalForm').serialize();
                         $.post(url, data = $('#ModalForm').serialize(),
                         function(data) {
 
@@ -74,18 +81,17 @@
 
                             } else {
 
-                                var obj = JSON.parse(data);
-                                for (var key in obj) {
+                                const obj = JSON.parse(data);
+                                for (const key in obj) {
 
                                     if (obj.hasOwnProperty(key)) {
 
-                                        var value = obj[key];
+                                        const value = obj[key];
+                                        $('.help-block').remove();
+                                        $('<p class="help-block">' + value + '</p>').insertAfter('#' + key);
+                                        $('.form-group').addClass('has-error');
 
                                     }
-
-                                    $('.help-block').remove();
-                                    $('<p class="help-block">' + value + '</p>').insertAfter('#' + key);
-                                    $('.form-group').addClass('has-error');
 
                                 }
 

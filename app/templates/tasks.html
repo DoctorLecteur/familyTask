@@ -69,7 +69,13 @@
         //добавляем рамку на текущий блок с задачей и убираем с предыдущего
         $(this).css("border", "2px solid #21c1cc");
         (prevIdTask > 0) ? $("#" + prevIdTask).css("border", ""): "";
+        const nIdMovePreviousTask = sessionStorage.getItem("IdMovePreviousTask");
+        if (nIdMovePreviousTask && nIdMovePreviousTask !== this["id"]) {
 
+            $("#" + nIdMovePreviousTask).css("border", "");
+            sessionStorage.removeItem("IdMovePreviousTask");
+
+        }
         idTask = this["id"];
         prevIdTask = idTask;
         $.post(url, {
@@ -188,6 +194,8 @@
             if (sUrl && numIdTaskMove) {
 
                 doUpdateStatus(sUrl, numIdTaskMove);
+                //сохраняем номер преыдущей задачи, которую подвигали
+                sessionStorage.setItem("IdMovePreviousTask", numIdTaskMove);
 
             }
 
