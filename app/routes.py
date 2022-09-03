@@ -4,9 +4,10 @@ from flask import render_template, flash, redirect, url_for, request, jsonify, m
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, SearchUserForm, EditProfileForm, AddTaskForm, EmptyForm, ShowTaskForm
 from flask_login import current_user, login_user, logout_user, login_required
-from app.models import Users, TypeTask, Priority, Status, Tasks, Complexity
+from app.models import Users, TypeTask, Priority, Status, Tasks, Complexity, Subscription
 from werkzeug.urls import url_parse
 from datetime import datetime
+from pywebpush import webpush, WebPushException
 
 @app.route('/')
 @app.route('/index')
@@ -233,7 +234,7 @@ def add_task():
        db.session.add(task)
        db.session.commit()
        flash('Task success added.')
-       return jsonify(status='ok')
+       return jsonify(status='ok', title_task=form.title.data)
     elif request.method == 'GET':
         form.deadline.data = datetime.now()
     else:
@@ -262,7 +263,16 @@ def next_status():
         task.date_completion = datetime.today()
     db.session.commit()
     flash('Task {} success update'.format(task.title))
-    return make_response('success')
+    status = get_status()
+    status_name = ""
+    for s in range(0, len(status), 1):
+        if status[s]["id"] == task.id_status:
+            status_name = status[s]["name"]
+    response_answer = {
+        'title_task': task.title,
+        'status_name': status_name
+    }
+    return make_response(response_answer)
 
 @app.route('/previous_status', methods=['POST'])
 @login_required
@@ -275,7 +285,16 @@ def previous_status():
         task.date_completion = None
     db.session.commit()
     flash('Task {} success update'.format(task.title))
-    return make_response('success')
+    status = get_status()
+    status_name = ""
+    for s in range(0, len(status), 1):
+        if status[s]["id"] == task.id_status:
+            status_name = status[s]["name"]
+    response_answer = {
+        'title_task': task.title,
+        'status_name': status_name
+    }
+    return make_response(response_answer)
 
 
 @app.route('/edit_task/<id_task>', methods=['GET', 'POST'])
@@ -322,3 +341,45 @@ def edit_task(id_task):
             return render_template('show_task.html', title='Task', form=form, task=task, priorities=priority, complexities=complexity)
 
     return redirect(url_for('tasks'))
+
+
+@app.route('/save_notify', methods=['POST'])
+@login_required
+def save_notify():
+    sub_user = str(request.get_json())
+    subscriprion = Subscription.query.filter_by(id_users=current_user.id, push_param=sub_user).first()
+    if subscriprion is None:
+        subscription = Subscription(id_users=current_user.id, push_param=sub_user)
+        db.session.add(subscription)
+        db.session.commit()
+    return make_response('success')
+
+@app.route('/send_push', methods=['POST'])
+@login_required
+def send_push_notification():
+    data = json.dumps(request.get_json())
+    id_user_partner = current_user.get_id_by_username(current_user.get_partner(current_user))
+    user_subscription = Subscription.query.filter_by(id_users=id_user_partner)
+    for subscription in user_subscription:
+
+        try:
+            webpush(
+                subscription_info=json.loads((subscription.push_param).replace('\'', '\"').replace("None", "\"\"")),
+                data=data,
+                vapid_private_key='./private_key.pem',
+                vapid_claims={
+                    'sub': 'mailto:{}'.format("test@test.com")
+                }
+            )
+        except WebPushException as ex:
+            print('I can\'t do that: {}'.format(repr(ex)))
+            print(ex)
+            # Mozilla returns additional information in the body of the response.
+            if ex.response and ex.response.json():
+                extra = ex.response.json()
+                print('Remote service replied with a {}:{}, {}',
+                      extra.code,
+                      extra.errno,
+                      extra.message)
+
+    return make_response('success')

@@ -6,3 +6,4 @@ class Config(object):
         'postgres://', 'postgresql://') or \
                               ''test''
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    NOTIFICATION_KEY = ''test''

@@ -112,6 +112,23 @@
         $.post(strUrl, {
             id_task: numIdTask
         }).done(function(response) {
+
+            //отправка оповещения после обновления статуса по задаче
+            $.ajax({
+
+                type: 'POST',
+                url: '/send_push',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                dataType: 'json',
+                data: JSON.stringify({
+                    "title": "FamilyTask",
+                    "body":  "In the " + response["title_task"] + " task, the status has been updated to " + response["status_name"]
+                })
+
+            });
+
             location.reload();
         }).fail(function() {
             console.log('fail');

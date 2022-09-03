@@ -77,6 +77,24 @@
                             if (data.status == 'ok') {
 
                                 $('#Modal').modal('hide');
+                                if (data.title_task) {
+
+                                    $.ajax({
+
+                                        type: 'POST',
+                                        url: '/send_push',
+                                        headers: {
+                                            "Content-Type": "application/json",
+                                        },
+                                        dataType: 'json',
+                                        data: JSON.stringify({
+                                            "title": "FamilyTask",
+                                            "body":  "Add New Task " + data.title_task
+                                        })
+
+                                    });
+
+                                }
                                 location.reload();
 
                             } else {
@@ -105,5 +123,99 @@
             });
 
         });
+
+        function checkWorkerAndPushManager () {
+            if (!('serviceWorker' in navigator)) {
+                console.log('Workers are not supported.');
+                return;
+            }
+            if (!('PushManager' in window)) {
+                console.log('Push notifications are not supported.');
+                return;
+            }
+            return true;
+        }
+
+        function registerWorker() {
+            window.addEventListener('load', function () {
+                navigator.serviceWorker.register('/static/js/sw.js').then(function (registration) {
+                    console.log('ServiceWorker registration successful');
+                }, function (err) {
+                    console.log('ServiceWorker registration failed: ', err);
+                    return;
+                });
+            });
+            return true;
+        }
+
+        const supported = checkWorkerAndPushManager();
+        if (supported) {
+
+            const worker = registerWorker();
+
+        }
+
+        function requestPermission() {
+            return new Promise(function(resolve, reject) {
+                const permissionResult = Notification.requestPermission(function(result) {
+                    // Поддержка устаревшей версии с функцией обратного вызова.
+                    resolve(result);
+                });
+                if (permissionResult) {
+                    permissionResult.then(resolve, reject);
+                }
+            })
+            .then(function(permissionResult) {
+                if (permissionResult !== 'granted') {
+                  console.log(permissionResult);
+                  throw new Error('Permission not granted.');
+                }
+            });
+            return true;
+        }
+        requestPermission(); //разрешение на показ уведомлений
+        const NOTIFICATION_KEY = "'test'";
+
+        function subscribeUserToPush(key) {
+
+            return navigator.serviceWorker.register('/static/js/sw.js')
+            .then(function(registration) {
+
+                const subscribeOptions = {
+                    userVisibleOnly: true,
+                    applicationServerKey: key,
+                };
+                return registration.pushManager.subscribe(subscribeOptions);
+
+            })
+            .then(function(pushSubscription) {
+
+                sendSubscriptionToBackEnd(pushSubscription);
+
+            });
+
+        }
+
+        subscribeUserToPush(NOTIFICATION_KEY); //подписка на уведомления
+        //сохранение подписки на уведомление в БД
+        function sendSubscriptionToBackEnd(subscription) {
+
+            const data = {
+               'csrf_token': $('input[name=csrf_token]').val(),
+               'registration_data': JSON.stringify(subscription)
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: '/save_notify',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                dataType: 'json',
+                data: JSON.stringify(subscription)
+            });
+
+        }
+
     </script>
 {% endblock %}
