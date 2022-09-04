@@ -15,6 +15,7 @@ class Users(UserMixin, db.Model):
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
+    last_seen = db.Column(db.DateTime, default=datetime.utcnow)
 
     families = db.relationship(
         'Users', secondary=family,
@@ -49,6 +50,9 @@ class Users(UserMixin, db.Model):
 
     def get_user(self, id):
         return self.query.filter_by(id=id).first_or_404().username
+
+    def get_last_seen_by_username(self, username):
+        return self.query.filter_by(username=username).first_or_404().last_seen
 
     def get_id_by_username(self, username):
         return self.query.filter_by(username=username).first_or_404().id

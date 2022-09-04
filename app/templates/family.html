@@ -6,11 +6,21 @@
     <table>
         <tr valign="top">
             <td><img src="/static/images/default.svg" width="40" height="40"></td>
-            <td><span>Family member№1 (You): {{ current_user.username }}</span></td>
+            <td>
+                <span>Family member№1 (You): {{ current_user.username }}</span>
+                {% if current_user.last_seen %}
+                    <p><span>Last seen on: {{ moment(current_user.last_seen).format('LLL') }}</span></p>
+                {% endif %}
+            </td>
         </tr>
         <tr valign="top">
             <td><img src="/static/images/default.svg" width="40" height="40"></td>
-            <td><span>Family member№2: {{ current_user.get_partner(current_user) }}</span></td>
+            <td>
+                <span>Family member№2: {{ current_user.get_partner(current_user) }}</span>
+                {% if current_user.get_last_seen_by_username(current_user.get_partner(current_user)) %}
+                    <p><span>Last seen on: {{ moment(current_user.get_last_seen_by_username(current_user.get_partner(current_user))).format('LLL') }}</span></p>
+                {% endif %}
+            </td>
         </tr>
     </table>
 {% endblock %}

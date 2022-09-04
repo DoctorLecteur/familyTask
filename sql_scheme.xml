@@ -50,6 +50,9 @@
 <row name="password_hash" null="0" autoincrement="0">
 <datatype>VARCHAR(128)</datatype>
 <default>'NULL'</default></row>
+<row name="last_seen" null="1" autoincrement="0">
+<datatype>DATETIME</datatype>
+<default>NULL</default></row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>

@@ -11,6 +11,12 @@ from datetime import datetime
 from pywebpush import webpush, WebPushException
 from app.email import send_password_reset_email
 
+@app.before_request
+def before_request():
+    if current_user.is_authenticated:
+        current_user.last_seen = datetime.utcnow()
+        db.session.commit()
+
 @app.route('/')
 @app.route('/index')
 @login_required
