@@ -366,29 +366,36 @@ def save_notify():
 @login_required
 def send_push_notification():
     data = json.dumps(request.get_json())
+    data_param = json.loads(data)
+    data_push = json.dumps({
+        "title": data_param["title"],
+        "body": data_param["body"]
+    })
+    data_param_push_json_endpoint = json.loads(data_param["param"])["endpoint"]
     id_user_partner = current_user.get_id_by_username(current_user.get_partner(current_user))
-    user_subscription = Subscription.query.filter_by(id_users=id_user_partner)
-    for subscription in user_subscription:
-
-        try:
-            webpush(
-                subscription_info=json.loads((subscription.push_param).replace('\'', '\"').replace("None", "\"\"")),
-                data=data,
-                vapid_private_key='./private_key.pem',
-                vapid_claims={
-                    'sub': 'mailto:{}'.format("test@test.com")
-                }
-            )
-        except WebPushException as ex:
-            print('I can\'t do that: {}'.format(repr(ex)))
-            print(ex)
-            # Mozilla returns additional information in the body of the response.
-            if ex.response and ex.response.json():
-                extra = ex.response.json()
-                print('Remote service replied with a {}:{}, {}',
-                      extra.code,
-                      extra.errno,
-                      extra.message)
+    user_subscription = Subscription.query.filter_by(id_users=id_user_partner).all()
+    for subscr in range(0, len(user_subscription)):
+        push_param = json.loads((user_subscription[subscr].push_param).replace('\'', '\"').replace("None", "\"\""))
+        if (data_param_push_json_endpoint != push_param['endpoint']): #не отправляем оповещение в браузер в котором произошло действие
+            try:
+                webpush(
+                    subscription_info=push_param,
+                    data=data_push,
+                    vapid_private_key='./private_key.pem',
+                    vapid_claims={
+                        'sub': 'mailto:{}'.format(app.config['ADMINS'][0])
+                    }
+                )
+            except WebPushException as ex:
+                print('I can\'t do that: {}'.format(repr(ex)))
+                print(ex)
+                # Mozilla returns additional information in the body of the response.
+                if ex.response and ex.response.json():
+                    extra = ex.response.json()
+                    print('Remote service replied with a {}:{}, {}',
+                          extra.code,
+                          extra.errno,
+                          extra.message)
 
     return make_response('success')
 

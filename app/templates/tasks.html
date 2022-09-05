@@ -124,7 +124,8 @@
                 dataType: 'json',
                 data: JSON.stringify({
                     "title": "FamilyTask",
-                    "body":  "In the " + response["title_task"] + " task, the status has been updated to " + response["status_name"]
+                    "body":  "In the " + response["title_task"] + " task, the status has been updated to " + response["status_name"],
+                    "param": sessionStorage.getItem("PushParam")
                 })
 
             });

@@ -202,11 +202,8 @@
         //сохранение подписки на уведомление в БД
         function sendSubscriptionToBackEnd(subscription) {
 
-            const data = {
-               'csrf_token': $('input[name=csrf_token]').val(),
-               'registration_data': JSON.stringify(subscription)
-            }
-
+            const dataPushParam = JSON.stringify(subscription);
+            sessionStorage.setItem("PushParam", dataPushParam); //сохраняем параметры оповещения в сессии, чтобы не отправлять лишние оповещения
             $.ajax({
                 type: 'POST',
                 url: '/save_notify',
@@ -214,7 +211,7 @@
                     "Content-Type": "application/json",
                 },
                 dataType: 'json',
-                data: JSON.stringify(subscription)
+                data: dataPushParam
             });
 
         }

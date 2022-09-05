@@ -186,7 +186,8 @@
                     dataType: 'json',
                     data: JSON.stringify({
                         "title": "FamilyTask",
-                        "body":  "In the " + response["title_task"] + " task, the status has been updated to " + response["status_name"]
+                        "body":  "In the " + response["title_task"] + " task, the status has been updated to " + response["status_name"],
+                        "param": sessionStorage.getItem("PushParam")
                     })
 
                 });
@@ -247,7 +248,6 @@
 
             $('#user').val(newUser);
             doPostUpdateTask(newUser, oldUser);
-            console.log("newUser", newUser);
             //отправка оповещения после обновления исполнителя по задаче
             if (newUser !== "{{ current_user.get_user(current_user.id) }}") {
 
@@ -261,7 +261,8 @@
                     dataType: 'json',
                     data: JSON.stringify({
                         "title": "FamilyTask",
-                        "body":  "Task {{ task.title }} is assigned to you"
+                        "body":  "Task {{ task.title }} is assigned to you",
+                        "param": sessionStorage.getItem("PushParam")
                     })
 
                 });
