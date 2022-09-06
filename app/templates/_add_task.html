@@ -24,8 +24,22 @@
       </p>
       <p>
         {{ form.title.label }}<br>
+        {% for error in form.type_task.errors %}
+          <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
         {{ form.title(size=64) }}<br>
         {% for error in form.title.errors %}
+          <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+      </p>
+      <p>
+        {{ form.category.label }}<br>
+        <select name="category" readonly>
+          {% for category in categories %}
+            <option value="{{ category.id }}">{{ category.name }}</option>
+          {% endfor %}
+        </select>
+        {% for error in form.category.errors %}
           <span style="color: red;">[{{ error }}]</span>
         {% endfor %}
       </p>

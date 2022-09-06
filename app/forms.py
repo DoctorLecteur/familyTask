@@ -47,6 +47,7 @@ class AddTaskForm(FlaskForm):
                                     Length(min=5, max=64, message='Name length must be between %(min)d and %(max)dcharacters')])
     priority = IntegerField('Priority')
     complexity = IntegerField('Complexity')
+    category = IntegerField('Category')
     #format='%Y-%m-%d %H:%M:%S'
     deadline = DateField('Deadline', format='%Y-%m-%d')
     description = TextAreaField('Description', validators=[DataRequired(),
@@ -67,6 +68,7 @@ class ShowTaskForm(FlaskForm):
     user = StringField('Performer')
     priority = StringField('Priority')
     complexity = StringField('Complexity')
+    category = StringField('Category')
     deadline = DateField('Deadline', format='%Y-%m-%d')
     submit = SubmitField('Save')
 

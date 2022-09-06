@@ -110,6 +110,7 @@ class Tasks(db.Model):
     create_date = db.Column(db.DateTime, default=datetime.utcnow)
     date_completion = db.Column(db.DateTime, default=datetime.utcnow)
     id_complexity = db.Column(db.Integer, db.ForeignKey('complexity.id'))
+    id_category = db.Column(db.Integer, db.ForeignKey('category.id'))
 
     def __repr__(self):
         return '<Tasks {}>'.format(self.title)
@@ -128,3 +129,10 @@ class Subscription(db.Model):
 
     def __repr__(self):
         return '<Subscription {}>'.format(self.push_param)
+
+class Category(db.Model):
+    id = db.Column(db.Integer, primary_key=True, index=True)
+    name = db.Column(db.String(128), unique=True)
+
+    def __repr__(self):
+        return '<Category {}>'.format(self.name)

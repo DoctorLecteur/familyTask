@@ -5,7 +5,7 @@ from app import app, db
 from app.forms import LoginForm, RegistrationForm, SearchUserForm, EditProfileForm, AddTaskForm, \
     EmptyForm, ShowTaskForm, ResetPasswordRequestForm, ResetPasswordForm
 from flask_login import current_user, login_user, logout_user, login_required
-from app.models import Users, TypeTask, Priority, Status, Tasks, Complexity, Subscription
+from app.models import Users, TypeTask, Priority, Status, Tasks, Complexity, Subscription, Category
 from werkzeug.urls import url_parse
 from datetime import datetime
 from pywebpush import webpush, WebPushException
@@ -221,6 +221,15 @@ def get_complexity():
         list_complexity.append(complexity_dict)
     return list_complexity
 
+#функция для получения всех доступных категорий
+def get_category():
+    category = Category.query.all()
+    list_category = []
+    for cat in category:
+        category_dict = {"id": cat.id, "name": cat.name}
+        list_category.append(category_dict)
+    return list_category
+
 @app.route('/add_task', methods=['GET', 'POST'])
 @login_required
 def add_task():
@@ -229,6 +238,7 @@ def add_task():
     priority = get_priotity()
     status = get_status()
     complexity = get_complexity()
+    category = get_category()
 
     if form.validate_on_submit():
 
@@ -238,7 +248,7 @@ def add_task():
        task = Tasks(id_type_task=type_task[0]["id"], title=form.title.data, id_priority=form.priority.data,
                     id_status=status[0]["id"], deadline=form.deadline.data, description=form.description.data,
                     create_user=current_user.id, create_date=datetime.today().strftime("%d-%m-%Y %H:%M:%S"),
-                    id_complexity=form.complexity.data)
+                    id_complexity=form.complexity.data, id_category=form.category.data)
        db.session.add(task)
        db.session.commit()
        flash('Task success added.')
@@ -248,7 +258,7 @@ def add_task():
     else:
         data = json.dumps(form.errors, ensure_ascii=True)
         return jsonify(data)
-    return render_template('_add_task.html', title='Add Task', form=form, typies_task=type_task, priorities=priority, complexities=complexity)
+    return render_template('_add_task.html', title='Add Task', form=form, typies_task=type_task, priorities=priority, complexities=complexity, categories=category)
 
 @app.route('/check_task', methods=['POST'])
 @login_required
@@ -313,6 +323,7 @@ def edit_task(id_task):
         priority = get_priotity()
         complexity = get_complexity()
         status = get_status()
+        category = get_category()
         form = ShowTaskForm()
         if request.method == 'GET':
             # заполнение исполнителя
@@ -331,7 +342,7 @@ def edit_task(id_task):
             if task.date_completion is not None:
                 task.date_completion = task.date_completion.strftime('%d.%m.%y %H:%M')  # преобразование даты
 
-            return render_template('show_task.html', title='Task', form=form, task=task, priorities=priority, complexities=complexity)
+            return render_template('show_task.html', title='Task', form=form, task=task, priorities=priority, complexities=complexity, categories=category)
 
         elif request.method == 'POST':
             if form.validate_on_submit():
@@ -344,9 +355,10 @@ def edit_task(id_task):
                 task.id_priority = form.priority.data
                 task.deadline = form.deadline.data
                 task.id_complexity = form.complexity.data
+                task.id_category = form.category.data
                 db.session.commit()
                 flash('Task {} success update'.format(task.title))
-            return render_template('show_task.html', title='Task', form=form, task=task, priorities=priority, complexities=complexity)
+            return render_template('show_task.html', title='Task', form=form, task=task, priorities=priority, complexities=complexity, categories=category)
 
     return redirect(url_for('tasks'))
 

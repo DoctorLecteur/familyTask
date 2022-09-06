@@ -63,6 +63,31 @@
                    {% endif %}
                </p>
                <p>
+                   {{ form.category.label }}<br>
+                   {% if task.id_status == 3 %}
+                       <select name="category" readonly>
+                       {% for category in categories %}
+                           {% if category.id == task.id_category %}
+                               <option disabled selected value="{{ category.id }}">{{ category.name }}</option>
+                           {% endif %}
+                       {% endfor %}
+                       </select>
+                   {% else %}
+                       <select name="category">
+                       {% for category in categories %}
+                           {% if category.id == task.id_category %}
+                               <option selected value="{{ category.id }}">{{ category.name }}</option>
+                           {% else %}
+                               <option value="{{ category.id }}">{{ category.name }}</option>
+                           {% endif %}
+                       {% endfor %}
+                       </select>
+                   {% endif %}
+                   {% for error in form.category.errors %}
+                       <span style="color: red;">[{{ error }}]</span>
+                   {% endfor %}
+               </p>
+               <p>
                    {{ form.priority.label }}<br>
                    {% if task.id_status == 3 %}
                        <select name="priority" readonly>
@@ -354,6 +379,16 @@
 
                 doPostUpdateTask($(this).val(), oldDeadline);
                 oldDeadline = $(this).val();
+
+            }
+        );
+        //обновление категории
+        let oldCategory = $('select[name=category]').val();
+        $('select[name=category]').change(
+            function() {
+
+                doPostUpdateTask($(this).val(), oldCategory);
+                oldCategory = $(this).val();
 
             }
         );
