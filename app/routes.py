@@ -121,32 +121,48 @@ def edit_profile():
 def family():
     return render_template('family.html', title='Family')
 
-@app.route('/tasks', methods=['GET'])
+@app.route('/tasks', methods=['GET', 'POST'])
 @login_required
 def tasks():
     form = EmptyForm()
     status = get_status()
-
+    type_user = None
+    if request.method == "POST":
+        type_user = request.form['type_user']
     user_partner = current_user.get_partner(current_user)
     user_partner_id = current_user.get_id_by_username(user_partner)
 
-    tasks_by_create_user = Tasks.query.filter_by(create_user=current_user.id)
-    tasks_by_id_users = Tasks.query.filter_by(id_users=current_user.id)
+    if type_user == 'author':
+        tasks_by_create_user = Tasks.query.filter_by(create_user=current_user.id)
+        tasks = tasks_by_create_user.all()
+    elif type_user == 'performer':
+        tasks_by_id_users = Tasks.query.filter_by(id_users=current_user.id)
+        tasks = tasks_by_id_users.all()
+    else:
+        tasks_by_create_user = Tasks.query.filter_by(create_user=current_user.id)
+        tasks_by_id_users = Tasks.query.filter_by(id_users=current_user.id)
 
-    tasks_by_partner_create_user = Tasks.query.filter_by(create_user=user_partner_id)
-    tasks_by_partner_id_users = Tasks.query.filter_by(id_users=user_partner_id)
+        tasks_by_partner_create_user = Tasks.query.filter_by(create_user=user_partner_id)
+        tasks_by_partner_id_users = Tasks.query.filter_by(id_users=user_partner_id)
 
-    tasks = tasks_by_create_user.union(tasks_by_id_users, tasks_by_partner_create_user, tasks_by_partner_id_users).order_by(Tasks.deadline.asc()).all()
+        tasks = tasks_by_create_user.union(tasks_by_id_users, tasks_by_partner_create_user, tasks_by_partner_id_users).order_by(Tasks.deadline.asc()).all()
 
     len_max = 0
     for i_status in range(0, len(status)): #проверяем в каком статусе задач больше всего для получения кол-ва строк в таблице
-        status_by_create_user = Tasks.query.filter_by(id_status=status[i_status]["id"], create_user=current_user.id)
-        status_by_id_users = Tasks.query.filter_by(id_status=status[i_status]["id"], id_users=current_user.id)
+        if type_user == 'author':
+            status_by_create_user = Tasks.query.filter_by(id_status=status[i_status]["id"], create_user=current_user.id)
+            status_count = status_by_create_user.count()
+        elif type_user == 'performer':
+            status_by_id_users = Tasks.query.filter_by(id_status=status[i_status]["id"], id_users=current_user.id)
+            status_count = status_by_id_users.count()
+        else:
+            status_by_create_user = Tasks.query.filter_by(id_status=status[i_status]["id"], create_user=current_user.id)
+            status_by_id_users = Tasks.query.filter_by(id_status=status[i_status]["id"], id_users=current_user.id)
 
-        status_by_partner_create_user = Tasks.query.filter_by(id_status=status[i_status]["id"], create_user=user_partner_id)
-        status_by_partner_id_users = Tasks.query.filter_by(id_status=status[i_status]["id"], id_users=user_partner_id)
+            status_by_partner_create_user = Tasks.query.filter_by(id_status=status[i_status]["id"], create_user=user_partner_id)
+            status_by_partner_id_users = Tasks.query.filter_by(id_status=status[i_status]["id"], id_users=user_partner_id)
 
-        status_count = status_by_create_user.union(status_by_id_users, status_by_partner_create_user, status_by_partner_id_users).count()
+            status_count = status_by_create_user.union(status_by_id_users, status_by_partner_create_user, status_by_partner_id_users).count()
         if status_count > len_max:
             len_max = status_count
 
@@ -184,6 +200,66 @@ def tasks():
         'count_done': count_done
     }
     return render_template('tasks.html', title='Tasks', form=form, status=status, tasks=list_tasks, count_tasks=count_dict)
+@app.route('/tasks_by_user/<type_user>', methods=['GET'])
+@login_required
+def tasks_by_user(type_user):
+    form = EmptyForm()
+    status = get_status()
+
+    if type_user == 'author':
+        tasks_by_create_user = Tasks.query.filter_by(create_user=current_user.id)
+        tasks = tasks_by_create_user.all()
+    elif type_user == 'performer':
+        tasks_by_id_users = Tasks.query.filter_by(id_users=current_user.id)
+        tasks = tasks_by_id_users.all()
+
+    len_max = 0
+    for i_status in range(0, len(status)):  # проверяем в каком статусе задач больше всего для получения кол-ва строк в таблице
+        if type_user == 'author':
+            status_by_create_user = Tasks.query.filter_by(id_status=status[i_status]["id"], create_user=current_user.id)
+            status_count = status_by_create_user.count()
+        elif type_user == 'performer':
+            status_by_id_users = Tasks.query.filter_by(id_status=status[i_status]["id"], id_users=current_user.id)
+            status_count = status_by_id_users.count()
+
+        if status_count > len_max:
+            len_max = status_count
+
+    # инициализация пустой таблицы с задачами для последующего заполнения
+    list_tasks = [0] * len_max
+    for i in range(0, len_max):
+        list_tasks[i] = [0] * len(status)
+    # переменные для подсчета кол-ва задач
+    count_backlog = 0
+    count_work = 0
+    count_done = 0
+    # заполнение таблицы с задачами
+    for j in range(0, len(tasks)):
+        tasks[j].create_date = tasks[j].create_date.strftime('%d.%m.%y %H:%M')  # преобразование даты
+        tasks[j].deadline = tasks[j].deadline.strftime('%d.%m.%y')  # преобразование даты
+        if tasks[j].date_completion is not None:
+            tasks[j].date_completion = tasks[j].date_completion.strftime('%d.%m.%y %H:%M')  # преобразование даты
+        for tr in range(0, len(list_tasks)):
+            if list_tasks[tr][0] == 0 and tasks[j].id_status == 1:
+                list_tasks[tr][0] = tasks[j]
+                count_backlog = count_backlog + 1
+                break
+            if list_tasks[tr][1] == 0 and tasks[j].id_status == 2:
+                list_tasks[tr][1] = tasks[j]
+                count_work = count_work + 1
+                break
+            if list_tasks[tr][2] == 0 and tasks[j].id_status == 3:
+                list_tasks[tr][2] = tasks[j]
+                count_done = count_done + 1
+                break
+
+    count_dict = {
+        'count_backlog': count_backlog,
+        'count_work': count_work,
+        'count_done': count_done
+    }
+    return json.dumps({"data": render_template('tasks.html', title='Tasks', form=form, status=status, tasks=list_tasks,
+                           count_tasks=count_dict)})
 
 #функция для получения всех доступных видов задач
 def get_type_task():
