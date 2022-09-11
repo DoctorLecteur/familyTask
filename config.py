@@ -13,3 +13,6 @@ class Config(object):
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     ADMINS = [''test'']
+    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+    UPLOADED_PHOTOS_DEST = "app/static/img"
+    FOLDER_NAME_IMG = "/static/img"

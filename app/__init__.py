@@ -6,6 +6,7 @@ from flask_login import LoginManager
 from flask_bootstrap import Bootstrap
 from flask_mail import Mail
 from flask_moment import Moment
+from flask_uploads import UploadSet, configure_uploads, IMAGES
 import logging
 from logging.handlers import SMTPHandler
 
@@ -18,6 +19,8 @@ login.login_view = 'login'
 bootstrap = Bootstrap(app)
 mail = Mail(app)
 moment = Moment(app)
+photos = UploadSet('photos', IMAGES)
+configure_uploads(app, photos)
 
 if not app.debug:
     if app.config['MAIL_SERVER']:

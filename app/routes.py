@@ -1,9 +1,9 @@
 import datetime
 import json
-from flask import render_template, flash, redirect, url_for, request, jsonify, make_response, session
-from app import app, db
+from flask import render_template, flash, redirect, url_for, request, jsonify, make_response
+from app import app, db, photos
 from app.forms import LoginForm, RegistrationForm, SearchUserForm, EditProfileForm, AddTaskForm, \
-    EmptyForm, ShowTaskForm, ResetPasswordRequestForm, ResetPasswordForm
+    EmptyForm, ShowTaskForm, ResetPasswordRequestForm, ResetPasswordForm, UploadForm
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import Users, TypeTask, Priority, Status, Tasks, Complexity, Subscription, Category
 from werkzeug.urls import url_parse
@@ -514,3 +514,26 @@ def reset_password(token):
         flash('Your password has been reset.')
         return redirect(url_for('login'))
     return render_template('reset_password.html', form=form)
+
+@app.route('/upload', methods=['GET', 'POST'])
+@login_required
+def upload():
+    form = UploadForm()
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            path = app.config['FOLDER_NAME_IMG'] + "/" + form.photo.data.filename
+            user = Users.query.filter_by(username=current_user.username, url_photo=path).first()
+            if user is None:
+                photos.save(form.photo.data)#обновляем фото профиля
+                current_user.set_photo(path)
+                db.session.commit()
+                flash('Your photo has been update.')
+                return jsonify(status='ok')
+            else:
+                errors = {"photo.exists": "This photo is exists."}
+                data = json.dumps(errors, ensure_ascii=True)
+                return jsonify(data)
+        else:
+            data = json.dumps(form.errors, ensure_ascii=True)
+            return jsonify(data)
+    return render_template("_modal_upload_file.html", form=form, title='Edit Photo')

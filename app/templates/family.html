@@ -5,7 +5,13 @@
     <h1>Family</h1>
     <table>
         <tr valign="top">
-            <td><img src="/static/images/default.svg" width="40" height="40"></td>
+            <td>
+                {% if current_user.url_photo %}
+                    <img src="{{ current_user.url_photo }}" width="40" height="40"><br>
+                {% else %}
+                    <img src="/static/img/default.svg" width="40" height="40"><br>
+                {% endif %}
+            </td>
             <td>
                 <span>Family member№1 (You): {{ current_user.username }}</span>
                 {% if current_user.last_seen %}
@@ -14,7 +20,13 @@
             </td>
         </tr>
         <tr valign="top">
-            <td><img src="/static/images/default.svg" width="40" height="40"></td>
+            <td>
+                {% if current_user.get_photo_by_username(current_user.get_partner(current_user)) %}
+                    <img src="{{ current_user.get_photo_by_username(current_user.get_partner(current_user)) }}" width="40" height="40"><br>
+                {% else %}
+                    <img src="/static/img/default.svg" width="40" height="40"><br>
+                {% endif %}
+            </td>
             <td>
                 <span>Family member№2: {{ current_user.get_partner(current_user) }}</span>
                 {% if current_user.get_last_seen_by_username(current_user.get_partner(current_user)) %}

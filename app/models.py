@@ -16,6 +16,7 @@ class Users(UserMixin, db.Model):
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
+    url_photo = db.Column(db.String(512))
 
     families = db.relationship(
         'Users', secondary=family,
@@ -70,6 +71,12 @@ class Users(UserMixin, db.Model):
         except:
             return
         return Users.query.get(id)
+
+    def get_photo_by_username(self, username):
+        return self.query.filter_by(username=username).first_or_404().url_photo
+
+    def set_photo(self, url_photo):
+        self.url_photo = url_photo
 
 @login.user_loader
 def load_user(id):
