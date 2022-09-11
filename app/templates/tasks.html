@@ -118,6 +118,8 @@
 
                 }
             }
+            //сохраняем номер преыдущей задачи, которую подвигали
+            sessionStorage.setItem("IdMovePreviousTask", idTask);
 
         }).fail(function() {
             console.log('fail');

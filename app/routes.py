@@ -317,19 +317,19 @@ def add_task():
     category = get_category()
 
     if form.validate_on_submit():
+       if form.type_task.data == 3:
+           if form.period_time.data == 'Hours':
+               period = form.period_count.data * 60
+           elif form.period_time.data == 'Days':
+               period = form.period_count.data * 24 * 60
+           else:
+               period = form.period_count.data
 
-       if form.period_time.data == 'Hours':
-           period = form.period_count.data * 60
-       elif form.period_time.data == 'Days':
-           period = form.period_count.data * 24 * 60
-       else:
-           period = form.period_count.data
-
-       if period is not None:
-           task = Tasks(id_type_task=form.type_task.data, title=form.title.data, id_priority=form.priority.data,
-                    id_status=status[0]["id"], deadline=form.deadline.data, description=form.description.data,
-                    create_user=current_user.id, create_date=datetime.today().strftime("%d-%m-%Y %H:%M:%S"),
-                    id_complexity=form.complexity.data, id_category=form.category.data, period=period)
+           if period is not None:
+               task = Tasks(id_type_task=form.type_task.data, title=form.title.data, id_priority=form.priority.data,
+                        id_status=status[0]["id"], deadline=form.deadline.data, description=form.description.data,
+                        create_user=current_user.id, create_date=datetime.today().strftime("%d-%m-%Y %H:%M:%S"),
+                        id_complexity=form.complexity.data, id_category=form.category.data, period=period)
        else:
            task = Tasks(id_type_task=form.type_task.data, title=form.title.data, id_priority=form.priority.data,
                         id_status=status[0]["id"], deadline=form.deadline.data, description=form.description.data,
