@@ -13,14 +13,38 @@
         {{ form.type_task.label }}<br>
         <select name="type_task" readonly>
           {% for type_task in typies_task %}
-            {% if type_task.name == "Задача" %}
-              <option disabled selected value="{{ type_task.id }}">{{ type_task.name }}</option>
-            {% endif %}
+              <option value="{{ type_task.id }}">{{ type_task.name }}</option>
           {% endfor %}
         </select>
         {% for error in form.type_task.errors %}
           <span style="color: red;">[{{ error }}]</span>
         {% endfor %}
+      </p>
+      <p>
+        <table id="period">
+          <thead>
+            <th>{{ form.period_count.label }}</th>
+            <th>Period Time</th>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                {{ form.period_count(size=64) }}
+                {% for error in form.period_count.errors %}
+                  <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+              </td>
+              <td>
+                <select style="width: 100px; height: 26px;" name="period_time" readonly>
+                  <option value="Minute">Minute</option>
+                  <option value="Hours">Hours</option>
+                  <option value="Days">Days</option>
+                </select>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        {{ form.period_time(size=10) }}
       </p>
       <p>
         {{ form.title.label }}<br>
@@ -86,3 +110,35 @@
     <button id="submit" type="submit" class="btn btn-success">OK</button>
   </div>
 </form>
+
+{% block scripts %}
+    <script>
+        //скрытие полей с периодами
+        $('#period').hide();
+        $('#period_time').hide();
+        $('#period_time').val("Minute");
+        $('select[name=type_task]').change(
+            function() {
+                if (+$(this).val() === 3) {
+
+                    $('#period').show();
+
+                } else {
+
+                    $('#period').hide();
+                    $('#period_time').val("");
+
+                }
+
+            }
+
+        );
+
+        $('select[name=period_time]').change(
+        function() {
+
+           $('#period_time').val($(this).val());
+
+        });
+    </script>
+{% endblock %}

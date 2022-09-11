@@ -171,6 +171,8 @@
                 $('.btn-danger').hide();
 
                 const nTaskStatusId = {{ task.id_status }}
+                const typeTaskId = {{ task.id_type_task }}
+                console.log("typeTaskId", typeTaskId);
                 if (nTaskStatusId === 1) {
 
                     $('.btn-warning').show();
@@ -181,12 +183,28 @@
                 if (nTaskStatusId === 2) {
 
                     $('.btn-success').show();
-                    $('.btn-danger').show();
+                    if (typeTaskId !== 3) {
+
+                        $('.btn-danger').show();
+
+                    } else {
+
+                        $('.btn-danger').hide();
+
+                    }
 
                 }
                 if (nTaskStatusId === 3) {
 
-                    $('.btn-danger').show();
+                    if (typeTaskId !== 3) {
+
+                        $('.btn-danger').show();
+
+                    } else {
+
+                        $('.btn-danger').hide();
+
+                    }
 
                 }
 

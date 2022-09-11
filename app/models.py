@@ -118,6 +118,7 @@ class Tasks(db.Model):
     date_completion = db.Column(db.DateTime, default=datetime.utcnow)
     id_complexity = db.Column(db.Integer, db.ForeignKey('complexity.id'))
     id_category = db.Column(db.Integer, db.ForeignKey('category.id'))
+    period = db.Column(db.Integer)
 
     def __repr__(self):
         return '<Tasks {}>'.format(self.title)

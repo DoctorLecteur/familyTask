@@ -84,22 +84,39 @@
             id_task: idTask
         }).done(function(response) {
 
-            if (response == "В куче") {
+            if (response["status"] == "В куче") {
                 $('.btn-warning').show();
                 $('.btn-success').hide();
                 $('.btn-danger').hide();
             }
 
-            if (response == "В работе") {
+            if (response["status"] == "В работе") {
                 $('.btn-warning').hide();
                 $('.btn-success').show();
-                $('.btn-danger').show();
+                if (response["type"] !== 3) {
+
+                    $('.btn-danger').show();
+
+                } else {
+
+                    $('.btn-danger').hide();
+
+                }
+
             }
 
-            if (response == "Готово") {
+            if (response["status"] == "Готово") {
                 $('.btn-warning').hide();
                 $('.btn-success').hide();
-                $('.btn-danger').show();
+                if (response["type"] !== 3) {
+
+                    $('.btn-danger').show();
+
+                } else {
+
+                    $('.btn-danger').hide();
+
+                }
             }
 
         }).fail(function() {

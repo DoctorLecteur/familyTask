@@ -7,7 +7,7 @@ from app.forms import LoginForm, RegistrationForm, SearchUserForm, EditProfileFo
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import Users, TypeTask, Priority, Status, Tasks, Complexity, Subscription, Category
 from werkzeug.urls import url_parse
-from datetime import datetime
+from datetime import datetime, timedelta
 from pywebpush import webpush, WebPushException
 from app.email import send_password_reset_email
 
@@ -318,13 +318,23 @@ def add_task():
 
     if form.validate_on_submit():
 
-       if form.type_task.data is None:
-           form.type_task.data = 1
+       if form.period_time.data == 'Hours':
+           period = form.period_count.data * 60
+       elif form.period_time.data == 'Days':
+           period = form.period_count.data * 24 * 60
+       else:
+           period = form.period_count.data
 
-       task = Tasks(id_type_task=type_task[0]["id"], title=form.title.data, id_priority=form.priority.data,
+       if period is not None:
+           task = Tasks(id_type_task=form.type_task.data, title=form.title.data, id_priority=form.priority.data,
                     id_status=status[0]["id"], deadline=form.deadline.data, description=form.description.data,
                     create_user=current_user.id, create_date=datetime.today().strftime("%d-%m-%Y %H:%M:%S"),
-                    id_complexity=form.complexity.data, id_category=form.category.data)
+                    id_complexity=form.complexity.data, id_category=form.category.data, period=period)
+       else:
+           task = Tasks(id_type_task=form.type_task.data, title=form.title.data, id_priority=form.priority.data,
+                        id_status=status[0]["id"], deadline=form.deadline.data, description=form.description.data,
+                        create_user=current_user.id, create_date=datetime.today().strftime("%d-%m-%Y %H:%M:%S"),
+                        id_complexity=form.complexity.data, id_category=form.category.data)
        db.session.add(task)
        db.session.commit()
        flash('Task success added.')
@@ -342,11 +352,16 @@ def check_task():
     task_id = request.form['id_task']
     task = Tasks.query.filter_by(id=task_id).first()
     status = Status.query.filter_by(id=task.id_status).first()
-    return make_response(status.name)
+    answer = {
+        "status": status.name,
+        "type": task.id_type_task
+    }
+    return make_response(answer)
 
 @app.route('/next_status', methods=['POST'])
 @login_required
 def next_status():
+    status = get_status()
     task_id = request.form['id_task']
     task = Tasks.query.filter_by(id=task_id).first()
     old_id_status = task.id_status
@@ -355,9 +370,10 @@ def next_status():
         task.id_users = current_user.id
     elif old_id_status == 2 and task.id_status == 3:
         task.date_completion = datetime.today()
+        if task.id_type_task == 3:
+            duplicate_task(task, status)
     db.session.commit()
     flash('Task {} success update'.format(task.title))
-    status = get_status()
     status_name = ""
     for s in range(0, len(status), 1):
         if status[s]["id"] == task.id_status:
@@ -537,3 +553,13 @@ def upload():
             data = json.dumps(form.errors, ensure_ascii=True)
             return jsonify(data)
     return render_template("_modal_upload_file.html", form=form, title='Edit Photo')
+
+def duplicate_task(task, status):
+    delta = timedelta(minutes=task.period)
+    deadline_time = task.date_completion + delta
+    task = Tasks(id_type_task=task.id_type_task, title=task.title, id_priority=task.id_priority,
+                 id_status=status[0]["id"], deadline=deadline_time, description=task.description,
+                 create_user=current_user.id, create_date=datetime.today().strftime("%d-%m-%Y %H:%M:%S"),
+                 id_complexity=task.id_complexity, id_category=task.id_category, period=task.period)
+    db.session.add(task)
+    db.session.commit()

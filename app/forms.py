@@ -2,7 +2,7 @@ from app import photos
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired, FileAllowed
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, DateTimeField, DateField, IntegerField, TextAreaField
-from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Length
+from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Length, NumberRange
 from app.models import Users
 
 class LoginForm(FlaskForm):
@@ -44,6 +44,8 @@ class EditProfileForm(FlaskForm):
 
 class AddTaskForm(FlaskForm):
     type_task = IntegerField('Type task')
+    period_count = IntegerField('Period Count', validators=[NumberRange(min=1)])
+    period_time = StringField('Period Time')
     title = StringField('Title',
                         validators=[DataRequired(),
                                     Length(min=5, max=64, message='Name length must be between %(min)d and %(max)dcharacters')])
