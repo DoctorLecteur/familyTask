@@ -2,12 +2,25 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
+    <!-- Dynamic Modal -->
+    <div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="FormModal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+            </div>
+        </div>
+    </div>
+    <!-- End Dynamic Modal -->
     <form id="editTask" method="post">
         {{ form.hidden_tag() }}
-        <a class="btn btn-info" href="{{ url_for('tasks') }}">Back</a>
+        <a class="btn btn-info" href="{{ url_for('tasks') }}">{{ _('Back') }}</a>
         <a class="btn btn-danger" href="#">&larr;</a>
-        <a class="btn btn-warning" href="#">To Work</a>
-        <a class="btn btn-success" href="#">Done</a>
+        <a class="btn btn-warning" href="#">{{ _('To Work') }}</a>
+        <a class="btn btn-success" href="#">{{ _('Done') }}</a>
+        {% if task.id_type_task != 2 %}
+            <a class="edit-modal-opener btn btn-primary" data-toggle="modal"
+                data-whatever="{{ url_for('add_subtask', task_id=task.id) }}" href="#">{{ _('Create Subtask') }}</a>
+        {% endif %}
         <div>
            <div style="float: left;">
                <p>
@@ -39,6 +52,12 @@
                        {% endfor %}
                    {% endif %}
                </p>
+               {% if task.is_subtask(task) > 0 %}
+                   <span style="font-size: 110%; font-weight: bold;">{{ _('Subtask') }}</span><br>
+                   {% for subtask in task.get_subtasks(task) %}
+                       <a style="font-size: 110%; font-weight: bold;" href="{{ url_for('edit_task', id_task=subtask.id) }}">{{ subtask.title }}</a><br>
+                   {% endfor %}
+               {% endif %}
            </div>
            <div style="float: right;">
                <p>
@@ -50,12 +69,12 @@
                    {% if task.id_status != 3 %}
                        {% if task.id_users %}
                            {% if task.id_users == current_user.id %}
-                               <a id="link1" href="#">Assign partner</a>
+                               <a id="link1" href="#">{{ _('Assign partner') }}</a>
                            {% elif task.id_users != current_user.id %}
-                               <a id="link2" href="#">Assign me</a>
+                               <a id="link2" href="#">{{ _('Assign me') }}</a>
                            {% endif %}
                        {% else %}
-                            <a id="link3" href="#">Assign me</a>|<a id="link4" href="#">Assign partner</a>
+                            <a id="link3" href="#">{{ _('Assign me') }}</a>|<a id="link4" href="#">{{ _('Assign partner') }}</a>
                        {% endif %}
                        {% for error in form.user.errors %}
                            <span style="color: red;">[{{ error }}]</span>
@@ -150,7 +169,7 @@
                </p>
                {% if task.id_status == 3 and task.date_completion %}
                <p>
-                   <label for="date_completion">Date Completion</label><br>
+                   <label for="date_completion">{{ _('Date Completion') }}</label><br>
                    <input id="date_completion" name="date_completion" size="12" type="text" value="{{ task.date_completion }}">
                </p>
                {% endif %}
@@ -172,12 +191,10 @@
 
                 const nTaskStatusId = {{ task.id_status }}
                 const typeTaskId = {{ task.id_type_task }}
-                console.log("typeTaskId", typeTaskId);
                 if (nTaskStatusId === 1) {
 
                     $('.btn-warning').show();
                     $('.btn-danger').hide();
-
 
                 }
                 if (nTaskStatusId === 2) {

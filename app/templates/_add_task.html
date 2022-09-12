@@ -7,15 +7,24 @@
     <h4 class="modal-title">{{ title }}</h4>
   </div>
   <div class="modal-body">
-
     {{ form.hidden_tag() }}
       <p>
         {{ form.type_task.label }}<br>
-        <select name="type_task" readonly>
-          {% for type_task in typies_task %}
-              <option value="{{ type_task.id }}">{{ type_task.name }}</option>
-          {% endfor %}
-        </select>
+        {% if task_id %}
+          <select name="type_task" disabled="true">
+            {% for type_task in typies_task %}
+                {% if type_task.id == 2 %}
+                  <option disabled selected value="{{ type_task.id }}">{{ type_task.name }}</option>
+                {% endif %}
+            {% endfor %}
+          </select>
+        {% else %}
+          <select name="type_task" readonly>
+            {% for type_task in typies_task %}
+                <option value="{{ type_task.id }}">{{ type_task.name }}</option>
+            {% endfor %}
+          </select>
+        {% endif %}
         {% for error in form.type_task.errors %}
           <span style="color: red;">[{{ error }}]</span>
         {% endfor %}

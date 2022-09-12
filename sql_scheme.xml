@@ -206,4 +206,17 @@
 </key>
 <comment>Таблица с категориями</comment>
 </table>
+<table x="1199" y="17" name="subtasks">
+<row name="id_task" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="tasks" row="id" />
+</row>
+<row name="id_subtask" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="tasks" row="id" />
+</row>
+<key type="PRIMARY" name="">
+</key>
+<comment>Таблица со связями для подзадач</comment>
+</table>
 </sql>

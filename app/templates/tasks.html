@@ -11,14 +11,14 @@
         </div>
     </div>
     <!-- End Dynamic Modal -->
-    <h1>Tasks</h1>
+    <h1>{{ _('Tasks') }}</h1>
     <a class="edit-modal-opener btn btn-primary" data-toggle="modal"
-       data-whatever="{{ url_for('add_task') }}" href="#">Add Task</a>
+       data-whatever="{{ url_for('add_task') }}" href="#">{{ _('Add Task') }}</a>
     <a class="btn btn-danger" href="#">&larr;</a>
-    <a class="btn btn-warning" href="#">To Work</a>
-    <a class="btn btn-success" href="#">Done</a>
-    <input class="form-check-input" type="checkbox" id="filterAuthor" name="filterTask" value="author"><span>My Tasks (I'm author)</span>
-    <input class="form-check-input" type="checkbox" id="filterPerformer" name="filterTask" value="performer"><span>My Tasks (I'm performer)</span>
+    <a class="btn btn-warning" href="#">{{ _('To Work') }}</a>
+    <a class="btn btn-success" href="#">{{ _('Done') }}</a>
+    <input class="form-check-input" type="checkbox" id="filterAuthor" name="filterTask" value="author"><span>{{ _('My Tasks (I"m author)') }}</span>
+    <input class="form-check-input" type="checkbox" id="filterPerformer" name="filterTask" value="performer"><span>{{ _('My Tasks (I"m performer)') }}</span>
     <br>
     {% if count_tasks.count_backlog > 0 or count_tasks.count_work > 0 or count_tasks.count_done > 0 %}
         <div class="table-responsive ">

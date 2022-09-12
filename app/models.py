@@ -10,6 +10,11 @@ family = db.Table('family',
                   db.Column('id_partner', db.Integer, db.ForeignKey('users.id'))
                 )
 
+subtasks = db.Table('subtasks',
+                    db.Column('id_task', db.Integer, db.ForeignKey('tasks.id')),
+                    db.Column('id_subtask', db.Integer, db.ForeignKey('tasks.id'))
+                    )
+
 class Users(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
@@ -120,8 +125,38 @@ class Tasks(db.Model):
     id_category = db.Column(db.Integer, db.ForeignKey('category.id'))
     period = db.Column(db.Integer)
 
+    subtask =  db.relationship(
+        'Tasks', secondary=subtasks,
+        primaryjoin=(subtasks.c.id_task == id),
+        secondaryjoin=(subtasks.c.id_subtask == id),
+        backref=db.backref('subtasks', lazy='dynamic'), lazy='dynamic')
+
     def __repr__(self):
         return '<Tasks {}>'.format(self.title)
+
+    def create_subtask(self, task):
+        if not self.is_subtask(task):
+            self.subtask.append(task)
+
+    def is_subtask(self, task):
+        return self.subtask.filter(
+            subtasks.c.id_task == task.id).count() > 0
+
+    def get_type_task(self, id_type_task):
+        return TypeTask.query.filter_by(id=id_type_task).first_or_404().name
+
+    def get_subtask_title(self, task):
+        return self.subtask.filter(
+            subtasks.c.id_task == task.id).first_or_404().title
+
+    def get_subtask_id(self, task):
+        return self.subtask.filter(
+            subtasks.c.id_task == task.id).first_or_404().id
+
+    def get_subtasks(self, task):
+        return self.subtask.filter(
+            subtasks.c.id_task == task.id).all()
+
 
 class Complexity(db.Model):
     id = db.Column(db.Integer, primary_key=True, index=True)

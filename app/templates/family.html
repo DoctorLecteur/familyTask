@@ -2,7 +2,7 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
-    <h1>Family</h1>
+    <h1>{{ _('Family') }}</h1>
     <table>
         <tr valign="top">
             <td>
@@ -13,9 +13,9 @@
                 {% endif %}
             </td>
             <td>
-                <span>Family member№1 (You): {{ current_user.username }}</span>
+                <span>{{ _('Family member№1 (You)') }}: {{ current_user.username }}</span>
                 {% if current_user.last_seen %}
-                    <p><span>Last seen on: {{ moment(current_user.last_seen).format('LLL') }}</span></p>
+                    <p><span>{{ _('Last seen on') }}: {{ moment(current_user.last_seen).format('LLL') }}</span></p>
                 {% endif %}
             </td>
         </tr>
@@ -28,9 +28,9 @@
                 {% endif %}
             </td>
             <td>
-                <span>Family member№2: {{ current_user.get_partner(current_user) }}</span>
+                <span>{{ _('Family member№2') }}: {{ current_user.get_partner(current_user) }}</span>
                 {% if current_user.get_last_seen_by_username(current_user.get_partner(current_user)) %}
-                    <p><span>Last seen on: {{ moment(current_user.get_last_seen_by_username(current_user.get_partner(current_user))).format('LLL') }}</span></p>
+                    <p><span>{{ _('Last seen on') }}: {{ moment(current_user.get_last_seen_by_username(current_user.get_partner(current_user))).format('LLL') }}</span></p>
                 {% endif %}
             </td>
         </tr>

@@ -1,0 +1,345 @@
+# Translations template for PROJECT.
+# Copyright (C) 2022 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2022-09-12 23:13+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.10.3\n"
+
+#: app/__init__.py:21
+msgid "Please log in to access this page."
+msgstr ""
+
+#: app/email.py:20
+msgid "[FamilyTask] Reset Your Password"
+msgstr ""
+
+#: app/forms.py:10 app/forms.py:18 app/forms.py:38
+msgid "Username"
+msgstr ""
+
+#: app/forms.py:12 app/forms.py:20 app/forms.py:40 app/forms.py:58
+#: app/forms.py:71
+#, python-format
+msgid "Name length must be between %(min)d and %(max)d characters"
+msgstr ""
+
+#: app/forms.py:13 app/forms.py:22 app/forms.py:84
+msgid "Password"
+msgstr ""
+
+#: app/forms.py:14
+msgid "Remember me"
+msgstr ""
+
+#: app/forms.py:15 app/routes.py:47 app/templates/login.html:5
+msgid "Sign In"
+msgstr ""
+
+#: app/forms.py:21 app/forms.py:44 app/forms.py:80
+msgid "Email"
+msgstr ""
+
+#: app/forms.py:24 app/forms.py:85
+msgid "Repeat Password"
+msgstr ""
+
+#: app/forms.py:25 app/routes.py:66 app/templates/register.html:5
+msgid "Register"
+msgstr ""
+
+#: app/forms.py:30
+msgid "Please use a different username."
+msgstr ""
+
+#: app/forms.py:35
+msgid "Please use a different email address."
+msgstr ""
+
+#: app/forms.py:47
+msgid "Type task"
+msgstr ""
+
+#: app/forms.py:48
+msgid "Period Count"
+msgstr ""
+
+#: app/forms.py:49
+msgid "Period Time"
+msgstr ""
+
+#: app/forms.py:50 app/forms.py:64
+msgid "Title"
+msgstr ""
+
+#: app/forms.py:52 app/forms.py:67
+#, python-format
+msgid "Name length must be between %(min)d and %(max)dcharacters"
+msgstr ""
+
+#: app/forms.py:53 app/forms.py:73
+msgid "Priority"
+msgstr ""
+
+#: app/forms.py:54 app/forms.py:74
+msgid "Complexity"
+msgstr ""
+
+#: app/forms.py:55 app/forms.py:75
+msgid "Category"
+msgstr ""
+
+#: app/forms.py:56 app/forms.py:76 app/templates/_task.html:66
+msgid "Deadline"
+msgstr ""
+
+#: app/forms.py:57 app/forms.py:69
+msgid "Description"
+msgstr ""
+
+#: app/forms.py:68
+msgid "Status"
+msgstr ""
+
+#: app/forms.py:72 app/templates/_task.html:57 app/templates/_task.html:59
+msgid "Performer"
+msgstr ""
+
+#: app/forms.py:77
+msgid "Save"
+msgstr ""
+
+#: app/forms.py:81 app/forms.py:86
+msgid "Request Password Reset"
+msgstr ""
+
+#: app/forms.py:90
+msgid "Upload"
+msgstr ""
+
+#: app/routes.py:30
+msgid "Home Page"
+msgstr ""
+
+#: app/routes.py:40
+msgid "Invalid username or password"
+msgstr ""
+
+#: app/routes.py:64
+msgid "Congratulations, you are now a registered user!"
+msgstr ""
+
+#: app/routes.py:82
+msgid "User %(username) not found. Repeat search."
+msgstr ""
+
+#: app/routes.py:86
+msgid "You cannot create family only yourself!"
+msgstr ""
+
+#: app/routes.py:90
+msgid "User %(username) have family!"
+msgstr ""
+
+#: app/routes.py:96
+msgid "You are creating family with %(username)!"
+msgstr ""
+
+#: app/routes.py:103
+msgid "Search User"
+msgstr ""
+
+#: app/routes.py:112
+msgid "Your changes have been saved."
+msgstr ""
+
+#: app/routes.py:119 app/templates/user.html:31
+msgid "Edit Profile"
+msgstr ""
+
+#: app/routes.py:124 app/templates/base.html:26 app/templates/family.html:5
+msgid "Family"
+msgstr ""
+
+#: app/routes.py:204 app/routes.py:263 app/templates/base.html:27
+#: app/templates/tasks.html:14
+msgid "Tasks"
+msgstr ""
+
+#: app/routes.py:342 app/routes.py:596
+msgid "Task success added."
+msgstr ""
+
+#: app/routes.py:349 app/templates/tasks.html:16
+msgid "Add Task"
+msgstr ""
+
+#: app/routes.py:370
+msgid "Subtask success added."
+msgstr ""
+
+#: app/routes.py:377
+msgid "Add Subtask"
+msgstr ""
+
+#: app/routes.py:406 app/routes.py:427 app/routes.py:482
+#, python-format
+msgid "Task %(title) success update"
+msgstr ""
+
+#: app/routes.py:467 app/routes.py:483
+msgid "Task"
+msgstr ""
+
+#: app/routes.py:545
+msgid "Check your email for the instructions to reset your password"
+msgstr ""
+
+#: app/routes.py:547 app/templates/reset_password.html:5
+msgid "Reset Password"
+msgstr ""
+
+#: app/routes.py:560
+msgid "Your password has been reset."
+msgstr ""
+
+#: app/routes.py:576
+msgid "Your photo has been update."
+msgstr ""
+
+#: app/routes.py:579
+msgid "This photo is exists."
+msgstr ""
+
+#: app/routes.py:585 app/templates/user.html:24
+msgid "Edit Photo"
+msgstr ""
+
+#: app/templates/404.html:4
+msgid "File Not Found"
+msgstr ""
+
+#: app/templates/500.html:4
+msgid "An unexpected error has occurred"
+msgstr ""
+
+#: app/templates/500.html:5
+msgid "The administrator has been notified. Sorry for the inconvenience!"
+msgstr ""
+
+#: app/templates/_task.html:54
+msgid "Type Task"
+msgstr ""
+
+#: app/templates/_task.html:63 app/templates/show_task.html:19
+#: app/templates/tasks.html:19
+msgid "Done"
+msgstr ""
+
+#: app/templates/_task.html:71 app/templates/_task.html:73
+msgid "Author"
+msgstr ""
+
+#: app/templates/base.html:4
+msgid "Welcome to FamilyTask"
+msgstr ""
+
+#: app/templates/base.html:22
+msgid "Login"
+msgstr ""
+
+#: app/templates/base.html:24
+msgid "Profile"
+msgstr ""
+
+#: app/templates/base.html:34
+msgid "Logout"
+msgstr ""
+
+#: app/templates/family.html:16
+msgid "Family member№1 (You)"
+msgstr ""
+
+#: app/templates/family.html:18 app/templates/family.html:33
+msgid "Last seen on"
+msgstr ""
+
+#: app/templates/family.html:31
+msgid "Family member№2"
+msgstr ""
+
+#: app/templates/login.html:12
+msgid "New User?"
+msgstr ""
+
+#: app/templates/login.html:12
+msgid "Click to Register!"
+msgstr ""
+
+#: app/templates/login.html:14
+msgid "Forgot Your Password?"
+msgstr ""
+
+#: app/templates/login.html:15
+msgid "Click to Reset It"
+msgstr ""
+
+#: app/templates/reset_password_request.html:5
+msgid "Reset Your Password"
+msgstr ""
+
+#: app/templates/show_task.html:16
+msgid "Back"
+msgstr ""
+
+#: app/templates/show_task.html:18 app/templates/tasks.html:18
+msgid "To Work"
+msgstr ""
+
+#: app/templates/show_task.html:22
+msgid "Create Subtask"
+msgstr ""
+
+#: app/templates/show_task.html:56
+msgid "Subtask"
+msgstr ""
+
+#: app/templates/show_task.html:72 app/templates/show_task.html:77
+msgid "Assign partner"
+msgstr ""
+
+#: app/templates/show_task.html:74 app/templates/show_task.html:77
+msgid "Assign me"
+msgstr ""
+
+#: app/templates/show_task.html:172
+msgid "Date Completion"
+msgstr ""
+
+#: app/templates/tasks.html:20
+msgid "My Tasks (I\"m author)"
+msgstr ""
+
+#: app/templates/tasks.html:21
+msgid "My Tasks (I\"m performer)"
+msgstr ""
+
+#: app/templates/user.html:27
+msgid "User"
+msgstr ""
+
+#: app/templates/user.html:34
+msgid "Search user"
+msgstr ""
+

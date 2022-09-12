@@ -1,6 +1,6 @@
 import datetime
 import json
-from flask import render_template, flash, redirect, url_for, request, jsonify, make_response
+from flask import render_template, flash, redirect, url_for, request, jsonify, make_response, g
 from app import app, db, photos
 from app.forms import LoginForm, RegistrationForm, SearchUserForm, EditProfileForm, AddTaskForm, \
     EmptyForm, ShowTaskForm, ResetPasswordRequestForm, ResetPasswordForm, UploadForm
@@ -10,12 +10,14 @@ from werkzeug.urls import url_parse
 from datetime import datetime, timedelta
 from pywebpush import webpush, WebPushException
 from app.email import send_password_reset_email
+from flask_babel import _, get_locale
 
 @app.before_request
 def before_request():
     if current_user.is_authenticated:
         current_user.last_seen = datetime.utcnow()
         db.session.commit()
+    g.locale = str(get_locale())
 
 @app.route('/')
 @app.route('/index')
@@ -25,7 +27,7 @@ def index():
         return redirect(url_for('tasks'))
     elif current_user.is_authenticated and not current_user.is_family(current_user):
         return redirect(url_for('user', username=current_user.username))
-    return render_template('index.html', title='Home Page')
+    return render_template('index.html', title=_('Home Page'))
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -35,14 +37,14 @@ def login():
     if form.validate_on_submit():
         user = Users.query.filter_by(username=form.username.data).first()
         if user is None or not user.check_password(form.password.data):
-            flash('Invalid username or password')
+            flash(_('Invalid username or password'))
             return redirect(url_for('login'))
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('index')
         return redirect(next_page)
-    return render_template('login.html', title='Sign In', form=form)
+    return render_template('login.html', title=_('Sign In'), form=form)
 
 @app.route('/logout')
 def logout():
@@ -59,9 +61,9 @@ def register():
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
-        flash('Congratulations, you are now a registered user!')
+        flash(_('Congratulations, you are now a registered user!'))
         return redirect(url_for('login'))
-    return render_template('register.html', title='Register', form=form)
+    return render_template('register.html', title=_('Register'), form=form)
 
 @app.route('/user/<username>')
 @login_required
@@ -77,28 +79,28 @@ def search():
         user_partner = Users.query.filter_by(username=search_from.username.data).first()
         errors = {}  #dict for errors
         if user_partner is None:
-            errors.update({'username': 'User {} not found. Repeat search.'.format(search_from.username.data)})
+            errors.update({'username': _('User %(username) not found. Repeat search.', username=search_from.username.data)})
             data = json.dumps(errors, ensure_ascii=True)
             return jsonify(data)
         if user_partner == current_user:
-            errors.update({'username': 'You cannot create family only yourself!'})
+            errors.update({'username': _('You cannot create family only yourself!')})
             data = json.dumps(errors, ensure_ascii=True)
             return jsonify(data)
         if user_partner.is_family(user_partner) > 0:
-            errors.update({'username': 'User {} have family!'.format(search_from.username.data)})
+            errors.update({'username': _('User %(username) have family!', username=search_from.username.data)})
             data = json.dumps(errors, ensure_ascii=True)
             return jsonify(data)
         current_user.create_family(user_partner)
         user_partner.create_family(current_user)
         db.session.commit()
-        flash('You are creating family with {}!'.format(user_partner.username))
+        flash(_('You are creating family with %(username)!', username=user_partner.username))
         return jsonify(status='ok')
     elif request.method == 'GET':
         search_from.username.data = ''
     else:
         data = json.dumps(search_from.errors, ensure_ascii=True)
         return jsonify(data)
-    return render_template('_modal_search_user.html', title='Search User', form=search_from)
+    return render_template('_modal_search_user.html', title=_('Search User'), form=search_from)
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
 @login_required
@@ -107,19 +109,19 @@ def edit_profile():
     if form.validate_on_submit():
         current_user.email = form.email.data
         db.session.commit()
-        flash('Your changes have been saved.')
+        flash(_('Your changes have been saved.'))
         return jsonify(status='ok')
     elif request.method == 'GET':
         form.email.data = current_user.email
     else:
         data = json.dumps(form.errors, ensure_ascii=True)
         return jsonify(data)
-    return render_template('_form_edit.html', title='Edit Profile', form=form)
+    return render_template('_form_edit.html', title=_('Edit Profile'), form=form)
 
 @app.route('/family', methods=['GET'])
 @login_required
 def family():
-    return render_template('family.html', title='Family')
+    return render_template('family.html', title=_('Family'))
 
 @app.route('/tasks', methods=['GET', 'POST'])
 @login_required
@@ -199,7 +201,7 @@ def tasks():
         'count_work': count_work,
         'count_done': count_done
     }
-    return render_template('tasks.html', title='Tasks', form=form, status=status, tasks=list_tasks, count_tasks=count_dict)
+    return render_template('tasks.html', title=_('Tasks'), form=form, status=status, tasks=list_tasks, count_tasks=count_dict)
 @app.route('/tasks_by_user/<type_user>', methods=['GET'])
 @login_required
 def tasks_by_user(type_user):
@@ -258,7 +260,7 @@ def tasks_by_user(type_user):
         'count_work': count_work,
         'count_done': count_done
     }
-    return json.dumps({"data": render_template('tasks.html', title='Tasks', form=form, status=status, tasks=list_tasks,
+    return json.dumps({"data": render_template('tasks.html', title=_('Tasks'), form=form, status=status, tasks=list_tasks,
                            count_tasks=count_dict)})
 
 #функция для получения всех доступных видов задач
@@ -337,14 +339,42 @@ def add_task():
                         id_complexity=form.complexity.data, id_category=form.category.data)
        db.session.add(task)
        db.session.commit()
-       flash('Task success added.')
+       flash(_('Task success added.'))
        return jsonify(status='ok', title_task=form.title.data)
     elif request.method == 'GET':
         form.deadline.data = datetime.now()
     else:
         data = json.dumps(form.errors, ensure_ascii=True)
         return jsonify(data)
-    return render_template('_add_task.html', title='Add Task', form=form, typies_task=type_task, priorities=priority, complexities=complexity, categories=category)
+    return render_template('_add_task.html', title=_('Add Task'), form=form, typies_task=type_task, priorities=priority, complexities=complexity, categories=category)
+
+@app.route('/add_subtask/<task_id>', methods=['GET', 'POST'])
+@login_required
+def add_subtask(task_id):
+    form = AddTaskForm()
+    type_task = get_type_task()
+    priority = get_priotity()
+    status = get_status()
+    complexity = get_complexity()
+    category = get_category()
+
+    if form.validate_on_submit():
+       subtask = Tasks(id_type_task=2, title=form.title.data, id_priority=form.priority.data,
+                    id_status=status[0]["id"], deadline=form.deadline.data, description=form.description.data,
+                    create_user=current_user.id, create_date=datetime.today().strftime("%d-%m-%Y %H:%M:%S"),
+                    id_complexity=form.complexity.data, id_category=form.category.data)
+       db.session.add(subtask)
+       current_task = Tasks.query.filter_by(id=task_id).first()
+       current_task.create_subtask(subtask)
+       db.session.commit()
+       flash(_('Subtask success added.'))
+       return jsonify(status='ok', title_task=form.title.data)
+    elif request.method == 'GET':
+        form.deadline.data = datetime.now()
+    else:
+        data = json.dumps(form.errors, ensure_ascii=True)
+        return jsonify(data)
+    return render_template('_add_task.html', title=_('Add Subtask'), form=form, typies_task=type_task, priorities=priority, complexities=complexity, categories=category, task_id=task_id)
 
 @app.route('/check_task', methods=['POST'])
 @login_required
@@ -373,7 +403,7 @@ def next_status():
         if task.id_type_task == 3:
             duplicate_task(task, status)
     db.session.commit()
-    flash('Task {} success update'.format(task.title))
+    flash(_('Task %(title) success update', title=task.title))
     status_name = ""
     for s in range(0, len(status), 1):
         if status[s]["id"] == task.id_status:
@@ -394,7 +424,7 @@ def previous_status():
     if old_id_status == 3 and task.id_status == 2:
         task.date_completion = None
     db.session.commit()
-    flash('Task {} success update'.format(task.title))
+    flash(_('Task %(title) success update', title=task.title))
     status = get_status()
     status_name = ""
     for s in range(0, len(status), 1):
@@ -434,7 +464,7 @@ def edit_task(id_task):
             if task.date_completion is not None:
                 task.date_completion = task.date_completion.strftime('%d.%m.%y %H:%M')  # преобразование даты
 
-            return render_template('show_task.html', title='Task', form=form, task=task, priorities=priority, complexities=complexity, categories=category)
+            return render_template('show_task.html', title=_('Task'), form=form, task=task, priorities=priority, complexities=complexity, categories=category)
 
         elif request.method == 'POST':
             if form.validate_on_submit():
@@ -449,8 +479,8 @@ def edit_task(id_task):
                 task.id_complexity = form.complexity.data
                 task.id_category = form.category.data
                 db.session.commit()
-                flash('Task {} success update'.format(task.title))
-            return render_template('show_task.html', title='Task', form=form, task=task, priorities=priority, complexities=complexity, categories=category)
+                flash(_('Task %(title) success update', title=task.title))
+            return render_template('show_task.html', title=_('Task'), form=form, task=task, priorities=priority, complexities=complexity, categories=category)
 
     return redirect(url_for('tasks'))
 
@@ -512,9 +542,9 @@ def reset_password_request():
         user = Users.query.filter_by(email=form.email.data).first()
         if user:
             send_password_reset_email(user)
-        flash('Check your email for the instructions to reset your password')
+        flash(_('Check your email for the instructions to reset your password'))
         return redirect(url_for('login'))
-    return render_template('reset_password_request.html', title='Reset Password', form=form)
+    return render_template('reset_password_request.html', title=_('Reset Password'), form=form)
 
 @app.route('/reset_password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
@@ -527,7 +557,7 @@ def reset_password(token):
     if form.validate_on_submit():
         user.set_password(form.password.data)
         db.session.commit()
-        flash('Your password has been reset.')
+        flash(_('Your password has been reset.'))
         return redirect(url_for('login'))
     return render_template('reset_password.html', form=form)
 
@@ -543,16 +573,16 @@ def upload():
                 photos.save(form.photo.data)#обновляем фото профиля
                 current_user.set_photo(path)
                 db.session.commit()
-                flash('Your photo has been update.')
+                flash(_('Your photo has been update.'))
                 return jsonify(status='ok')
             else:
-                errors = {"photo.exists": "This photo is exists."}
+                errors = {"photo.exists": _("This photo is exists.")}
                 data = json.dumps(errors, ensure_ascii=True)
                 return jsonify(data)
         else:
             data = json.dumps(form.errors, ensure_ascii=True)
             return jsonify(data)
-    return render_template("_modal_upload_file.html", form=form, title='Edit Photo')
+    return render_template("_modal_upload_file.html", form=form, title=_('Edit Photo'))
 
 def duplicate_task(task, status):
     delta = timedelta(minutes=task.period)
@@ -563,3 +593,4 @@ def duplicate_task(task, status):
                  id_complexity=task.id_complexity, id_category=task.id_category, period=task.period)
     db.session.add(task)
     db.session.commit()
+    flash(_('Task success added.'))

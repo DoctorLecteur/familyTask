@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from config import Config
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -7,8 +7,10 @@ from flask_bootstrap import Bootstrap
 from flask_mail import Mail
 from flask_moment import Moment
 from flask_uploads import UploadSet, configure_uploads, IMAGES
+from flask_babel import Babel
 import logging
 from logging.handlers import SMTPHandler
+from flask_babel import _, lazy_gettext as _l
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -16,11 +18,13 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 login = LoginManager(app)
 login.login_view = 'login'
+login.login_message = _l('Please log in to access this page.')
 bootstrap = Bootstrap(app)
 mail = Mail(app)
 moment = Moment(app)
 photos = UploadSet('photos', IMAGES)
 configure_uploads(app, photos)
+babel = Babel(app)
 
 if not app.debug:
     if app.config['MAIL_SERVER']:
@@ -39,5 +43,8 @@ if not app.debug:
         mail_handler.setLevel(logging.ERROR)
         app.logger.addHandler(mail_handler)
 
+@babel.localeselector
+def get_locale():
+    return request.accept_languages.best_match(app.config['LANGUAGES'])
 
 from app import routes, models, errors

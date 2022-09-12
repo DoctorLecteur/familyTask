@@ -51,25 +51,26 @@
     {% endif %}
     <span style="float: right; font-size: 90%; color: #7a7a7a; font-family: monospace;">{{ task_td.create_date }}</span>
     <br>
+    <span>{{ _('Type Task') }}: {{ task_td.get_type_task(task_td.id_type_task) }}</span><br>
     {% if task_td.id_users %}
         {% if current_user.get_photo_by_username(current_user.get_user(task_td.id_users)) %}
-            <span>Performer: <img src="{{ current_user.get_photo_by_username(current_user.get_user(task_td.id_users)) }}" width="20" height="20">{{ current_user.get_user(task_td.id_users) }}</span><br>
+            <span>{{ _('Performer') }}: <img src="{{ current_user.get_photo_by_username(current_user.get_user(task_td.id_users)) }}" width="20" height="20">{{ current_user.get_user(task_td.id_users) }}</span><br>
         {% else %}
-            <span>Performer: <img src="/static/img/default.svg" width="20" height="20">{{ current_user.get_user(task_td.id_users) }}</span><br>
+            <span>{{ _('Performer') }}: <img src="/static/img/default.svg" width="20" height="20">{{ current_user.get_user(task_td.id_users) }}</span><br>
         {% endif %}
     {% endif %}
     {% if task_td.id_status == 3 and task_td.date_completion %}
-        <span>Done: {{ task_td.date_completion }} </span><br>
+        <span>{{ _('Done') }}: {{ task_td.date_completion }} </span><br>
     {% else %}
         {% if task_td.id_status != 3 %}
-            <span>Deadline: {{ task_td.deadline }} </span><br>
+            <span>{{ _('Deadline') }}: {{ task_td.deadline }} </span><br>
         {% endif %}
     {% endif %}
     {% if task_td.create_user %}
         {% if current_user.get_photo_by_username(current_user.get_user(task_td.create_user)) %}
-            <span>Author: <img src="{{ current_user.get_photo_by_username(current_user.get_user(task_td.create_user)) }}" width="20" height="20">{{ current_user.get_user(task_td.create_user) }}</span><br>
+            <span>{{ _('Author') }}: <img src="{{ current_user.get_photo_by_username(current_user.get_user(task_td.create_user)) }}" width="20" height="20">{{ current_user.get_user(task_td.create_user) }}</span><br>
         {% else %}
-            <span>Author: <img src="/static/img/default.svg" width="20" height="20">{{ current_user.get_user(task_td.create_user) }}</span><br>
+            <span>{{ _('Author') }}: <img src="/static/img/default.svg" width="20" height="20">{{ current_user.get_user(task_td.create_user) }}</span><br>
         {% endif %}
     {% endif %}
 </div>
