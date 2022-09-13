@@ -468,7 +468,7 @@ def edit_task(id_task):
             form.deadline.data = task.deadline
 
             if task.date_completion is not None:
-                task.date_completion = task.date_completion.strftime('%d.%m.%y %H:%M')  # преобразование даты
+                task.date_completion = task.date_completion.strftime('%Y-%m-%d %H:%M:%S')  # преобразование даты
 
             return render_template('show_task.html', title=_('Task'), form=form, task=task, priorities=priority, complexities=complexity, categories=category)
 
