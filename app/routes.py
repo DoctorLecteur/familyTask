@@ -409,7 +409,7 @@ def next_status():
         if task.id_type_task == 3:
             duplicate_task(task, status)
     db.session.commit()
-    flash(_('Task %(title) success update', title=task.title))
+    flash(_('Task %(title)s success update', title=task.title))
     status_name = ""
     for s in range(0, len(status), 1):
         if status[s]["id"] == task.id_status:
@@ -430,7 +430,7 @@ def previous_status():
     if old_id_status == 3 and task.id_status == 2:
         task.date_completion = None
     db.session.commit()
-    flash(_('Task %(title) success update', title=task.title))
+    flash(_('Task %(title)s success update', title=task.title))
     status = get_status()
     status_name = ""
     for s in range(0, len(status), 1):
@@ -485,7 +485,7 @@ def edit_task(id_task):
                 task.id_complexity = form.complexity.data
                 task.id_category = form.category.data
                 db.session.commit()
-                flash(_('Task %(title) success update', title=task.title))
+                flash(_('Task %(title)s success update', title=task.title))
             return render_template('show_task.html', title=_('Task'), form=form, task=task, priorities=priority, complexities=complexity, categories=category)
 
     return redirect(url_for('tasks'))
