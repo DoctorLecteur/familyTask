@@ -10,7 +10,7 @@ from werkzeug.urls import url_parse
 from datetime import datetime, timedelta
 from pywebpush import webpush, WebPushException
 from app.email import send_password_reset_email
-from flask_babel import _, get_locale
+from flask_babel import _, get_locale, lazy_gettext as _l
 
 @app.before_request
 def before_request():
@@ -23,6 +23,24 @@ def before_request():
 @app.route('/index')
 @login_required
 def index():
+    category1 = Category(name="Дом")
+    category2 = Category(name="Животные")
+    category3 = Category(name="Готовка")
+    category4 = Category(name="Досуг")
+    category5 = Category(name="Поездки")
+    category6 = Category(name="Покупки")
+    category7 = Category(name="Другое")
+
+    db.session.add(category1)
+    db.session.add(category2)
+    db.session.add(category3)
+    db.session.add(category4)
+    db.session.add(category5)
+    db.session.add(category6)
+    db.session.add(category7)
+
+    db.session.commit()
+
     if current_user.is_authenticated and current_user.is_family(current_user):
         return redirect(url_for('tasks'))
     elif current_user.is_authenticated and not current_user.is_family(current_user):
@@ -79,7 +97,8 @@ def search():
         user_partner = Users.query.filter_by(username=search_from.username.data).first()
         errors = {}  #dict for errors
         if user_partner is None:
-            errors.update({'username': _('User %(username) not found. Repeat search.', username=search_from.username.data)})
+            text_error = _('User %(username)s not found. Repeat search.', username=search_from.username.data)
+            errors.update({'username': text_error})
             data = json.dumps(errors, ensure_ascii=True)
             return jsonify(data)
         if user_partner == current_user:
@@ -87,13 +106,15 @@ def search():
             data = json.dumps(errors, ensure_ascii=True)
             return jsonify(data)
         if user_partner.is_family(user_partner) > 0:
-            errors.update({'username': _('User %(username) have family!', username=search_from.username.data)})
+            text_error = _('User %(username)s have family!', username=search_from.username.data)
+            errors.update({'username': text_error})
             data = json.dumps(errors, ensure_ascii=True)
             return jsonify(data)
         current_user.create_family(user_partner)
         user_partner.create_family(current_user)
         db.session.commit()
-        flash(_('You are creating family with %(username)!', username=user_partner.username))
+        text_info = _('You are creating family with %(username)s!', username=user_partner.username)
+        flash(text_info)
         return jsonify(status='ok')
     elif request.method == 'GET':
         search_from.username.data = ''
