@@ -23,21 +23,37 @@ def before_request():
 @app.route('/index')
 @login_required
 def index():
-    category1 = Category(name="Дом")
-    category2 = Category(name="Животные")
-    category3 = Category(name="Готовка")
-    category4 = Category(name="Досуг")
-    category5 = Category(name="Поездки")
-    category6 = Category(name="Покупки")
-    category7 = Category(name="Другое")
+    complexity1 = Complexity(name="Низкая")
+    complexity2 = Complexity(name="Средняя")
+    complexity3 = Complexity(name="Высокая")
 
-    db.session.add(category1)
-    db.session.add(category2)
-    db.session.add(category3)
-    db.session.add(category4)
-    db.session.add(category5)
-    db.session.add(category6)
-    db.session.add(category7)
+    db.session.add(complexity1)
+    db.session.add(complexity2)
+    db.session.add(complexity3)
+
+    priority1 = Priority(name="Низкий")
+    priority2 = Priority(name="Средний")
+    priority3 = Priority(name="Высокий")
+
+    db.session.add(priority1)
+    db.session.add(priority2)
+    db.session.add(priority3)
+
+    status1 = Status(name="В куче")
+    status2 = Status(name="В работе")
+    status3 = Status(name="Готово")
+
+    db.session.add(status1)
+    db.session.add(status2)
+    db.session.add(status3)
+
+    type1 = TypeTask(name="Задача")
+    type2 = TypeTask(name="Подзадача")
+    type3 = TypeTask(name="Циклическая")
+
+    db.session.add(type1)
+    db.session.add(type2)
+    db.session.add(type3)
 
     db.session.commit()
 
