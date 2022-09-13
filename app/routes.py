@@ -181,10 +181,10 @@ def tasks():
     count_done = 0
     #заполнение таблицы с задачами
     for j in range(0, len(tasks)):
-        tasks[j].create_date = tasks[j].create_date.strftime('%d.%m.%y %H:%M') #преобразование даты
-        tasks[j].deadline = tasks[j].deadline.strftime('%d.%m.%y')  # преобразование даты
+        tasks[j].create_date = tasks[j].create_date.strftime('%Y-%m-%d %H:%M:%S') #преобразование даты
+        tasks[j].deadline = tasks[j].deadline.strftime('%Y-%m-%d %H:%M:%S')  # преобразование даты
         if tasks[j].date_completion is not None:
-            tasks[j].date_completion = tasks[j].date_completion.strftime('%d.%m.%y %H:%M')  # преобразование даты
+            tasks[j].date_completion = tasks[j].date_completion.strftime('%Y-%m-%d %H:%M:%S')  # преобразование даты
         for tr in range(0, len(list_tasks)):
             if list_tasks[tr][0] == 0 and tasks[j].id_status == 1:
                 list_tasks[tr][0] = tasks[j]
