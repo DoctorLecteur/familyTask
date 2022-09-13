@@ -21,6 +21,7 @@
             <a class="edit-modal-opener btn btn-primary" data-toggle="modal"
                 data-whatever="{{ url_for('add_subtask', task_id=task.id) }}" href="#">{{ _('Create Subtask') }}</a>
         {% endif %}
+        <a class="btn btn-dark" href="#">{{ _('Delete Task') }}</a>
         <div>
            <div style="float: left;">
                <p>
@@ -427,5 +428,21 @@
 
             }
         );
+        //удаление задачи
+        $('.btn-dark').click(function() {
+            doDeleteTask({{ task.id }});
+        });
+        function doDeleteTask(numTaskId) {
+
+            $.post('/delete_task', {
+                id_task: numTaskId
+            }).done(function(response) {
+                console.log('success delete');
+                location.reload();
+            }).fail(function() {
+                console.log('fail delete');
+            });
+
+        }
     </script>
 {% endblock %}

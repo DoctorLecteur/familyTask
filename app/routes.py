@@ -600,3 +600,13 @@ def duplicate_task(task, status):
     db.session.add(task)
     db.session.commit()
     flash(_('Task success added.'))
+
+@app.route('/delete_task', methods=['GET', 'POST'])
+@login_required
+def delete_task():
+    task = Tasks.query.filter_by(id=request.form["id_task"]).first()
+    if task is not None:
+        db.session.delete(task)
+        flash(_('Task %(title)s success delete', title=task.title))
+        db.session.commit()
+    return make_response('success')

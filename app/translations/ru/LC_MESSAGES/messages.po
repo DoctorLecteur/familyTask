@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-09-13 23:03+0300\n"
+"POT-Creation-Date: 2022-09-13 23:37+0300\n"
 "PO-Revision-Date: 2022-09-11 23:58+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -233,6 +233,10 @@ msgstr "Данное фото уже существует"
 msgid "Edit Photo"
 msgstr "Редактировать фото"
 
+#: app/routes.py:610
+msgid "Task %(title)s success delete"
+msgstr "Задача %(title)s успешно удалена"
+
 #: app/templates/404.html:4
 msgid "File Not Found"
 msgstr "Страница не найдена"
@@ -339,23 +343,27 @@ msgid "Date Completion"
 msgstr "Дата завершения"
 
 #: app/templates/tasks.html:20
+msgid "Delete Task"
+msgstr "Удалить задачу"
+
+#: app/templates/tasks.html:21
 msgid "My Tasks (I\"m author)"
 msgstr "Мои задачи (Я автор)"
 
-#: app/templates/tasks.html:21
+#: app/templates/tasks.html:22
 msgid "My Tasks (I\"m performer)"
 msgstr "Мои задачи (Я исполнитель)"
 
-#: app/templates/tasks.html:46 app/templates/tasks.html:47
-#: app/templates/tasks.html:48
+#: app/templates/tasks.html:47 app/templates/tasks.html:48
+#: app/templates/tasks.html:49
 msgid "Total"
 msgstr "Всего"
 
-#: app/templates/tasks.html:148
+#: app/templates/tasks.html:155
 msgid "In the "
 msgstr "По задаче"
 
-#: app/templates/tasks.html:148
+#: app/templates/tasks.html:155
 msgid " task, the status has been updated to "
 msgstr " был обновлен статус на"
 

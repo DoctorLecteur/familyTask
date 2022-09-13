@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-09-13 23:03+0300\n"
+"POT-Creation-Date: 2022-09-13 23:37+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -229,6 +229,11 @@ msgstr ""
 msgid "Edit Photo"
 msgstr ""
 
+#: app/routes.py:610
+#, python-format
+msgid "Task %(title)s success delete"
+msgstr ""
+
 #: app/templates/404.html:4
 msgid "File Not Found"
 msgstr ""
@@ -335,23 +340,27 @@ msgid "Date Completion"
 msgstr ""
 
 #: app/templates/tasks.html:20
-msgid "My Tasks (I\"m author)"
+msgid "Delete Task"
 msgstr ""
 
 #: app/templates/tasks.html:21
+msgid "My Tasks (I\"m author)"
+msgstr ""
+
+#: app/templates/tasks.html:22
 msgid "My Tasks (I\"m performer)"
 msgstr ""
 
-#: app/templates/tasks.html:46 app/templates/tasks.html:47
-#: app/templates/tasks.html:48
+#: app/templates/tasks.html:47 app/templates/tasks.html:48
+#: app/templates/tasks.html:49
 msgid "Total"
 msgstr ""
 
-#: app/templates/tasks.html:148
+#: app/templates/tasks.html:155
 msgid "In the "
 msgstr ""
 
-#: app/templates/tasks.html:148
+#: app/templates/tasks.html:155
 msgid " task, the status has been updated to "
 msgstr ""
 
