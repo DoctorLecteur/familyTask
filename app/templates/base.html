@@ -96,7 +96,7 @@
                                         dataType: 'json',
                                         data: JSON.stringify({
                                             "title": "FamilyTask",
-                                            "body":  "Add New Task " + data.title_task,
+                                            "body":  "{{ _("Add New Task") }} " + data.title_task,
                                             "param": sessionStorage.getItem("PushParam")
                                         })
 

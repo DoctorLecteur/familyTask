@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-09-12 23:13+0300\n"
+"POT-Creation-Date: 2022-09-13 23:03+0300\n"
 "PO-Revision-Date: 2022-09-11 23:58+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -143,90 +143,93 @@ msgid "Congratulations, you are now a registered user!"
 msgstr "Поздравляем, вы стали зарегистрированным пользователем!"
 
 #: app/routes.py:82
-msgid "User %(username) not found. Repeat search."
-msgstr "Пользователь %(username) не найден. Повторите поиск."
+#, python-format
+msgid "User %(username)s not found. Repeat search."
+msgstr "Пользователь %(username)s не найден. Повторите поиск."
 
-#: app/routes.py:86
+#: app/routes.py:87
 msgid "You cannot create family only yourself!"
 msgstr "Вы не можете создать семью"
 
-#: app/routes.py:90
-msgid "User %(username) have family!"
-msgstr "У пользователя %(username) есть семья!"
+#: app/routes.py:91
+#, python-format
+msgid "User %(username)s have family!"
+msgstr "У пользователя %(username)s есть семья!"
 
-#: app/routes.py:96
-msgid "You are creating family with %(username)!"
-msgstr "Вы создали семью с %(username)!"
+#: app/routes.py:98
+#, python-format
+msgid "You are creating family with %(username)s!"
+msgstr "Вы создали семью с %(username)s!"
 
-#: app/routes.py:103
+#: app/routes.py:106
 msgid "Search User"
 msgstr "Поиск пользователя"
 
-#: app/routes.py:112
+#: app/routes.py:115
 msgid "Your changes have been saved."
 msgstr "Ваши изменения были успешно сохранены"
 
-#: app/routes.py:119 app/templates/user.html:31
+#: app/routes.py:122 app/templates/user.html:31
 msgid "Edit Profile"
 msgstr "Редактировать профиль"
 
-#: app/routes.py:124 app/templates/base.html:26 app/templates/family.html:5
+#: app/routes.py:127 app/templates/base.html:26 app/templates/family.html:5
 msgid "Family"
 msgstr "Семья"
 
-#: app/routes.py:204 app/routes.py:263 app/templates/base.html:27
+#: app/routes.py:207 app/routes.py:266 app/templates/base.html:27
 #: app/templates/tasks.html:14
 msgid "Tasks"
 msgstr "Задачи"
 
-#: app/routes.py:342 app/routes.py:596
+#: app/routes.py:347 app/routes.py:602
 msgid "Task success added."
 msgstr "Задача успешно добавлена."
 
-#: app/routes.py:349 app/templates/tasks.html:16
+#: app/routes.py:354 app/templates/tasks.html:16
 msgid "Add Task"
 msgstr "Добавить задачу"
 
-#: app/routes.py:370
+#: app/routes.py:376
 msgid "Subtask success added."
 msgstr "Подзадача успешно добавлена."
 
-#: app/routes.py:377
+#: app/routes.py:383
 msgid "Add Subtask"
 msgstr "Добавить подзадачу"
 
-#: app/routes.py:406 app/routes.py:427 app/routes.py:482
+#: app/routes.py:412 app/routes.py:433 app/routes.py:488
 #, python-format
-msgid "Task %(title) success update"
-msgstr "Задача %(title) успешно обновлена"
+msgid "Task %(title)s success update"
+msgstr "Задача %(title)s успешно обновлена"
 
-#: app/routes.py:467 app/routes.py:483
+#: app/routes.py:473 app/routes.py:489
 msgid "Task"
 msgstr "Задача"
 
-#: app/routes.py:545
+#: app/routes.py:551
 msgid "Check your email for the instructions to reset your password"
 msgstr ""
 "Проверьте свою электронную почту, чтобы получить инструкции по сбросу "
 "пароля"
 
-#: app/routes.py:547 app/templates/reset_password.html:5
+#: app/routes.py:553 app/templates/reset_password.html:5
 msgid "Reset Password"
 msgstr "Сбросить пароль"
 
-#: app/routes.py:560
+#: app/routes.py:566
 msgid "Your password has been reset."
 msgstr "Ваш пароль успешно сброшен"
 
-#: app/routes.py:576
+#: app/routes.py:582
 msgid "Your photo has been update."
 msgstr "Ваше фото успешно обновлено"
 
-#: app/routes.py:579
+#: app/routes.py:585
 msgid "This photo is exists."
 msgstr "Данное фото уже существует"
 
-#: app/routes.py:585 app/templates/user.html:24
+#: app/routes.py:591 app/templates/user.html:24
 msgid "Edit Photo"
 msgstr "Редактировать фото"
 
@@ -270,6 +273,10 @@ msgstr "Профиль"
 #: app/templates/base.html:34
 msgid "Logout"
 msgstr "Выйти"
+
+#: app/templates/base.html:99
+msgid "Add New Task"
+msgstr "Добавлена новая задача"
 
 #: app/templates/family.html:16
 msgid "Family member№1 (You)"
@@ -338,6 +345,19 @@ msgstr "Мои задачи (Я автор)"
 #: app/templates/tasks.html:21
 msgid "My Tasks (I\"m performer)"
 msgstr "Мои задачи (Я исполнитель)"
+
+#: app/templates/tasks.html:46 app/templates/tasks.html:47
+#: app/templates/tasks.html:48
+msgid "Total"
+msgstr "Всего"
+
+#: app/templates/tasks.html:148
+msgid "In the "
+msgstr "По задаче"
+
+#: app/templates/tasks.html:148
+msgid " task, the status has been updated to "
+msgstr " был обновлен статус на"
 
 #: app/templates/user.html:27
 msgid "User"
