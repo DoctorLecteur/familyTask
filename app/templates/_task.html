@@ -49,7 +49,7 @@
         {% endif %}
         <a class="text-success" style="font-size: 110%; font-weight: bold;" href="{{ url_for('edit_task', id_task=task_td.id) }}">{{ task_td.title }}</a>
     {% endif %}
-    <span style="float: right; font-size: 90%; color: #7a7a7a; font-family: monospace;">{{ task_td.create_date }}</span>
+    <span style="float: right; font-size: 90%; color: #7a7a7a; font-family: monospace;">{{ moment(task_td.create_date).format('D.MM.YYYY, HH:mm') }}</span>
     <br>
     <span>{{ _('Type Task') }}: {{ task_td.get_type_task(task_td.id_type_task) }}</span><br>
     {% if task_td.id_users %}
@@ -60,10 +60,10 @@
         {% endif %}
     {% endif %}
     {% if task_td.id_status == 3 and task_td.date_completion %}
-        <span>{{ _('Done') }}: {{ task_td.date_completion }} </span><br>
+        <span>{{ _('Done') }}: {{ moment(task_td.date_completion).format('D.MM.YYYY, HH:mm') }} </span><br>
     {% else %}
         {% if task_td.id_status != 3 %}
-            <span>{{ _('Deadline') }}: {{ task_td.deadline }} </span><br>
+            <span>{{ _('Deadline') }}: {{ moment(task_td.deadline).format('D.MM.YYYY, HH:mm') }} </span><br>
         {% endif %}
     {% endif %}
     {% if task_td.create_user %}

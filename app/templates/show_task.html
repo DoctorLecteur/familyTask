@@ -170,8 +170,8 @@
                </p>
                {% if task.id_status == 3 and task.date_completion %}
                <p>
-                   <label for="date_completion">{{ _('Date Completion') }}</label><br>
-                   <input id="date_completion" name="date_completion" size="12" type="text" value="{{ task.date_completion }}">
+                   <span style="font-weight: bold;">{{ _('Date Completion') }}</span><br>
+                   <span>{{ moment(task.date_completion).format('D.MM.YYYY, HH:mm') }}</span><br>
                </p>
                {% endif %}
            </div>

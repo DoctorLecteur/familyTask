@@ -16,7 +16,6 @@
             <td>
                 {% if current_user.is_authenticated %}
                     {% if current_user.url_photo %}
-                        <!-- {{ current_user.get_photo_by_username(current_user.username) }} -->
                         <img src="{{ current_user.get_photo_by_username(current_user.username) }}" width="120" height="120"><br>
                     {% else %}
                         <img src="/static/img/default.svg" width="120" height="120"><br>
