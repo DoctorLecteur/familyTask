@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-09-13 23:37+0300\n"
+"POT-Creation-Date: 2022-09-14 20:54+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -201,7 +201,7 @@ msgstr ""
 msgid "Task %(title)s success update"
 msgstr ""
 
-#: app/routes.py:473 app/routes.py:489
+#: app/routes.py:473 app/routes.py:489 app/templates/show_task.html:290
 msgid "Task"
 msgstr ""
 
@@ -236,6 +236,11 @@ msgstr ""
 
 #: app/templates/404.html:4
 msgid "File Not Found"
+msgstr ""
+
+#: app/templates/404.html:5 app/templates/500.html:6
+#: app/templates/show_task.html:16
+msgid "Back"
 msgstr ""
 
 #: app/templates/500.html:4
@@ -311,10 +316,6 @@ msgstr ""
 msgid "Reset Your Password"
 msgstr ""
 
-#: app/templates/show_task.html:16
-msgid "Back"
-msgstr ""
-
 #: app/templates/show_task.html:18 app/templates/tasks.html:18
 msgid "To Work"
 msgstr ""
@@ -323,24 +324,28 @@ msgstr ""
 msgid "Create Subtask"
 msgstr ""
 
-#: app/templates/show_task.html:56
+#: app/templates/show_task.html:24 app/templates/tasks.html:20
+msgid "Delete Task"
+msgstr ""
+
+#: app/templates/show_task.html:57
 msgid "Subtask"
 msgstr ""
 
-#: app/templates/show_task.html:72 app/templates/show_task.html:77
+#: app/templates/show_task.html:73 app/templates/show_task.html:78
 msgid "Assign partner"
 msgstr ""
 
-#: app/templates/show_task.html:74 app/templates/show_task.html:77
+#: app/templates/show_task.html:75 app/templates/show_task.html:78
 msgid "Assign me"
 msgstr ""
 
-#: app/templates/show_task.html:172
+#: app/templates/show_task.html:173
 msgid "Date Completion"
 msgstr ""
 
-#: app/templates/tasks.html:20
-msgid "Delete Task"
+#: app/templates/show_task.html:290
+msgid "success update"
 msgstr ""
 
 #: app/templates/tasks.html:21

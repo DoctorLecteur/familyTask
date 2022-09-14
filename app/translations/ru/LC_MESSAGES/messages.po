@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-09-13 23:37+0300\n"
+"POT-Creation-Date: 2022-09-14 20:54+0300\n"
 "PO-Revision-Date: 2022-09-11 23:58+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -203,7 +203,7 @@ msgstr "Добавить подзадачу"
 msgid "Task %(title)s success update"
 msgstr "Задача %(title)s успешно обновлена"
 
-#: app/routes.py:473 app/routes.py:489
+#: app/routes.py:473 app/routes.py:489 app/templates/show_task.html:290
 msgid "Task"
 msgstr "Задача"
 
@@ -234,12 +234,18 @@ msgid "Edit Photo"
 msgstr "Редактировать фото"
 
 #: app/routes.py:610
+#, python-format
 msgid "Task %(title)s success delete"
 msgstr "Задача %(title)s успешно удалена"
 
 #: app/templates/404.html:4
 msgid "File Not Found"
 msgstr "Страница не найдена"
+
+#: app/templates/404.html:5 app/templates/500.html:6
+#: app/templates/show_task.html:16
+msgid "Back"
+msgstr "Назад"
 
 #: app/templates/500.html:4
 msgid "An unexpected error has occurred"
@@ -314,10 +320,6 @@ msgstr "Нажмите, чтобы сбросить его"
 msgid "Reset Your Password"
 msgstr "Сбросить пароль"
 
-#: app/templates/show_task.html:16
-msgid "Back"
-msgstr "Назад"
-
 #: app/templates/show_task.html:18 app/templates/tasks.html:18
 msgid "To Work"
 msgstr "В работу"
@@ -326,25 +328,30 @@ msgstr "В работу"
 msgid "Create Subtask"
 msgstr "Создать подзадачу"
 
-#: app/templates/show_task.html:56
-msgid "Subtask"
-msgstr "Подзадача"
+#: app/templates/show_task.html:24 app/templates/tasks.html:20
+msgid "Delete Task"
+msgstr "Удалить задачу"
 
-#: app/templates/show_task.html:72 app/templates/show_task.html:77
+#: app/templates/show_task.html:57
+#, fuzzy
+msgid "Subtask"
+msgstr "Добавить подзадачу"
+
+#: app/templates/show_task.html:73 app/templates/show_task.html:78
 msgid "Assign partner"
 msgstr "Назначить на партнера"
 
-#: app/templates/show_task.html:74 app/templates/show_task.html:77
+#: app/templates/show_task.html:75 app/templates/show_task.html:78
 msgid "Assign me"
-msgstr "Назначить на себя"
+msgstr "Назначить на меня"
 
-#: app/templates/show_task.html:172
+#: app/templates/show_task.html:173
 msgid "Date Completion"
 msgstr "Дата завершения"
 
-#: app/templates/tasks.html:20
-msgid "Delete Task"
-msgstr "Удалить задачу"
+#: app/templates/show_task.html:290
+msgid "success update"
+msgstr "успешно обновлена"
 
 #: app/templates/tasks.html:21
 msgid "My Tasks (I\"m author)"
@@ -377,4 +384,19 @@ msgstr "Поиск пользователя"
 
 #~ msgid "You are creating family with {}!"
 #~ msgstr ""
+
+#~ msgid "Create Subtask"
+#~ msgstr "Создать подзадачу"
+
+#~ msgid "Subtask"
+#~ msgstr "Подзадача"
+
+#~ msgid "Assign partner"
+#~ msgstr "Назначить на партнера"
+
+#~ msgid "Assign me"
+#~ msgstr "Назначить на себя"
+
+#~ msgid "Date Completion"
+#~ msgstr "Дата завершения"
 

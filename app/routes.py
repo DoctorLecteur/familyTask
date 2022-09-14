@@ -573,7 +573,12 @@ def upload():
     form = UploadForm()
     if request.method == 'POST':
         if form.validate_on_submit():
-            path = app.config['FOLDER_NAME_IMG'] + "/" + form.photo.data.filename
+            if (form.photo.data.filename.find(' ') > 0):
+                filename_str = form.photo.data.filename.split()
+                filename_photo = '_'.join(filename_str)
+            else:
+                filename_photo = form.photo.data.filename
+            path = app.config['FOLDER_NAME_IMG'] + "/" + filename_photo
             user = Users.query.filter_by(username=current_user.username, url_photo=path).first()
             if user is None:
                 photos.save(form.photo.data)#обновляем фото профиля

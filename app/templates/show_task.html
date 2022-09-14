@@ -287,7 +287,7 @@
                 $.post('/edit_task/{{ task.id }}', $('#editTask').serialize()
                 ).done(function(response) {
 
-                    const elem = '<div class="alert alert-info" role="alert">Task ' + $('#title').val() + ' success update</div>';
+                    const elem = '<div class="alert alert-info" role="alert">{{ _('Task') }} ' + $('#title').val() + ' {{ _('success update') }}</div>';
                     $('#editTask').before(elem);
                     setTimeout(
                         function() {
