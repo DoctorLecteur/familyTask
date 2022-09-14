@@ -333,14 +333,14 @@ def add_task():
            if period is not None:
                task = Tasks(id_type_task=form.type_task.data, title=form.title.data, id_priority=form.priority.data,
                         id_status=status[0]["id"], deadline=form.deadline.data, description=form.description.data,
-                        create_user=current_user.id, create_date=datetime.today().strftime("%Y-%m-%d %H:%M:%S"),
-                        date_completion=datetime.today().strftime("%Y-%m-%d %H:%M:%S"),
+                        create_user=current_user.id, create_date=datetime.utcnow().today().strftime("%Y-%m-%d %H:%M:%S"),
+                        date_completion=datetime.utcnow().today().strftime("%Y-%m-%d %H:%M:%S"),
                         id_complexity=form.complexity.data, id_category=form.category.data, period=period)
        else:
            task = Tasks(id_type_task=form.type_task.data, title=form.title.data, id_priority=form.priority.data,
                         id_status=status[0]["id"], deadline=form.deadline.data, description=form.description.data,
-                        create_user=current_user.id, create_date=datetime.today().strftime("%Y-%m-%d %H:%M:%S"),
-                        date_completion=datetime.today().strftime("%Y-%m-%d %H:%M:%S"),
+                        create_user=current_user.id, create_date=datetime.utcnow().today().strftime("%Y-%m-%d %H:%M:%S"),
+                        date_completion=datetime.utcnow().today().strftime("%Y-%m-%d %H:%M:%S"),
                         id_complexity=form.complexity.data, id_category=form.category.data)
        db.session.add(task)
        db.session.commit()
@@ -366,8 +366,8 @@ def add_subtask(task_id):
     if form.validate_on_submit():
        subtask = Tasks(id_type_task=2, title=form.title.data, id_priority=form.priority.data,
                     id_status=status[0]["id"], deadline=form.deadline.data, description=form.description.data,
-                    create_user=current_user.id, create_date=datetime.today().strftime("%Y-%m-%d %H:%M:%S"),
-                    date_completion=datetime.today().strftime("%Y-%m-%d %H:%M:%S"),
+                    create_user=current_user.id, create_date=datetime.utcnow().today().strftime("%Y-%m-%d %H:%M:%S"),
+                    date_completion=datetime.utcnow().today().strftime("%Y-%m-%d %H:%M:%S"),
                     id_complexity=form.complexity.data, id_category=form.category.data)
        db.session.add(subtask)
        current_task = Tasks.query.filter_by(id=task_id).first()
@@ -405,7 +405,7 @@ def next_status():
     if old_id_status == 1 and task.id_status == 2 and task.id_users is None: #заполняем исполнителя, если перевели в работу и исполнитель еще не указан
         task.id_users = current_user.id
     elif old_id_status == 2 and task.id_status == 3:
-        task.date_completion = datetime.today()
+        task.date_completion = datetime.utcnow().today()
         if task.id_type_task == 3:
             duplicate_task(task, status)
     db.session.commit()
@@ -601,7 +601,7 @@ def duplicate_task(task, status):
     deadline_time = task.date_completion + delta
     task = Tasks(id_type_task=task.id_type_task, title=task.title, id_priority=task.id_priority,
                  id_status=status[0]["id"], deadline=deadline_time.strftime("%Y-%m-%d %H:%M:%S"), description=task.description,
-                 create_user=current_user.id, create_date=datetime.today().strftime("%Y-%m-%d %H:%M:%S"),
+                 create_user=current_user.id, create_date=datetime.utcnow().today().strftime("%Y-%m-%d %H:%M:%S"),
                  id_complexity=task.id_complexity, id_category=task.id_category, period=task.period)
     db.session.add(task)
     db.session.commit()
