@@ -55,6 +55,15 @@
 {% endblock %}
 
 {% block scripts %}
+    <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
+    <script>
+      window.OneSignal = window.OneSignal || [];
+      OneSignal.push(function() {
+        OneSignal.init({
+          appId: "036dcce2-8bc5-4efa-b7a1-8194c502e9fb",
+        });
+      });
+    </script>
     {{ super() }}
     {{ moment.include_moment() }}
     {{ moment.lang(g.locale) }}
