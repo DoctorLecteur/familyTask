@@ -161,6 +161,12 @@
                     console.log('ServiceWorker registration failed: ', err);
                     return;
                 });
+                navigator.serviceWorker.register('/static/js/OneSignalSDKWorker.js').then(function (registration) {
+                    console.log('ServiceWorker OneSignalSDKWorker registration successful');
+                }, function (err) {
+                    console.log('ServiceWorker OneSignalSDKWorker registration failed: ', err);
+                    return;
+                });
             });
             return true;
         }
