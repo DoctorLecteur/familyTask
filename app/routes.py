@@ -11,6 +11,7 @@ from datetime import datetime, timedelta
 from pywebpush import webpush, WebPushException
 from app.email import send_password_reset_email
 from flask_babel import _, get_locale, lazy_gettext as _l
+from onesignal_sdk.client import Client
 
 @app.before_request
 def before_request():
@@ -523,6 +524,16 @@ def send_push_notification():
                               extra.code,
                               extra.errno,
                               extra.message)
+
+    else:
+        print('onesignal iphone')
+        APP_ID = '036dcce2-8bc5-4efa-b7a1-8194c502e9fb'
+        REST_API_KEY = 'OTAwOTk0NzItOTk1MC00N2JkLTgwYjEtMWQ4MzFiNDk4NTZl'
+        client = Client(app_id=APP_ID, rest_api_key=REST_API_KEY)
+        body = {
+            'device_type': 5
+        }
+        response = client.add_device(body)
 
     return make_response('success')
 
