@@ -131,6 +131,7 @@ def family():
 @login_required
 def tasks():
     print('ip addr', request.remote_addr)
+    print('user agent', request.headers.get('User-Agent'))
     form = EmptyForm()
     status = get_status()
     type_user = None
