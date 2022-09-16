@@ -130,6 +130,7 @@ def family():
 @app.route('/tasks', methods=['GET', 'POST'])
 @login_required
 def tasks():
+    print('ip addr', request.remote_addr)
     form = EmptyForm()
     status = get_status()
     type_user = None
