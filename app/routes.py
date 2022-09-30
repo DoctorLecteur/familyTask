@@ -500,6 +500,7 @@ def send_push_notification():
         "title": data_param["title"],
         "body": data_param["body"]
     })
+    print(data_param["param"])
     if data_param["param"] is not None:
         data_param_push_json_endpoint = json.loads(data_param["param"])["endpoint"]
         id_user_partner = current_user.get_id_by_username(current_user.get_partner(current_user))
@@ -533,7 +534,8 @@ def send_push_notification():
         send_email(data_param["title"],
                    sender=app.config['ADMINS'][0],
                    recipients=[partner_email],
-                   text_body=data_param["body"]
+                   text_body=data_param["body"],
+                   html_body=""
                    )
 
     return make_response('success')
