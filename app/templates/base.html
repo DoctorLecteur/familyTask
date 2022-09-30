@@ -62,6 +62,19 @@
         OneSignal.init({
           appId: "036dcce2-8bc5-4efa-b7a1-8194c502e9fb",
         });
+        let externalUserId = null;
+        $.ajax({
+            type: 'GET',
+            url: '/get_token_by_notify',
+            async: false,
+            success: function (response) {
+                externalUserId = response;
+            }
+        });
+
+        if (externalUserId.length < 256) {
+            OneSignal.setExternalUserId(externalUserId);
+        }
       });
     </script>
     {{ super() }}
@@ -140,7 +153,17 @@
             });
 
         });
+        /*//сохранение подписки OneSignal
+        $.post('/save_notification_one_signal'
+        ).done(function (response) {
 
+            console.log('done save_notification_one_signal');
+
+        }).fail(function () {
+
+            console.log('fail save_notification_one_signal');
+
+        });*/
         /*function checkWorkerAndPushManager () {
             if (!('serviceWorker' in navigator)) {
                 console.log('Workers are not supported.');

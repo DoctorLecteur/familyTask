@@ -189,6 +189,9 @@
 <row name="push_param" null="1" autoincrement="0">
 <datatype>VARCHAR(512)</datatype>
 <default>NULL</default></row>
+<row name="token_hash" null="1" autoincrement="0">
+<datatype>VARCHAR(512)</datatype>
+<default>NULL</default></row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>

@@ -169,6 +169,7 @@ class Subscription(db.Model):
     id = db.Column(db.Integer, primary_key=True, index=True)
     id_users = db.Column(db.Integer, db.ForeignKey('users.id'))
     push_param = db.Column(db.String(1024))
+    token_hash = db.Column(db.String(512))
 
     def __repr__(self):
         return '<Subscription {}>'.format(self.push_param)
