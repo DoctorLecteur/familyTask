@@ -63,6 +63,9 @@ class Users(UserMixin, db.Model):
     def get_id_by_username(self, username):
         return self.query.filter_by(username=username).first_or_404().id
 
+    def get_email_by_username(self, username):
+        return self.query.filter_by(username=username).first_or_404().email
+
     def get_reset_password_token(self, expires_in=600):
         return jwt.encode(
             {'reset_password': self.id, 'exp': time() + expires_in},
@@ -169,7 +172,6 @@ class Subscription(db.Model):
     id = db.Column(db.Integer, primary_key=True, index=True)
     id_users = db.Column(db.Integer, db.ForeignKey('users.id'))
     push_param = db.Column(db.String(1024))
-    token_hash = db.Column(db.String(512))
 
     def __repr__(self):
         return '<Subscription {}>'.format(self.push_param)

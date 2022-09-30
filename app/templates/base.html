@@ -55,28 +55,6 @@
 {% endblock %}
 
 {% block scripts %}
-    <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
-    <script>
-      window.OneSignal = window.OneSignal || [];
-      OneSignal.push(function() {
-        OneSignal.init({
-          appId: "036dcce2-8bc5-4efa-b7a1-8194c502e9fb",
-        });
-        let externalUserId = null;
-        $.ajax({
-            type: 'GET',
-            url: '/get_token_by_notify',
-            async: false,
-            success: function (response) {
-                externalUserId = response;
-            }
-        });
-
-        if (externalUserId.length < 256) {
-            OneSignal.setExternalUserId(externalUserId);
-        }
-      });
-    </script>
     {{ super() }}
     {{ moment.include_moment() }}
     {{ moment.lang(g.locale) }}
@@ -153,18 +131,7 @@
             });
 
         });
-        /*//сохранение подписки OneSignal
-        $.post('/save_notification_one_signal'
-        ).done(function (response) {
-
-            console.log('done save_notification_one_signal');
-
-        }).fail(function () {
-
-            console.log('fail save_notification_one_signal');
-
-        });*/
-        /*function checkWorkerAndPushManager () {
+        function checkWorkerAndPushManager () {
             if (!('serviceWorker' in navigator)) {
                 console.log('Workers are not supported.');
                 return;
@@ -182,12 +149,6 @@
                     console.log('ServiceWorker registration successful');
                 }, function (err) {
                     console.log('ServiceWorker registration failed: ', err);
-                    return;
-                });*/
-                /*navigator.serviceWorker.register('/static/js/OneSignalSDKWorker.js').then(function (registration) {
-                    console.log('ServiceWorker OneSignalSDKWorker registration successful');
-                }, function (err) {
-                    console.log('ServiceWorker OneSignalSDKWorker registration failed: ', err);
                     return;
                 });
             });
@@ -258,7 +219,7 @@
                 data: dataPushParam
             });
 
-        }*/
+        }
 
     </script>
 {% endblock %}

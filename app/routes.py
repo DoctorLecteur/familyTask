@@ -9,7 +9,7 @@ from app.models import Users, TypeTask, Priority, Status, Tasks, Complexity, Sub
 from werkzeug.urls import url_parse
 from datetime import datetime, timedelta
 from pywebpush import webpush, WebPushException
-from app.email import send_password_reset_email
+from app.email import send_password_reset_email, send_email
 from flask_babel import _, get_locale, lazy_gettext as _l
 from onesignal_sdk.client import Client
 import jwt
@@ -42,15 +42,6 @@ def login():
         if user is None or not user.check_password(form.password.data):
             flash(_('Invalid username or password'))
             return redirect(url_for('login'))
-        token = str(user.username) + request.headers.get('user-agent')
-        token_encode = jwt.encode({'token_push': token}, app.config['SECRET_KEY'], algorithm='HS256') #токен для отправки оповещений
-        if len(token_encode) > 256:
-            token_encode = token_encode[:255]
-        subscription_by_token = Subscription.query.filter_by(id_users=user.id, token_hash=token_encode).first()
-        if subscription_by_token is None:
-            subscription_by_token = Subscription(id_users=user.id, token_hash=token_encode)
-            db.session.add(subscription_by_token)
-            db.session.commit()
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
@@ -505,26 +496,7 @@ def save_notify():
 def send_push_notification():
     data = json.dumps(request.get_json())
     data_param = json.loads(data)
-    APP_ID = '036dcce2-8bc5-4efa-b7a1-8194c502e9fb'
-    REST_API_KEY = 'OTAwOTk0NzItOTk1MC00N2JkLTgwYjEtMWQ4MzFiNDk4NTZl'
-    client = Client(app_id=APP_ID, rest_api_key=REST_API_KEY)
-    user_partner = current_user.get_partner(current_user)
-    user_partner_id = current_user.get_id_by_username(user_partner)
-    subscriptions = Subscription.query.filter_by(id_users=user_partner_id).all()
-    array_include_external_user_ids = []
-    for item_subscription in range(0, len(subscriptions)):
-        if subscriptions[item_subscription].token_hash is not None:
-            array_include_external_user_ids.append(subscriptions[item_subscription].token_hash)
-    notification_body = {
-        "include_external_user_ids": array_include_external_user_ids,
-        "contents": {
-            "en": data_param["body"]
-        }
-    }
-    response_send_notification = client.send_notification(notification_body)
-    if response_send_notification.status_code == 200:
-        return make_response('success')
-    '''data_push = json.dumps({
+    data_push = json.dumps({
         "title": data_param["title"],
         "body": data_param["body"]
     })
@@ -553,7 +525,18 @@ def send_push_notification():
                         print('Remote service replied with a {}:{}, {}',
                               extra.code,
                               extra.errno,
-                              extra.message)'''
+                              extra.message)
+
+    else:
+        user_partner = current_user.get_partner(current_user)
+        partner_email = current_user.get_email_by_username(user_partner)
+        send_email(data_param["title"],
+                   sender=app.config['ADMINS'][0],
+                   recipients=[partner_email],
+                   text_body=data_param["body"]
+                   )
+
+    return make_response('success')
 
 @app.route('/reset_password_request', methods = ['GET', 'POST'])
 def reset_password_request():
@@ -631,23 +614,3 @@ def delete_task():
         flash(_('Task %(title)s success delete', title=task.title))
         db.session.commit()
     return make_response('success')
-
-@app.route('/save_notification_one_signal', methods=['GET', 'POST'])
-@login_required
-def save_notification_one_signal():
-    APP_ID = '036dcce2-8bc5-4efa-b7a1-8194c502e9fb'
-    REST_API_KEY = 'OTAwOTk0NzItOTk1MC00N2JkLTgwYjEtMWQ4MzFiNDk4NTZl'
-    client = Client(app_id=APP_ID, rest_api_key=REST_API_KEY)
-
-    return make_response('success')
-
-@app.route('/get_token_by_notify', methods=['GET', 'POST'])
-@login_required
-def get_token_by_notify():
-    token = str(current_user.username) + request.headers.get('user-agent')
-    token_encode = jwt.encode({'token_push': token}, app.config['SECRET_KEY'],
-                              algorithm='HS256') #токен для отправки оповещений
-    token_encode = token_encode[:255]
-    subscription_by_token = Subscription.query.filter_by(id_users=current_user.id, token_hash=token_encode).first()
-    if subscription_by_token is not None:
-        return make_response(subscription_by_token.token_hash)
