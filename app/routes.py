@@ -520,7 +520,7 @@ def send_push_notification():
                     print('I can\'t do that: {}'.format(repr(ex)))
                     print(ex)
                     if ex.response.status_code == 410:
-                        print('subscr', user_subscription[subscr])
+                        print('subscr', user_subscription[subscr].id_users, user_subscription[subscr].push_param)
                     # Mozilla returns additional information in the body of the response.
                     if ex.response and ex.response.json():
                         extra = ex.response.json()
