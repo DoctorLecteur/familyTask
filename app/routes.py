@@ -519,8 +519,9 @@ def send_push_notification():
                 except WebPushException as ex:
                     print('I can\'t do that: {}'.format(repr(ex)))
                     print(ex)
-                    print(ex.response)
-                    print(ex.message)
+                    print('response', ex.response)
+                    print('message', ex.message)
+                    print('dir', dir(ex.response))
                     # Mozilla returns additional information in the body of the response.
                     if ex.response and ex.response.json():
                         extra = ex.response.json()
