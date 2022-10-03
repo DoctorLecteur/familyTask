@@ -521,6 +521,8 @@ def send_push_notification():
                     print(ex)
                     if ex.response.status_code == 410:
                         print('subscr', user_subscription[subscr].id_users, user_subscription[subscr].push_param)
+                        db.session.delete(user_subscription[subscr])
+                        db.session.commit()
                     # Mozilla returns additional information in the body of the response.
                     if ex.response and ex.response.json():
                         extra = ex.response.json()
