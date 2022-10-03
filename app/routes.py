@@ -521,6 +521,7 @@ def send_push_notification():
                     print(ex)
                     print('response', ex.response)
                     print('message', ex.message)
+                    print('status code', ex.response.status_code)
                     print('dir', dir(ex.response))
                     # Mozilla returns additional information in the body of the response.
                     if ex.response and ex.response.json():
