@@ -500,7 +500,6 @@ def send_push_notification():
         "title": data_param["title"],
         "body": data_param["body"]
     })
-    print(data_param["param"])
     if data_param["param"] is not None:
         data_param_push_json_endpoint = json.loads(data_param["param"])["endpoint"]
         id_user_partner = current_user.get_id_by_username(current_user.get_partner(current_user))
@@ -520,6 +519,7 @@ def send_push_notification():
                 except WebPushException as ex:
                     print('I can\'t do that: {}'.format(repr(ex)))
                     print(ex)
+                    print(ex.response.json())
                     # Mozilla returns additional information in the body of the response.
                     if ex.response and ex.response.json():
                         extra = ex.response.json()
