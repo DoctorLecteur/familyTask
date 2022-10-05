@@ -485,8 +485,8 @@ def edit_task(id_task):
 def save_notify():
     subscr_all = Subscription.query.all()
     for s_all in range(0, len(subscr_all)):
-        print('id_users', subscr_all[s_all].id_users)
-        print('push_param', subscr_all[s_all].push_param)
+        print('s_all id_users', subscr_all[s_all].id_users)
+        print('s_all push_param', subscr_all[s_all].push_param)
     sub_user = str(request.get_json())
     subscriprion = Subscription.query.filter_by(id_users=current_user.id, push_param=sub_user).first()
     if subscriprion is None:
@@ -511,6 +511,7 @@ def send_push_notification():
         user_subscription = Subscription.query.filter_by(id_users=id_user_partner).all()
         for subscr in range(0, len(user_subscription)):
             push_param = json.loads((user_subscription[subscr].push_param).replace('\'', '\"').replace("None", "\"\""))
+            print('webpush push param', push_param)
             if (data_param_push_json_endpoint != push_param['endpoint']): #не отправляем оповещение в браузер в котором произошло действие
                 try:
                     webpush(
