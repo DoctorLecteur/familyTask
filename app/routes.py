@@ -487,9 +487,9 @@ def save_notify():
     for s_all in range(0, len(subscr_all)):
         print('s_all id_users', subscr_all[s_all].id_users)
         print('s_all push_param', subscr_all[s_all].push_param)
-        if subscr_all[s_all].push_param is None:
-            db.session.delete(subscr_all[s_all])
-            db.session.commit()
+        #if subscr_all[s_all].push_param is None:
+        db.session.delete(subscr_all[s_all])
+        db.session.commit()
     sub_user = str(request.get_json())
     subscriprion = Subscription.query.filter_by(id_users=current_user.id, push_param=sub_user).first()
     if subscriprion is None:
