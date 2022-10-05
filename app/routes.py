@@ -504,12 +504,12 @@ def send_push_notification():
         "title": data_param["title"],
         "body": data_param["body"]
     })
+    print('data_param["param"]', data_param["param"])
     if data_param["param"] is not None:
         data_param_push_json_endpoint = json.loads(data_param["param"])["endpoint"]
         id_user_partner = current_user.get_id_by_username(current_user.get_partner(current_user))
         user_subscription = Subscription.query.filter_by(id_users=id_user_partner).all()
         for subscr in range(0, len(user_subscription)):
-            print(user_subscription[subscr].id_users, user_subscription[subscr].push_param)
             push_param = json.loads((user_subscription[subscr].push_param).replace('\'', '\"').replace("None", "\"\""))
             if (data_param_push_json_endpoint != push_param['endpoint']): #не отправляем оповещение в браузер в котором произошло действие
                 try:
