@@ -69,7 +69,6 @@
         $('.btn-warning').hide();
         $('.btn-success').hide();
         $('.btn-danger').hide();
-        $('.btn-dark').show();
         let url = '/check_task';
         //добавляем рамку на текущий блок с задачей и убираем с предыдущего
         $(this).css("border", "2px solid #21c1cc");
@@ -126,6 +125,24 @@
 
         }).fail(function() {
             console.log('fail');
+        });
+
+        $.post('/check_subtask', {//скрываем кнопки Готово и Удалить задачу, если есть подзадачи
+            id_task: this["id"]
+        }).done(function(response) {
+            const bIsSubTask = (response === "false") ? false : true;
+            if (bIsSubTask === true) {
+
+                $('.btn-dark').hide();
+                $('.btn-success').hide();
+
+            } else {
+
+                $('.btn-dark').show();
+
+            }
+        }).fail(function() {
+            console.log('check_subtask fail');
         });
 
         $('.btn-dark').click(function() {

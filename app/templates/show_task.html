@@ -53,7 +53,7 @@
                        {% endfor %}
                    {% endif %}
                </p>
-               {% if task.is_subtask(task) > 0 %}
+               {% if task.is_subtask(task) %}
                    <span style="font-size: 110%; font-weight: bold;">{{ _('Subtask') }}</span><br>
                    {% for subtask in task.get_subtasks(task) %}
                        <a style="font-size: 110%; font-weight: bold;" href="{{ url_for('edit_task', id_task=subtask.id) }}">{{ subtask.title }}</a><br>
@@ -190,6 +190,19 @@
                 $('.btn-success').hide();
                 $('.btn-danger').hide();
 
+                const bIsSubTask = ("{{ task.is_subtask(task) }}" === "False") ? false : true;
+                if (bIsSubTask === false) { //скрытие кнопки удаления задачи, если есть подзадачи
+
+                    $('.btn-dark').show();
+                    //$('.btn-success').show();
+
+                } else if (bIsSubTask === true) {
+
+                    $('.btn-dark').hide();
+                    //$('.btn-success').hide();
+
+                }
+
                 const nTaskStatusId = {{ task.id_status }}
                 const typeTaskId = {{ task.id_type_task }}
                 if (nTaskStatusId === 1) {
@@ -200,7 +213,16 @@
                 }
                 if (nTaskStatusId === 2) {
 
-                    $('.btn-success').show();
+                    if (bIsSubTask === false) {
+
+                        $('.btn-success').show();
+
+                    } else {
+
+                        $('.btn-success').hide();
+
+                    }
+
                     if (typeTaskId !== 3) {
 
                         $('.btn-danger').show();

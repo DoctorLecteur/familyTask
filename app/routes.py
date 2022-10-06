@@ -485,8 +485,6 @@ def edit_task(id_task):
 def save_notify():
     subscr_all = Subscription.query.all()
     for s_all in range(0, len(subscr_all)):
-        print('s_all id_users', subscr_all[s_all].id_users)
-        print('s_all push_param', subscr_all[s_all].push_param)
         if subscr_all[s_all].push_param is None:
             db.session.delete(subscr_all[s_all])
             db.session.commit()
@@ -507,18 +505,13 @@ def send_push_notification():
         "title": data_param["title"],
         "body": data_param["body"]
     })
-    print('data_param["param"]', data_param["param"])
     if data_param["param"] is not None:
         data_param_push_json_endpoint = json.loads(data_param["param"])["endpoint"]
         id_user_partner = current_user.get_id_by_username(current_user.get_partner(current_user))
         user_subscription = Subscription.query.filter_by(id_users=id_user_partner).all()
         for subscr in range(0, len(user_subscription)):
             push_param = json.loads((user_subscription[subscr].push_param).replace('\'', '\"').replace("None", "\"\""))
-            print('webpush push param', push_param)
             if (data_param_push_json_endpoint != push_param['endpoint']): #не отправляем оповещение в браузер в котором произошло действие
-                print('data_param_push_json_endpoint', data_param_push_json_endpoint)
-                print('push_param["endpoint"]', push_param['endpoint'])
-                print('data push', data_push)
                 try:
                     webpush(
                         subscription_info=push_param,
@@ -631,3 +624,12 @@ def delete_task():
         flash(_('Task %(title)s success delete', title=task.title))
         db.session.commit()
     return make_response('success')
+
+@app.route('/check_subtask', methods=['POST'])
+@login_required
+def check_subtask():
+    task = Tasks.query.filter_by(id=request.form["id_task"]).first()
+    if task.is_subtask(task):
+        return make_response("true")
+    else:
+        return make_response("false")
