@@ -45,9 +45,10 @@
               </td>
               <td>
                 <select style="width: 100px; height: 26px;" name="period_time" readonly>
-                  <option value="Minute">Minute</option>
-                  <option value="Hours">Hours</option>
                   <option value="Days">Days</option>
+                  <option value="Weeks">Weeks</option>
+                  <option value="Months">Months</option>
+                  <option value="Years">Years</option>
                 </select>
               </td>
             </tr>
@@ -148,7 +149,49 @@
         function() {
 
            $('#period_time').val($(this).val());
+           const deadline = new Date(); //прибавляем срок по периоду к текущей дате
+           if ($(this).val() === "Days") {
+
+               deadline.setDate(deadline.getDate() + Number($('#period_count').val()));
+
+           }
+           if ($(this).val() === "Weeks") {
+
+               deadline.setDate(deadline.getDate() + Number($('#period_count').val()) * 7);
+
+           }
+           if ($(this).val() === "Months") {
+
+               deadline.setMonth(deadline.getMonth() + Number($('#period_count').val()));
+
+           }
+           if ($(this).val() === "Years") {
+
+               deadline.setFullYear(deadline.getFullYear() + Number($('#period_count').val()));
+
+           }
+
+           let sDeadlineByDate = deadline.getFullYear() + "-" + (deadline.getMonth() + 1);
+           if (deadline.getDate() < 10) {
+
+               sDeadlineByDate += "-0" + deadline.getDate();
+
+           } else {
+
+               sDeadlineByDate += "-" + deadline.getDate();
+
+           }
+
+
+
+           $('#deadline').val(sDeadlineByDate);
 
         });
+
+        $('#title').change(
+          function() {
+            $('#description').val($(this).val());
+          }
+        );
     </script>
 {% endblock %}

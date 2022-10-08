@@ -149,6 +149,9 @@
 <row name="period" null="1" autoincrement="0">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
+<row name="period_time" null="1" autoincrement="0">
+<datatype>VARCHAR(24)</datatype>
+<default>NULL</default></row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>

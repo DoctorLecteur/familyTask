@@ -11,6 +11,7 @@ from datetime import datetime, timedelta
 from pywebpush import webpush, WebPushException
 from app.email import send_password_reset_email, send_email
 from flask_babel import _, get_locale, lazy_gettext as _l
+from dateutil.relativedelta import relativedelta
 from onesignal_sdk.client import Client
 import jwt
 from time import time
@@ -318,18 +319,12 @@ def add_task():
 
     if form.validate_on_submit():
        if form.type_task.data == 3:
-           if form.period_time.data == 'Hours':
-               period = form.period_count.data * 60
-           elif form.period_time.data == 'Days':
-               period = form.period_count.data * 24 * 60
-           else:
-               period = form.period_count.data
-
-           if period is not None:
+           if form.period_count.data is not None:
                task = Tasks(id_type_task=form.type_task.data, title=form.title.data, id_priority=form.priority.data,
                         id_status=status[0]["id"], deadline=form.deadline.data, description=form.description.data,
                         create_user=current_user.id, create_date=datetime.today(), date_completion=datetime.utcnow(),
-                        id_complexity=form.complexity.data, id_category=form.category.data, period=period)
+                        id_complexity=form.complexity.data, id_category=form.category.data, period=form.period_count.data,
+                        period_type=form.period_time.data)
        else:
            task = Tasks(id_type_task=form.type_task.data, title=form.title.data, id_priority=form.priority.data,
                         id_status=status[0]["id"], deadline=form.deadline.data, description=form.description.data,
@@ -605,12 +600,20 @@ def upload():
     return render_template("_modal_upload_file.html", form=form, title=_('Edit Photo'))
 
 def duplicate_task(task, status):
-    delta = timedelta(minutes=task.period)
-    deadline_time = task.date_completion + delta
+    if task.period_type == "Days":
+        delta = timedelta(days=task.period)
+        deadline_time = task.date_completion + delta
+    elif task.period_type == "Weeks":
+        delta = timedelta(weeks=task.period)
+        deadline_time = task.date_completion + delta
+    elif task.period_type == "Months":
+        deadline_time = task.date_completion + relativedelta(months=+task.period)
+    elif task.period_type == "Years":
+        deadline_time = task.date_completion + relativedelta(years=+task.period)
     task = Tasks(id_type_task=task.id_type_task, title=task.title, id_priority=task.id_priority,
                  id_status=status[0]["id"], deadline=deadline_time, description=task.description,
-                 create_user=current_user.id, create_date=datetime.utcnow(),
-                 id_complexity=task.id_complexity, id_category=task.id_category, period=task.period)
+                 create_user=current_user.id, create_date=datetime.utcnow(),id_complexity=task.id_complexity,
+                 id_category=task.id_category, period=task.period, period_type=task.period_type)
     db.session.add(task)
     db.session.commit()
     flash(_('Task success added.'))
