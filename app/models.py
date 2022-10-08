@@ -127,7 +127,7 @@ class Tasks(db.Model):
     id_complexity = db.Column(db.Integer, db.ForeignKey('complexity.id'))
     id_category = db.Column(db.Integer, db.ForeignKey('category.id'))
     period = db.Column(db.Integer)
-    period_type = db.Column(db.String(24))
+    #period_type = db.Column(db.String(24))
 
     subtask =  db.relationship(
         'Tasks', secondary=subtasks,
