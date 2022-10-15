@@ -36,6 +36,57 @@
                    {% endif %}
                </p>
                <p>
+                   {% if task.id_status == 3 %}
+                       <select name="type_task" readonly>
+                       {% for type in typies %}
+                           {% if type.id == task.id_type_task %}
+                               <option disabled selected value="{{ type.id }}">{{ type.name }}</option>
+                           {% endif %}
+                       {% endfor %}
+                       </select>
+                   {% else %}
+                       <select name="type_task">
+                       {% for type in typies %}
+                           {% if type.id == task.id_type_task %}
+                               <option selected value="{{ type.id }}">{{ type.name }}</option>
+                           {% else %}
+                               <option value="{{ type.id }}">{{ type.name }}</option>
+                           {% endif %}
+                       {% endfor %}
+                       </select>
+                   {% endif %}
+                   {% for error in form.type_task.errors %}
+                       <span style="color: red;">[{{ error }}]</span>
+                   {% endfor %}
+               </p>
+               <p>
+                <table id="period">
+                  <thead>
+                    <th>{{ form.period_count.label }}</th>
+                    <th>Period Time</th>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        {{ form.period_count(size=64) }}
+                        {% for error in form.period_count.errors %}
+                          <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                      </td>
+                      <td>
+                        <select style="width: 100px; height: 26px;" name="period_type" readonly>
+                          <option value="Days">Days</option>
+                          <option value="Weeks">Weeks</option>
+                          <option value="Months">Months</option>
+                          <option value="Years">Years</option>
+                        </select>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                {{ form.period_time(size=10) }}
+               </p>
+               <p>
                    {{ form.status.label }}<br>
                    {{ form.status(size=16, readonly=True) }}
                    {% for error in form.status.errors %}
@@ -194,17 +245,30 @@
                 if (bIsSubTask === false) { //скрытие кнопки удаления задачи, если есть подзадачи
 
                     $('.btn-dark').show();
-                    //$('.btn-success').show();
 
                 } else if (bIsSubTask === true) {
 
                     $('.btn-dark').hide();
-                    //$('.btn-success').hide();
 
                 }
 
-                const nTaskStatusId = {{ task.id_status }}
-                const typeTaskId = {{ task.id_type_task }}
+                const nTaskStatusId = {{ task.id_status }};
+                const typeTaskId = {{ task.id_type_task }};
+
+                if (typeTaskId !== 3) {//показать и скрытие элементов для циклических задач
+
+                    $('#period').hide();
+                    $('#period_time').hide();
+                    $('#period_time').val("");
+
+                } else {
+
+                    $('#period').show();
+                    $('#period_time').hide();
+                    $('select[name=period_type]').val($('#period_time').val());
+
+                }
+
                 if (nTaskStatusId === 1) {
 
                     $('.btn-warning').show();
@@ -226,6 +290,7 @@
                     if (typeTaskId !== 3) {
 
                         $('.btn-danger').show();
+
 
                     } else {
 
@@ -397,6 +462,123 @@
 
                 doPostUpdateTask($(this).val(), oldTitle);
                 oldTitle = $(this).val();
+
+            }
+        );
+        //обновление типа задачи
+        let oldTypeTask = $('select[name=type_task]').val();
+        $('select[name=type_task]').change(
+            function() {
+
+                if (+$(this).val() === 3) {
+
+                    $('#period').show();
+
+                } else {
+
+                    $('#period').hide();
+                    $('#period_time').hide();
+                    $('#period_time').val("");
+
+                }
+
+                doPostUpdateTask($(this).val(), oldTypeTask);
+                oldTypeTask = $(this).val();
+
+            }
+        );
+        //обвноления времени периода и срока в циклических задачах
+        let oldPeriodCount = $('#period_count').val();
+        $("#period_count").mouseleave(
+            function() {
+
+                const periodType = $('select[name=period_type]').val();
+                const deadline = new Date(); //прибавляем срок по периоду к текущей дате
+                if (periodType === "Days") {
+
+                    deadline.setDate(deadline.getDate() + Number($('#period_count').val()));
+
+                }
+                if (periodType === "Weeks") {
+
+                    deadline.setDate(deadline.getDate() + Number($('#period_count').val()) * 7);
+
+                }
+                if (periodType === "Months") {
+
+                    deadline.setMonth(deadline.getMonth() + Number($('#period_count').val()));
+
+                }
+                if (periodType === "Years") {
+
+                    deadline.setFullYear(deadline.getFullYear() + Number($('#period_count').val()));
+
+                }
+
+                let sDeadlineByDate = deadline.getFullYear() + "-" + (deadline.getMonth() + 1);
+                if (deadline.getDate() < 10) {
+
+                    sDeadlineByDate += "-0" + deadline.getDate();
+
+                } else {
+
+                    sDeadlineByDate += "-" + deadline.getDate();
+
+                }
+
+                $('#deadline').val(sDeadlineByDate);
+
+                doPostUpdateTask($(this).val(), oldPeriodCount);
+                oldPeriodCount = $(this).val();
+
+            }
+        );
+        //обвноления типа периода и срока в циклических задачах
+        let oldPeriodType = $('#period_time').val();
+        $("select[name=period_type]").change(
+            function() {
+
+                const periodType = $(this).val();
+                const deadline = new Date(); //прибавляем срок по периоду к текущей дате
+                if (periodType === "Days") {
+
+                    deadline.setDate(deadline.getDate() + Number($('#period_count').val()));
+
+                }
+                if (periodType === "Weeks") {
+
+                    deadline.setDate(deadline.getDate() + Number($('#period_count').val()) * 7);
+
+                }
+                if (periodType === "Months") {
+
+                    deadline.setMonth(deadline.getMonth() + Number($('#period_count').val()));
+
+                }
+                if (periodType === "Years") {
+
+                    deadline.setFullYear(deadline.getFullYear() + Number($('#period_count').val()));
+
+                }
+
+
+                let sDeadlineByDate = deadline.getFullYear() + "-" + (deadline.getMonth() + 1);
+                if (deadline.getDate() < 10) {
+
+                    sDeadlineByDate += "-0" + deadline.getDate();
+
+                } else {
+
+                    sDeadlineByDate += "-" + deadline.getDate();
+
+                }
+
+                $('#deadline').val(sDeadlineByDate);
+
+                $('#period_time').val(periodType);
+                console.log("period time", $('#period_time').val());
+                doPostUpdateTask($('#period_time').val(), oldPeriodType);
+                oldPeriodType = $('#period_time').val();
 
             }
         );

@@ -435,11 +435,13 @@ def previous_status():
 def edit_task(id_task):
     task = Tasks.query.filter_by(id=id_task).first()
     if task is not None:
+        type_task = get_type_task()
         priority = get_priotity()
         complexity = get_complexity()
         status = get_status()
         category = get_category()
         form = ShowTaskForm()
+
         if request.method == 'GET':
             # заполнение исполнителя
             if task.id_users is not None:
@@ -451,14 +453,19 @@ def edit_task(id_task):
                     form.status.data = status[s]["name"]
 
             form.title.data = task.title
+            if task.id_type_task == 3:
+                form.period_count.data = task.period
+                form.period_time.data = task.period_type
             form.description.data = task.description
             form.deadline.data = task.deadline
 
-            return render_template('show_task.html', title=_('Task'), form=form, task=task, priorities=priority, complexities=complexity, categories=category)
+            return render_template('show_task.html', title=_('Task'), form=form, task=task, priorities=priority,
+                                   complexities=complexity, categories=category, typies=type_task)
 
         elif request.method == 'POST':
             if form.validate_on_submit():
                 task.title = form.title.data
+                task.id_type_task = form.type_task.data
                 task.description = form.description.data
 
                 if form.user.data is not None and form.user.data != "":
@@ -468,9 +475,13 @@ def edit_task(id_task):
                 task.deadline = form.deadline.data
                 task.id_complexity = form.complexity.data
                 task.id_category = form.category.data
+                task.period = form.period_count.data
+                print('period time', form.period_time.data)
+                task.period_type = form.period_time.data
                 db.session.commit()
                 flash(_('Task %(title)s success update', title=task.title))
-            return render_template('show_task.html', title=_('Task'), form=form, task=task, priorities=priority, complexities=complexity, categories=category)
+            return render_template('show_task.html', title=_('Task'), form=form, task=task, priorities=priority,
+                                   complexities=complexity, categories=category, typies=type_task)
 
     return redirect(url_for('tasks'))
 

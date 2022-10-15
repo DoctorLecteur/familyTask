@@ -127,7 +127,6 @@
         $('#period').hide();
         $('#period_time').hide();
         $('#period_count').val(1);
-        $('#period_time').val("Minute");
         $('select[name=type_task]').change(
             function() {
                 if (+$(this).val() === 3) {
@@ -148,7 +147,6 @@
         $('select[name=period_time]').change(
         function() {
 
-           $('#period_time').val($(this).val());
            const deadline = new Date(); //прибавляем срок по периоду к текущей дате
            if ($(this).val() === "Days") {
 
@@ -182,16 +180,8 @@
 
            }
 
-
-
            $('#deadline').val(sDeadlineByDate);
 
         });
-
-        $('#title').change(
-          function() {
-            $('#description').val($(this).val());
-          }
-        );
     </script>
 {% endblock %}

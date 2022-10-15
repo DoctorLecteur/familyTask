@@ -54,8 +54,7 @@ class AddTaskForm(FlaskForm):
     complexity = IntegerField(_l('Complexity'))
     category = IntegerField(_l('Category'))
     deadline = DateField(_l('Deadline'), format='%Y-%m-%d')
-    description = TextAreaField(_l('Description'), validators=[DataRequired(),
-                                                         Length(min=5, max=1024, message=_l('Name length must be between %(min)d and %(max)d characters', min=5, max=1024))])
+    description = TextAreaField(_l('Description'))
 
 class EmptyForm(FlaskForm):
     submit = SubmitField('Submit')
@@ -65,6 +64,9 @@ class ShowTaskForm(FlaskForm):
                         validators=[DataRequired(),
                                     Length(min=5, max=64,
                                            message=_l('Name length must be between %(min)d and %(max)dcharacters', min=5, max=64))])
+    type_task = StringField(_l('Type task'))
+    period_count = IntegerField(_l('Period Count'), validators=[NumberRange(min=1)])
+    period_time = StringField(_l('Period Time'))
     status = StringField(_l('Status'))
     description = TextAreaField(_l('Description'), validators=[DataRequired(),
                                                            Length(min=5, max=1024,
