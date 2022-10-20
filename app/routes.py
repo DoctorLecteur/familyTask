@@ -556,6 +556,10 @@ def send_push_notification():
                    html_body=""
                    )
 
+    user_partner = current_user.get_partner(current_user)
+    print('user_partner', user_partner)
+    partner_email = current_user.get_email_by_username(user_partner)
+    print('partner_email', partner_email)
     return make_response('success')
 
 @app.route('/reset_password_request', methods = ['GET', 'POST'])
