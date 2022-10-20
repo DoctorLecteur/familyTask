@@ -122,8 +122,14 @@
                        {% if task.id_users %}
                            {% if task.id_users == current_user.id %}
                                <a id="link1" href="#">{{ _('Assign partner') }}</a>
+                               {% if task.id_status == 1%}
+                               |<a id="link5" href="#">{{ _('Remove the performer') }}</a>
+                               {% endif %}
                            {% elif task.id_users != current_user.id %}
                                <a id="link2" href="#">{{ _('Assign me') }}</a>
+                               {% if task.id_status == 1%}
+                               |<a id="link5" href="#">{{ _('Remove the performer') }}</a>
+                               {% endif %}
                            {% endif %}
                        {% else %}
                             <a id="link3" href="#">{{ _('Assign me') }}</a>|<a id="link4" href="#">{{ _('Assign partner') }}</a>
@@ -240,6 +246,7 @@
                 $('.btn-warning').hide();
                 $('.btn-success').hide();
                 $('.btn-danger').hide();
+                $('#period_count').val(1);
 
                 const bIsSubTask = ("{{ task.is_subtask(task) }}" === "False") ? false : true;
                 if (bIsSubTask === false) { //скрытие кнопки удаления задачи, если есть подзадачи
@@ -334,7 +341,7 @@
                     dataType: 'json',
                     data: JSON.stringify({
                         "title": "FamilyTask",
-                        "body":  "In the " + response["title_task"] + " task, the status has been updated to " + response["status_name"],
+                        "body":  "{{ _("In the ") }} " + response["title_task"] + "{{ _(" task, the status has been updated to ") }} " + response["status_name"],
                         "param": sessionStorage.getItem("PushParam")
                     })
 
@@ -346,7 +353,7 @@
             });
 
         }
-        const idTask = {{ task.id }}
+        const idTask = {{ task.id }};
         //действие при нажатии кнопки в работу
         $('.btn-warning').click(function() {
 
@@ -409,7 +416,7 @@
                     dataType: 'json',
                     data: JSON.stringify({
                         "title": "FamilyTask",
-                        "body":  "Task {{ task.title }} is assigned to you",
+                        "body":  "{{ _("Task ") }} " + "{{ task.title }}" + " {{ _("is assigned to you") }}",
                         "param": sessionStorage.getItem("PushParam")
                     })
 
@@ -482,8 +489,21 @@
 
                 }
 
-                doPostUpdateTask($(this).val(), oldTypeTask);
-                oldTypeTask = $(this).val();
+                if (+$(this).val() === 3) {
+
+                    if ($('#period_count').val() && $('#period_time').val()) {
+
+                        doPostUpdateTask($(this).val(), oldTypeTask);
+                        oldTypeTask = $(this).val();
+
+                    }
+
+                } else {
+
+                    doPostUpdateTask($(this).val(), oldTypeTask);
+                    oldTypeTask = $(this).val();
+
+                }
 
             }
         );
@@ -648,5 +668,13 @@
             });
 
         }
+        //очистка исполнителя
+        $("#link5").click(
+            function() {
+
+                doUpdatePerformer($('#user').val(), "");
+
+            }
+        );
     </script>
 {% endblock %}

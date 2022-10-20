@@ -467,17 +467,18 @@ def edit_task(id_task):
                 task.title = form.title.data
                 task.id_type_task = form.type_task.data
                 task.description = form.description.data
-
                 if form.user.data is not None and form.user.data != "":
                     task.id_users = current_user.get_id_by_username(form.user.data)
+                else:
+                    task.id_users = None
 
                 task.id_priority = form.priority.data
                 task.deadline = form.deadline.data
                 task.id_complexity = form.complexity.data
                 task.id_category = form.category.data
-                task.period = form.period_count.data
-                print('period time', form.period_time.data)
-                task.period_type = form.period_time.data
+                if task.id_type_task == 3:
+                    task.period = form.period_count.data
+                    task.period_type = form.period_time.data
                 db.session.commit()
                 flash(_('Task %(title)s success update', title=task.title))
             return render_template('show_task.html', title=_('Task'), form=form, task=task, priorities=priority,

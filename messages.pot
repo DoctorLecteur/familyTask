@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-09-14 20:54+0300\n"
+"POT-Creation-Date: 2022-10-15 18:41+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -29,8 +29,7 @@ msgstr ""
 msgid "Username"
 msgstr ""
 
-#: app/forms.py:12 app/forms.py:20 app/forms.py:40 app/forms.py:58
-#: app/forms.py:71
+#: app/forms.py:12 app/forms.py:20 app/forms.py:40
 #, python-format
 msgid "Name length must be between %(min)d and %(max)d characters"
 msgstr ""
@@ -43,7 +42,7 @@ msgstr ""
 msgid "Remember me"
 msgstr ""
 
-#: app/forms.py:15 app/routes.py:47 app/templates/login.html:5
+#: app/forms.py:15 app/routes.py:51 app/templates/login.html:5
 msgid "Sign In"
 msgstr ""
 
@@ -55,7 +54,7 @@ msgstr ""
 msgid "Repeat Password"
 msgstr ""
 
-#: app/forms.py:25 app/routes.py:66 app/templates/register.html:5
+#: app/forms.py:25 app/routes.py:70 app/templates/register.html:5
 msgid "Register"
 msgstr ""
 
@@ -67,23 +66,23 @@ msgstr ""
 msgid "Please use a different email address."
 msgstr ""
 
-#: app/forms.py:47
+#: app/forms.py:47 app/forms.py:67
 msgid "Type task"
 msgstr ""
 
-#: app/forms.py:48
+#: app/forms.py:48 app/forms.py:68
 msgid "Period Count"
 msgstr ""
 
-#: app/forms.py:49
+#: app/forms.py:49 app/forms.py:69
 msgid "Period Time"
 msgstr ""
 
-#: app/forms.py:50 app/forms.py:64
+#: app/forms.py:50 app/forms.py:63
 msgid "Title"
 msgstr ""
 
-#: app/forms.py:52 app/forms.py:67
+#: app/forms.py:52 app/forms.py:66
 #, python-format
 msgid "Name length must be between %(min)d and %(max)dcharacters"
 msgstr ""
@@ -104,11 +103,11 @@ msgstr ""
 msgid "Deadline"
 msgstr ""
 
-#: app/forms.py:57 app/forms.py:69
+#: app/forms.py:57 app/forms.py:71
 msgid "Description"
 msgstr ""
 
-#: app/forms.py:68
+#: app/forms.py:70
 msgid "Status"
 msgstr ""
 
@@ -128,108 +127,108 @@ msgstr ""
 msgid "Upload"
 msgstr ""
 
-#: app/routes.py:30
+#: app/routes.py:34
 msgid "Home Page"
 msgstr ""
 
-#: app/routes.py:40
+#: app/routes.py:44
 msgid "Invalid username or password"
 msgstr ""
 
-#: app/routes.py:64
+#: app/routes.py:68
 msgid "Congratulations, you are now a registered user!"
 msgstr ""
 
-#: app/routes.py:82
+#: app/routes.py:86
 #, python-format
 msgid "User %(username)s not found. Repeat search."
 msgstr ""
 
-#: app/routes.py:87
+#: app/routes.py:91
 msgid "You cannot create family only yourself!"
 msgstr ""
 
-#: app/routes.py:91
+#: app/routes.py:95
 #, python-format
 msgid "User %(username)s have family!"
 msgstr ""
 
-#: app/routes.py:98
+#: app/routes.py:102
 #, python-format
 msgid "You are creating family with %(username)s!"
 msgstr ""
 
-#: app/routes.py:106
+#: app/routes.py:110
 msgid "Search User"
 msgstr ""
 
-#: app/routes.py:115
+#: app/routes.py:119
 msgid "Your changes have been saved."
 msgstr ""
 
-#: app/routes.py:122 app/templates/user.html:31
+#: app/routes.py:126 app/templates/user.html:31
 msgid "Edit Profile"
 msgstr ""
 
-#: app/routes.py:127 app/templates/base.html:26 app/templates/family.html:5
+#: app/routes.py:131 app/templates/base.html:26 app/templates/family.html:5
 msgid "Family"
 msgstr ""
 
-#: app/routes.py:207 app/routes.py:266 app/templates/base.html:27
+#: app/routes.py:207 app/routes.py:262 app/templates/base.html:27
 #: app/templates/tasks.html:14
 msgid "Tasks"
 msgstr ""
 
-#: app/routes.py:347 app/routes.py:602
+#: app/routes.py:335 app/routes.py:629
 msgid "Task success added."
 msgstr ""
 
-#: app/routes.py:354 app/templates/tasks.html:16
+#: app/routes.py:342 app/templates/tasks.html:16
 msgid "Add Task"
 msgstr ""
 
-#: app/routes.py:376
+#: app/routes.py:363
 msgid "Subtask success added."
 msgstr ""
 
-#: app/routes.py:383
+#: app/routes.py:370
 msgid "Add Subtask"
 msgstr ""
 
-#: app/routes.py:412 app/routes.py:433 app/routes.py:488
+#: app/routes.py:399 app/routes.py:420 app/routes.py:481
 #, python-format
 msgid "Task %(title)s success update"
 msgstr ""
 
-#: app/routes.py:473 app/routes.py:489 app/templates/show_task.html:290
+#: app/routes.py:462 app/routes.py:482 app/templates/show_task.html:384
 msgid "Task"
 msgstr ""
 
-#: app/routes.py:551
+#: app/routes.py:565
 msgid "Check your email for the instructions to reset your password"
 msgstr ""
 
-#: app/routes.py:553 app/templates/reset_password.html:5
+#: app/routes.py:567 app/templates/reset_password.html:5
 msgid "Reset Password"
 msgstr ""
 
-#: app/routes.py:566
+#: app/routes.py:580
 msgid "Your password has been reset."
 msgstr ""
 
-#: app/routes.py:582
+#: app/routes.py:601
 msgid "Your photo has been update."
 msgstr ""
 
-#: app/routes.py:585
+#: app/routes.py:604
 msgid "This photo is exists."
 msgstr ""
 
-#: app/routes.py:591 app/templates/user.html:24
+#: app/routes.py:610 app/templates/user.html:24
 msgid "Edit Photo"
 msgstr ""
 
-#: app/routes.py:610
+#: app/routes.py:637
 #, python-format
 msgid "Task %(title)s success delete"
 msgstr ""
@@ -328,24 +327,44 @@ msgstr ""
 msgid "Delete Task"
 msgstr ""
 
-#: app/templates/show_task.html:57
+#: app/templates/show_task.html:108
 msgid "Subtask"
 msgstr ""
 
-#: app/templates/show_task.html:73 app/templates/show_task.html:78
+#: app/templates/show_task.html:124 app/templates/show_task.html:135
 msgid "Assign partner"
 msgstr ""
 
-#: app/templates/show_task.html:75 app/templates/show_task.html:78
+#: app/templates/show_task.html:126 app/templates/show_task.html:131
+msgid "Remove the performer"
+msgstr ""
+
+#: app/templates/show_task.html:129 app/templates/show_task.html:135
 msgid "Assign me"
 msgstr ""
 
-#: app/templates/show_task.html:173
+#: app/templates/show_task.html:230
 msgid "Date Completion"
 msgstr ""
 
-#: app/templates/show_task.html:290
+#: app/templates/show_task.html:344 app/templates/tasks.html:172
+msgid "In the "
+msgstr ""
+
+#: app/templates/show_task.html:344 app/templates/tasks.html:172
+msgid " task, the status has been updated to "
+msgstr ""
+
+#: app/templates/show_task.html:384
 msgid "success update"
+msgstr ""
+
+#: app/templates/show_task.html:419
+msgid "Task "
+msgstr ""
+
+#: app/templates/show_task.html:419
+msgid "is assigned to you"
 msgstr ""
 
 #: app/templates/tasks.html:21
@@ -359,14 +378,6 @@ msgstr ""
 #: app/templates/tasks.html:47 app/templates/tasks.html:48
 #: app/templates/tasks.html:49
 msgid "Total"
-msgstr ""
-
-#: app/templates/tasks.html:155
-msgid "In the "
-msgstr ""
-
-#: app/templates/tasks.html:155
-msgid " task, the status has been updated to "
 msgstr ""
 
 #: app/templates/user.html:27

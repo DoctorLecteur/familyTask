@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-09-14 20:54+0300\n"
+"POT-Creation-Date: 2022-10-15 18:41+0300\n"
 "PO-Revision-Date: 2022-09-11 23:58+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -31,8 +31,7 @@ msgstr "[FamilyTask] Сброс пароля"
 msgid "Username"
 msgstr "Пользователь"
 
-#: app/forms.py:12 app/forms.py:20 app/forms.py:40 app/forms.py:58
-#: app/forms.py:71
+#: app/forms.py:12 app/forms.py:20 app/forms.py:40
 #, python-format
 msgid "Name length must be between %(min)d and %(max)d characters"
 msgstr "Длина имени должна составлять от %(min)d до %(max)d символов."
@@ -45,7 +44,7 @@ msgstr "Пароль"
 msgid "Remember me"
 msgstr "Запомнить меня"
 
-#: app/forms.py:15 app/routes.py:47 app/templates/login.html:5
+#: app/forms.py:15 app/routes.py:51 app/templates/login.html:5
 msgid "Sign In"
 msgstr "Войти"
 
@@ -57,7 +56,7 @@ msgstr "Почта"
 msgid "Repeat Password"
 msgstr "Повторите пароль"
 
-#: app/forms.py:25 app/routes.py:66 app/templates/register.html:5
+#: app/forms.py:25 app/routes.py:70 app/templates/register.html:5
 msgid "Register"
 msgstr "Регистрация"
 
@@ -69,23 +68,23 @@ msgstr "Пожалуйста, используйте другое имя пол�
 msgid "Please use a different email address."
 msgstr "Пожалуйста, используйте другую электронную почту."
 
-#: app/forms.py:47
+#: app/forms.py:47 app/forms.py:67
 msgid "Type task"
 msgstr "Тип задачи"
 
-#: app/forms.py:48
+#: app/forms.py:48 app/forms.py:68
 msgid "Period Count"
 msgstr "Время"
 
-#: app/forms.py:49
+#: app/forms.py:49 app/forms.py:69
 msgid "Period Time"
 msgstr "Период"
 
-#: app/forms.py:50 app/forms.py:64
+#: app/forms.py:50 app/forms.py:63
 msgid "Title"
 msgstr "Заголовок"
 
-#: app/forms.py:52 app/forms.py:67
+#: app/forms.py:52 app/forms.py:66
 #, python-format
 msgid "Name length must be between %(min)d and %(max)dcharacters"
 msgstr "Длина имени должна составлять от %(min)d до %(max)d символов."
@@ -106,11 +105,11 @@ msgstr "Категория"
 msgid "Deadline"
 msgstr "Срок"
 
-#: app/forms.py:57 app/forms.py:69
+#: app/forms.py:57 app/forms.py:71
 msgid "Description"
 msgstr "Описание"
 
-#: app/forms.py:68
+#: app/forms.py:70
 msgid "Status"
 msgstr "Статус"
 
@@ -130,110 +129,110 @@ msgstr "Запросить сброс пароля"
 msgid "Upload"
 msgstr "Загрузить"
 
-#: app/routes.py:30
+#: app/routes.py:34
 msgid "Home Page"
 msgstr "Домашняя страница"
 
-#: app/routes.py:40
+#: app/routes.py:44
 msgid "Invalid username or password"
 msgstr "Некорректное имя пользователя или пароль"
 
-#: app/routes.py:64
+#: app/routes.py:68
 msgid "Congratulations, you are now a registered user!"
 msgstr "Поздравляем, вы стали зарегистрированным пользователем!"
 
-#: app/routes.py:82
+#: app/routes.py:86
 #, python-format
 msgid "User %(username)s not found. Repeat search."
 msgstr "Пользователь %(username)s не найден. Повторите поиск."
 
-#: app/routes.py:87
+#: app/routes.py:91
 msgid "You cannot create family only yourself!"
 msgstr "Вы не можете создать семью"
 
-#: app/routes.py:91
+#: app/routes.py:95
 #, python-format
 msgid "User %(username)s have family!"
 msgstr "У пользователя %(username)s есть семья!"
 
-#: app/routes.py:98
+#: app/routes.py:102
 #, python-format
 msgid "You are creating family with %(username)s!"
 msgstr "Вы создали семью с %(username)s!"
 
-#: app/routes.py:106
+#: app/routes.py:110
 msgid "Search User"
 msgstr "Поиск пользователя"
 
-#: app/routes.py:115
+#: app/routes.py:119
 msgid "Your changes have been saved."
 msgstr "Ваши изменения были успешно сохранены"
 
-#: app/routes.py:122 app/templates/user.html:31
+#: app/routes.py:126 app/templates/user.html:31
 msgid "Edit Profile"
 msgstr "Редактировать профиль"
 
-#: app/routes.py:127 app/templates/base.html:26 app/templates/family.html:5
+#: app/routes.py:131 app/templates/base.html:26 app/templates/family.html:5
 msgid "Family"
 msgstr "Семья"
 
-#: app/routes.py:207 app/routes.py:266 app/templates/base.html:27
+#: app/routes.py:207 app/routes.py:262 app/templates/base.html:27
 #: app/templates/tasks.html:14
 msgid "Tasks"
 msgstr "Задачи"
 
-#: app/routes.py:347 app/routes.py:602
+#: app/routes.py:335 app/routes.py:629
 msgid "Task success added."
 msgstr "Задача успешно добавлена."
 
-#: app/routes.py:354 app/templates/tasks.html:16
+#: app/routes.py:342 app/templates/tasks.html:16
 msgid "Add Task"
 msgstr "Добавить задачу"
 
-#: app/routes.py:376
+#: app/routes.py:363
 msgid "Subtask success added."
 msgstr "Подзадача успешно добавлена."
 
-#: app/routes.py:383
+#: app/routes.py:370
 msgid "Add Subtask"
 msgstr "Добавить подзадачу"
 
-#: app/routes.py:412 app/routes.py:433 app/routes.py:488
+#: app/routes.py:399 app/routes.py:420 app/routes.py:481
 #, python-format
 msgid "Task %(title)s success update"
 msgstr "Задача %(title)s успешно обновлена"
 
-#: app/routes.py:473 app/routes.py:489 app/templates/show_task.html:290
+#: app/routes.py:462 app/routes.py:482 app/templates/show_task.html:384
 msgid "Task"
 msgstr "Задача"
 
-#: app/routes.py:551
+#: app/routes.py:565
 msgid "Check your email for the instructions to reset your password"
 msgstr ""
 "Проверьте свою электронную почту, чтобы получить инструкции по сбросу "
 "пароля"
 
-#: app/routes.py:553 app/templates/reset_password.html:5
+#: app/routes.py:567 app/templates/reset_password.html:5
 msgid "Reset Password"
 msgstr "Сбросить пароль"
 
-#: app/routes.py:566
+#: app/routes.py:580
 msgid "Your password has been reset."
 msgstr "Ваш пароль успешно сброшен"
 
-#: app/routes.py:582
+#: app/routes.py:601
 msgid "Your photo has been update."
 msgstr "Ваше фото успешно обновлено"
 
-#: app/routes.py:585
+#: app/routes.py:604
 msgid "This photo is exists."
 msgstr "Данное фото уже существует"
 
-#: app/routes.py:591 app/templates/user.html:24
+#: app/routes.py:610 app/templates/user.html:24
 msgid "Edit Photo"
 msgstr "Редактировать фото"
 
-#: app/routes.py:610
+#: app/routes.py:637
 #, python-format
 msgid "Task %(title)s success delete"
 msgstr "Задача %(title)s успешно удалена"
@@ -332,26 +331,45 @@ msgstr "Создать подзадачу"
 msgid "Delete Task"
 msgstr "Удалить задачу"
 
-#: app/templates/show_task.html:57
-#, fuzzy
+#: app/templates/show_task.html:108
 msgid "Subtask"
-msgstr "Добавить подзадачу"
+msgstr "Подзадачи"
 
-#: app/templates/show_task.html:73 app/templates/show_task.html:78
+#: app/templates/show_task.html:124 app/templates/show_task.html:135
 msgid "Assign partner"
 msgstr "Назначить на партнера"
 
-#: app/templates/show_task.html:75 app/templates/show_task.html:78
+#: app/templates/show_task.html:126 app/templates/show_task.html:131
+msgid "Remove the performer"
+msgstr "Убрать исполнителя"
+
+#: app/templates/show_task.html:129 app/templates/show_task.html:135
 msgid "Assign me"
 msgstr "Назначить на меня"
 
-#: app/templates/show_task.html:173
+#: app/templates/show_task.html:230
 msgid "Date Completion"
 msgstr "Дата завершения"
 
-#: app/templates/show_task.html:290
+#: app/templates/show_task.html:344 app/templates/tasks.html:172
+msgid "In the "
+msgstr "По задаче"
+
+#: app/templates/show_task.html:344 app/templates/tasks.html:172
+msgid " task, the status has been updated to "
+msgstr " был обновлен статус на"
+
+#: app/templates/show_task.html:384
 msgid "success update"
 msgstr "успешно обновлена"
+
+#: app/templates/show_task.html:419
+msgid "Task "
+msgstr "Задача"
+
+#: app/templates/show_task.html:419
+msgid "is assigned to you"
+msgstr "была назначена на вас"
 
 #: app/templates/tasks.html:21
 msgid "My Tasks (I\"m author)"
@@ -365,14 +383,6 @@ msgstr "Мои задачи (Я исполнитель)"
 #: app/templates/tasks.html:49
 msgid "Total"
 msgstr "Всего"
-
-#: app/templates/tasks.html:155
-msgid "In the "
-msgstr "По задаче"
-
-#: app/templates/tasks.html:155
-msgid " task, the status has been updated to "
-msgstr " был обновлен статус на"
 
 #: app/templates/user.html:27
 msgid "User"

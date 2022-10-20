@@ -68,9 +68,7 @@ class ShowTaskForm(FlaskForm):
     period_count = IntegerField(_l('Period Count'), validators=[NumberRange(min=1)])
     period_time = StringField(_l('Period Time'))
     status = StringField(_l('Status'))
-    description = TextAreaField(_l('Description'), validators=[DataRequired(),
-                                                           Length(min=5, max=1024,
-                                                                  message=_l('Name length must be between %(min)d and %(max)d characters', min=5, max=64))])
+    description = TextAreaField(_l('Description'))
     user = StringField(_l('Performer'))
     priority = StringField(_l('Priority'))
     complexity = StringField(_l('Complexity'))
