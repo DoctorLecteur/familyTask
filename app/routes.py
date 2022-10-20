@@ -481,6 +481,8 @@ def edit_task(id_task):
                     task.period_type = form.period_time.data
                 db.session.commit()
                 flash(_('Task %(title)s success update', title=task.title))
+            else:
+                flash('Error validation update task')
             return render_template('show_task.html', title=_('Task'), form=form, task=task, priorities=priority,
                                    complexities=complexity, categories=category, typies=type_task)
 
