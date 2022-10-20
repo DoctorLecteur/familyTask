@@ -514,6 +514,7 @@ def send_push_notification():
         "title": data_param["title"],
         "body": data_param["body"]
     })
+    print('data param', data_param)
     if data_param["param"] is not None:
         data_param_push_json_endpoint = json.loads(data_param["param"])["endpoint"]
         id_user_partner = current_user.get_id_by_username(current_user.get_partner(current_user))
