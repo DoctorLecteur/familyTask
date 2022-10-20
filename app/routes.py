@@ -550,7 +550,7 @@ def send_push_notification():
         user_partner = current_user.get_partner(current_user)
         print('user_partner send email', user_partner)
         partner_email = current_user.get_email_by_username(user_partner)
-        print('partner_email send email', user_partner)
+        print('partner_email send email', partner_email)
         send_email(data_param["title"],
                    sender=app.config['ADMINS'][0],
                    recipients=[partner_email],
