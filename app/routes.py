@@ -492,11 +492,6 @@ def edit_task(id_task):
 @app.route('/save_notify', methods=['POST'])
 @login_required
 def save_notify():
-    subscr_all = Subscription.query.all()
-    for s_all in range(0, len(subscr_all)):
-        if subscr_all[s_all].push_param is None:
-            db.session.delete(subscr_all[s_all])
-            db.session.commit()
     sub_user = str(request.get_json())
     print('sub_user', sub_user)
     subscriprion = Subscription.query.filter_by(id_users=current_user.id, push_param=sub_user).first()
