@@ -498,6 +498,7 @@ def save_notify():
             db.session.delete(subscr_all[s_all])
             db.session.commit()
     sub_user = str(request.get_json())
+    print('sub_user', sub_user)
     subscriprion = Subscription.query.filter_by(id_users=current_user.id, push_param=sub_user).first()
     if subscriprion is None:
         subscription = Subscription(id_users=current_user.id, push_param=sub_user)
@@ -524,6 +525,7 @@ def send_push_notification():
             print('user id', user_subscription[subscr].id_users)
             print('push_param endpoint', push_param['endpoint'])
             if (data_param_push_json_endpoint != push_param['endpoint']): #не отправляем оповещение в браузер в котором произошло действие
+                print('send webpush')
                 try:
                     webpush(
                         subscription_info=push_param,
