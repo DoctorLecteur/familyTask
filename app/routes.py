@@ -501,7 +501,10 @@ def save_notify():
     print('sub_user', sub_user)
     subscriprion = Subscription.query.filter_by(id_users=current_user.id, push_param=sub_user).first()
     if subscriprion is None:
-        subscription = Subscription(id_users=current_user.id, push_param=sub_user)
+        if sub_user is None:
+            subscription = Subscription(id_users=current_user.id, push_param=current_user.email)
+        else:
+            subscription = Subscription(id_users=current_user.id, push_param=sub_user)
         db.session.add(subscription)
         db.session.commit()
     return make_response('success')
@@ -516,11 +519,22 @@ def send_push_notification():
         "body": data_param["body"]
     })
     print('data param', data_param)
-    if data_param["param"] is not None:
-        data_param_push_json_endpoint = json.loads(data_param["param"])["endpoint"]
-        id_user_partner = current_user.get_id_by_username(current_user.get_partner(current_user))
-        user_subscription = Subscription.query.filter_by(id_users=id_user_partner).all()
-        for subscr in range(0, len(user_subscription)):
+    data_param_push_json_endpoint = json.loads(data_param["param"])["endpoint"]
+    id_user_partner = current_user.get_id_by_username(current_user.get_partner(current_user))
+    user_subscription = Subscription.query.filter_by(id_users=id_user_partner).all()
+    for subscr in range(0, len(user_subscription)):
+        if (user_subscription[subscr].push_param).find('@') > -1:
+            user_partner = current_user.get_partner(current_user)
+            print('user_partner send email', user_partner)
+            partner_email = current_user.get_email_by_username(user_partner)
+            print('partner_email send email', partner_email)
+            send_email(data_param["title"],
+                       sender=app.config['ADMINS'][0],
+                       recipients=[partner_email],
+                       text_body=data_param["body"],
+                       html_body=""
+                       )
+        else:
             push_param = json.loads((user_subscription[subscr].push_param).replace('\'', '\"').replace("None", "\"\""))
             print('user id', user_subscription[subscr].id_users)
             print('push_param endpoint', push_param['endpoint'])
@@ -539,7 +553,7 @@ def send_push_notification():
                     print('I can\'t do that: {}'.format(repr(ex)))
                     print(ex)
                     if ex.response.status_code == 410:
-                        print('subscr', user_subscription[subscr].id_users, user_subscription[subscr].push_param)
+                        print('subscr 410 error', user_subscription[subscr].id_users, user_subscription[subscr].push_param)
                         db.session.delete(user_subscription[subscr])
                         db.session.commit()
                     # Mozilla returns additional information in the body of the response.
@@ -549,18 +563,6 @@ def send_push_notification():
                               extra.code,
                               extra.errno,
                               extra.message)
-
-    else:
-        user_partner = current_user.get_partner(current_user)
-        print('user_partner send email', user_partner)
-        partner_email = current_user.get_email_by_username(user_partner)
-        print('partner_email send email', partner_email)
-        send_email(data_param["title"],
-                   sender=app.config['ADMINS'][0],
-                   recipients=[partner_email],
-                   text_body=data_param["body"],
-                   html_body=""
-                   )
 
     user_partner = current_user.get_partner(current_user)
     print('user_partner', user_partner)
