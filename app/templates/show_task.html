@@ -246,7 +246,6 @@
                 $('.btn-warning').hide();
                 $('.btn-success').hide();
                 $('.btn-danger').hide();
-                $('#period_count').val(1);
 
                 const bIsSubTask = ("{{ task.is_subtask(task) }}" === "False") ? false : true;
                 if (bIsSubTask === false) { //скрытие кнопки удаления задачи, если есть подзадачи
@@ -267,6 +266,7 @@
                     $('#period').hide();
                     $('#period_time').hide();
                     $('#period_time').val("");
+                    $('#period_count').val(1);
 
                 } else {
 
