@@ -476,7 +476,7 @@ def edit_task(id_task):
                 task.deadline = form.deadline.data
                 task.id_complexity = form.complexity.data
                 task.id_category = form.category.data
-                if task.id_type_task == 3:
+                if int(task.id_type_task) == 3:
                     task.period = form.period_count.data
                     task.period_type = form.period_time.data
                 db.session.commit()
@@ -518,54 +518,51 @@ def send_push_notification():
         data_param_push_json_endpoint = json.loads(data_param["param"])["endpoint"]
     else:
         data_param_push_json_endpoint = ""
-    id_user_partner = current_user.get_id_by_username(current_user.get_partner(current_user))
-    user_subscription = Subscription.query.filter_by(id_users=id_user_partner).all()
-    for subscr in range(0, len(user_subscription)):
-        if (user_subscription[subscr].push_param).find('@') > -1:
-            user_partner = current_user.get_partner(current_user)
-            print('user_partner send email', user_partner)
-            partner_email = current_user.get_email_by_username(user_partner)
-            print('partner_email send email', partner_email)
-            send_email(data_param["title"],
-                       sender=app.config['ADMINS'][0],
-                       recipients=[partner_email],
-                       text_body=data_param["body"],
-                       html_body=""
-                       )
-        else:
-            push_param = json.loads((user_subscription[subscr].push_param).replace('\'', '\"').replace("None", "\"\""))
-            print('user id', user_subscription[subscr].id_users)
-            print('push_param endpoint', push_param['endpoint'])
-            if (data_param_push_json_endpoint != push_param['endpoint']): #не отправляем оповещение в браузер в котором произошло действие
-                print('send webpush')
-                try:
-                    webpush(
-                        subscription_info=push_param,
-                        data=data_push,
-                        vapid_private_key='./private_key.pem',
-                        vapid_claims={
-                            'sub': 'mailto:{}'.format(app.config['ADMINS'][0])
-                        }
-                    )
-                except WebPushException as ex:
-                    print('I can\'t do that: {}'.format(repr(ex)))
-                    print(ex)
-                    if ex.response.status_code == 410:
-                        print('subscr 410 error', user_subscription[subscr].id_users, user_subscription[subscr].push_param)
-                        db.session.delete(user_subscription[subscr])
-                        db.session.commit()
-                    # Mozilla returns additional information in the body of the response.
-                    if ex.response and ex.response.json():
-                        extra = ex.response.json()
-                        print('Remote service replied with a {}:{}, {}',
-                              extra.code,
-                              extra.errno,
-                              extra.message)
 
     user_partner = current_user.get_partner(current_user)
     print('user_partner', user_partner)
     partner_email = current_user.get_email_by_username(user_partner)
     print('partner_email', partner_email)
+    id_user_partner = current_user.get_id_by_username(user_partner)
+    user_subscription = Subscription.query.filter_by(id_users=id_user_partner).all()
+    for subscr in range(0, len(user_subscription)):#отправка оповещений по на подписанный устройства и браузеры партнера
+        push_param = json.loads((user_subscription[subscr].push_param).replace('\'', '\"').replace("None", "\"\""))
+        print('user id', user_subscription[subscr].id_users)
+        print('push_param endpoint', push_param['endpoint'])
+        if (data_param_push_json_endpoint != push_param['endpoint']): #не отправляем оповещение в браузер в котором произошло действие
+            print('send webpush')
+            try:
+                webpush(
+                    subscription_info=push_param,
+                    data=data_push,
+                    vapid_private_key='./private_key.pem',
+                    vapid_claims={
+                        'sub': 'mailto:{}'.format(app.config['ADMINS'][0])
+                    }
+                )
+            except WebPushException as ex:
+                print('I can\'t do that: {}'.format(repr(ex)))
+                print(ex)
+                if ex.response.status_code == 410:
+                    print('subscr 410 error', user_subscription[subscr].id_users, user_subscription[subscr].push_param)
+                    db.session.delete(user_subscription[subscr])
+                    db.session.commit()
+                # Mozilla returns additional information in the body of the response.
+                if ex.response and ex.response.json():
+                    extra = ex.response.json()
+                    print('Remote service replied with a {}:{}, {}',
+                          extra.code,
+                          extra.errno,
+                          extra.message)
+
+    #дублирование оповещения на почту партнера
+    send_email(data_param["title"],
+               sender=app.config['ADMINS'][0],
+               recipients=[partner_email],
+               text_body=data_param["body"],
+               html_body=""
+               )
+
     return make_response('success')
 
 @app.route('/reset_password_request', methods = ['GET', 'POST'])
@@ -637,7 +634,7 @@ def duplicate_task(task, status):
         deadline_time = task.date_completion + relativedelta(years=+task.period)
     task = Tasks(id_type_task=task.id_type_task, title=task.title, id_priority=task.id_priority,
                  id_status=status[0]["id"], deadline=deadline_time, description=task.description,
-                 create_user=current_user.id, create_date=datetime.utcnow(),id_complexity=task.id_complexity,
+                 create_user=current_user.id, create_date=datetime.utcnow(), id_complexity=task.id_complexity,
                  id_category=task.id_category, period=task.period, period_type=task.period_type)
     db.session.add(task)
     db.session.commit()

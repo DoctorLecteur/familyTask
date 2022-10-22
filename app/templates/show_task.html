@@ -535,7 +535,16 @@
 
                 }
 
-                let sDeadlineByDate = deadline.getFullYear() + "-" + (deadline.getMonth() + 1);
+                let sDeadlineByDate = deadline.getFullYear();
+                if ((deadline.getMonth() + 1) < 10) {
+
+                    sDeadlineByDate += "-0" + (deadline.getMonth() + 1);
+
+                } else {
+
+                    sDeadlineByDate += "-" + (deadline.getMonth() + 1);
+
+                }
                 if (deadline.getDate() < 10) {
 
                     sDeadlineByDate += "-0" + deadline.getDate();
@@ -581,8 +590,16 @@
 
                 }
 
+                let sDeadlineByDate = deadline.getFullYear();
+                if ((deadline.getMonth() + 1) < 10) {
 
-                let sDeadlineByDate = deadline.getFullYear() + "-" + (deadline.getMonth() + 1);
+                    sDeadlineByDate += "-0" + (deadline.getMonth() + 1);
+
+                } else {
+
+                    sDeadlineByDate += "-" + (deadline.getMonth() + 1);
+
+                }
                 if (deadline.getDate() < 10) {
 
                     sDeadlineByDate += "-0" + deadline.getDate();
@@ -596,7 +613,6 @@
                 $('#deadline').val(sDeadlineByDate);
 
                 $('#period_time').val(periodType);
-                console.log("period time", $('#period_time').val());
                 doPostUpdateTask($('#period_time').val(), oldPeriodType);
                 oldPeriodType = $('#period_time').val();
 
