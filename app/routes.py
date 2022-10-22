@@ -521,6 +521,8 @@ def send_push_notification():
         user_subscription = Subscription.query.filter_by(id_users=id_user_partner).all()
         for subscr in range(0, len(user_subscription)):
             push_param = json.loads((user_subscription[subscr].push_param).replace('\'', '\"').replace("None", "\"\""))
+            print('user id', user_subscription[subscr].id_users)
+            print('push_param endpoint', push_param['endpoint'])
             if (data_param_push_json_endpoint != push_param['endpoint']): #не отправляем оповещение в браузер в котором произошло действие
                 try:
                     webpush(
