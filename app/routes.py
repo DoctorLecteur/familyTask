@@ -183,6 +183,7 @@ def tasks():
     count_backlog = 0
     count_work = 0
     count_done = 0
+    max_date_completion = None #переменная для самой ранней даты выполнения
     #заполнение таблицы с задачами
     for j in range(0, len(tasks)):
         for tr in range(0, len(list_tasks)):
@@ -197,14 +198,32 @@ def tasks():
             if list_tasks[tr][2] == 0 and tasks[j].id_status == 3:
                 list_tasks[tr][2] = tasks[j]
                 count_done = count_done + 1
+                if max_date_completion is None:
+                    max_date_completion = list_tasks[tr][2].date_completion
+                else:
+                    if list_tasks[tr][2].date_completion > max_date_completion:
+                        max_date_completion = list_tasks[tr][2].date_completion
                 break
+
+    arr_new = []
+    for tr_item_task_done in range(0, len(list_tasks)):
+        arr_new.append(list_tasks[tr_item_task_done][2].date_completion)
+
+    arr_new.sort(reverse=True)
+    for item_sort in range(0, len(arr_new)):
+        for item_task in range(0, len(list_tasks)):
+            if arr_new[item_sort] == list_tasks[item_task][2].date_completion:
+                temp_task = list_tasks[item_sort][2]
+                list_tasks[item_sort][2] = list_tasks[item_task][2]
+                list_tasks[item_task][2] = temp_task
 
     count_dict = {
         'count_backlog': count_backlog,
         'count_work': count_work,
         'count_done': count_done
     }
-    return render_template('tasks.html', title=_('Tasks'), form=form, status=status, tasks=list_tasks, count_tasks=count_dict)
+    return render_template('tasks.html', title=_('Tasks'), form=form, status=status, tasks=list_tasks,
+                           count_tasks=count_dict)
 @app.route('/tasks_by_user/<type_user>', methods=['GET'])
 @login_required
 def tasks_by_user(type_user):
@@ -219,7 +238,7 @@ def tasks_by_user(type_user):
         tasks = tasks_by_id_users.all()
 
     len_max = 0
-    for i_status in range(0, len(status)):  # проверяем в каком статусе задач больше всего для получения кол-ва строк в таблице
+    for i_status in range(0, len(status)):#проверяем в каком статусе задач больше всего для получения кол-ва строк в таблице
         if type_user == 'author':
             status_by_create_user = Tasks.query.filter_by(id_status=status[i_status]["id"], create_user=current_user.id)
             status_count = status_by_create_user.count()
@@ -259,8 +278,8 @@ def tasks_by_user(type_user):
         'count_work': count_work,
         'count_done': count_done
     }
-    return json.dumps({"data": render_template('tasks.html', title=_('Tasks'), form=form, status=status, tasks=list_tasks,
-                           count_tasks=count_dict)})
+    return json.dumps({"data": render_template('tasks.html', title=_('Tasks'), form=form, status=status,
+                                               tasks=list_tasks, count_tasks=count_dict)})
 
 #функция для получения всех доступных видов задач
 def get_type_task():
