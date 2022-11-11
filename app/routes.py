@@ -538,6 +538,7 @@ def send_push_notification():
     else:
         data_param_push_json_endpoint = ""
 
+    flag_send_push = False
     user_partner = current_user.get_partner(current_user)
     print('user_partner', user_partner)
     partner_email = current_user.get_email_by_username(user_partner)
@@ -545,42 +546,46 @@ def send_push_notification():
     id_user_partner = current_user.get_id_by_username(user_partner)
     user_subscription = Subscription.query.filter_by(id_users=id_user_partner).all()
     for subscr in range(0, len(user_subscription)):#отправка оповещений по на подписанный устройства и браузеры партнера
-        push_param = json.loads((user_subscription[subscr].push_param).replace('\'', '\"').replace("None", "\"\""))
-        print('user id', user_subscription[subscr].id_users)
-        print('push_param endpoint', push_param['endpoint'])
-        if (data_param_push_json_endpoint != push_param['endpoint']): #не отправляем оповещение в браузер в котором произошло действие
-            print('send webpush')
-            try:
-                webpush(
-                    subscription_info=push_param,
-                    data=data_push,
-                    vapid_private_key='./private_key.pem',
-                    vapid_claims={
-                        'sub': 'mailto:{}'.format(app.config['ADMINS'][0])
-                    }
-                )
-            except WebPushException as ex:
-                print('I can\'t do that: {}'.format(repr(ex)))
-                print(ex)
-                if ex.response.status_code == 410:
-                    print('subscr 410 error', user_subscription[subscr].id_users, user_subscription[subscr].push_param)
-                    db.session.delete(user_subscription[subscr])
-                    db.session.commit()
-                # Mozilla returns additional information in the body of the response.
-                if ex.response and ex.response.json():
-                    extra = ex.response.json()
-                    print('Remote service replied with a {}:{}, {}',
-                          extra.code,
-                          extra.errno,
-                          extra.message)
+        print('user_subscription[subscr].push_param', user_subscription[subscr].push_param)
+        if user_subscription[subscr].push_param is not None:
+            push_param = json.loads((user_subscription[subscr].push_param).replace('\'', '\"').replace("None", "\"\""))
+            print('user id', user_subscription[subscr].id_users)
+            print('push_param endpoint', push_param['endpoint'])
+            if (data_param_push_json_endpoint != push_param['endpoint']): #не отправляем оповещение в браузер в котором произошло действие
+                print('send webpush')
+                try:
+                    webpush(
+                        subscription_info=push_param,
+                        data=data_push,
+                        vapid_private_key='./private_key.pem',
+                        vapid_claims={
+                            'sub': 'mailto:{}'.format(app.config['ADMINS'][0])
+                        }
+                    )
+                    flag_send_push = True
+                except WebPushException as ex:
+                    print('I can\'t do that: {}'.format(repr(ex)))
+                    print(ex)
+                    if ex.response.status_code == 410:
+                        print('subscr 410 error', user_subscription[subscr].id_users, user_subscription[subscr].push_param)
+                        db.session.delete(user_subscription[subscr])
+                        db.session.commit()
+                    # Mozilla returns additional information in the body of the response.
+                    if ex.response and ex.response.json():
+                        extra = ex.response.json()
+                        print('Remote service replied with a {}:{}, {}',
+                              extra.code,
+                              extra.errno,
+                              extra.message)
 
-    #дублирование оповещения на почту партнера
-    send_email(data_param["title"],
-               sender=app.config['ADMINS'][0],
-               recipients=[partner_email],
-               text_body=data_param["body"],
-               html_body=""
-               )
+    if flag_send_push == False:
+        #дублирование оповещения на почту партнера
+        send_email(data_param["title"],
+                   sender=app.config['ADMINS'][0],
+                   recipients=[partner_email],
+                   text_body=data_param["body"],
+                   html_body=""
+                   )
 
     return make_response('success')
 
