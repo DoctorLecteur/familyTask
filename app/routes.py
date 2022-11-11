@@ -547,7 +547,7 @@ def send_push_notification():
     user_subscription = Subscription.query.filter_by(id_users=id_user_partner).all()
     for subscr in range(0, len(user_subscription)):#отправка оповещений по на подписанный устройства и браузеры партнера
         print('user_subscription[subscr].push_param', user_subscription[subscr].push_param)
-        if user_subscription[subscr].push_param is not None:
+        if user_subscription[subscr].push_param != partner_email:
             push_param = json.loads((user_subscription[subscr].push_param).replace('\'', '\"').replace("None", "\"\""))
             print('user id', user_subscription[subscr].id_users)
             print('push_param endpoint', push_param['endpoint'])
