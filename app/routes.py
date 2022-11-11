@@ -538,7 +538,6 @@ def send_push_notification():
     else:
         data_param_push_json_endpoint = ""
 
-    flag_send_push = False
     user_partner = current_user.get_partner(current_user)
     print('user_partner', user_partner)
     partner_email = current_user.get_email_by_username(user_partner)
@@ -578,14 +577,14 @@ def send_push_notification():
                               extra.errno,
                               extra.message)
 
-    if flag_send_push == False:
-        #дублирование оповещения на почту партнера
-        send_email(data_param["title"],
-                   sender=app.config['ADMINS'][0],
-                   recipients=[partner_email],
-                   text_body=data_param["body"],
-                   html_body=""
-                   )
+    #дублирование оповещения на почту партнера
+    print('send email notify')
+    send_email(data_param["title"],
+               sender=app.config['ADMINS'][0],
+               recipients=[partner_email],
+               text_body=data_param["body"],
+               html_body=""
+               )
 
     return make_response('success')
 
