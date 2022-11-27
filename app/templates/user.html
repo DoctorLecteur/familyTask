@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% from 'bootstrap/wtf.html' import wtf %}
+
+{% block app_content %}
+    <!-- Dynamic Modal -->
+    <div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="FormModal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+            </div>
+        </div>
+    </div>
+    <!-- End Dynamic Modal -->
+    <table>
+        <tr valign="top">
+            <td>
+                {% if current_user.is_authenticated %}
+                    {% if current_user.url_photo %}
+                        <img src="{{ current_user.get_photo_by_username(current_user.username) }}" width="120" height="120"><br>
+                    {% else %}
+                        <img src="/static/img/default.svg" width="120" height="120"><br>
+                    {% endif %}
+                {% endif %}
+                <a class="edit-photo-modal btn btn-primary" data-toggle="modal" data-whatever="{{ url_for('upload') }}" href="#">{{ _('Edit Photo') }}</a><br>
+            </td>
+            <td>
+                <h1>{{ _('User') }}: {{ user.username }}</h1>
+                {% if current_user.is_authenticated %}
+                    <p>Email: {{ user.email }}</p>
+                    <a class="edit-modal-opener btn btn-primary" data-toggle="modal"
+                              data-whatever="{{ url_for('edit_profile') }}" href="#">{{ _('Edit Profile') }}</a>
+                    {% if not current_user.is_family(user) %}
+                        <p><a class="edit-modal-opener btn btn-primary" data-toggle="modal"
+                              data-whatever="{{ url_for('search') }}" href="#">{{ _('Search user') }}</a></p>
+                        <p>У вас нет семьи</p>
+                    {% else %}
+                        <p>У вас есть семья c {{ current_user.get_partner(user) }}</p>
+                    {% endif %}
+                {% endif %}
+            </td>
+        </tr>
+    </table>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script>
+    function readURL(input) {
+        console.log('readURL');
+        if (input.files && input.files[0]) {
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+
+                $("#imgPhoto").attr('src', e.target.result);
+                $("#imgPhotoDef").attr('src', e.target.result);
+
+            }
+
+            reader.readAsDataURL(input.files[0]);
+
+        }
+
+    }
+
+    $('.edit-photo-modal').click(function() {
+        const url = $(this).data('whatever');
+        $.get(url, function (data) {
+
+            $('#Modal .modal-content').html(data);
+            $('#Modal').modal();
+
+            $('#submit').click(function (event) {
+                event.preventDefault();
+                const formData = new FormData();
+                formData.append('csrf_token', $("#csrf_token").val());
+                formData.append('photo', $("#photo")[0].files[0]);
+
+                $.ajax({
+                    type: "POST",
+                    url: '/upload',
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    data: formData,
+                    dataType: 'json',
+                    success: function(response) {
+
+                        if (response["status"] === 'ok') {
+
+                            $('#Modal').modal('hide');
+                            location.reload();
+
+                        } else {
+
+                            const obj = JSON.parse(response);
+                            for (const key in obj) {
+
+                                if (obj.hasOwnProperty(key)) {
+
+                                    const value = obj[key];
+                                    $('.help-block').remove();
+                                    $('<p class="help-block">' + value + '</p>').insertAfter('#photo');
+                                    $('.form-group').addClass('has-error');
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                });
+
+            });
+
+            $("#photo").change(function() {
+                readURL(this);
+            });
+
+        });
+
+    });
+
+    </script>
+{% endblock %}

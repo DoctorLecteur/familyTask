@@ -1,0 +1,187 @@
+<form id="ModalForm" name="stepForm" class="form" method="post">
+
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h4 class="modal-title">{{ title }}</h4>
+  </div>
+  <div class="modal-body">
+    {{ form.hidden_tag() }}
+      <p>
+        {{ form.type_task.label }}<br>
+        {% if task_id %}
+          <select name="type_task" disabled="true">
+            {% for type_task in typies_task %}
+                {% if type_task.id == 2 %}
+                  <option disabled selected value="{{ type_task.id }}">{{ type_task.name }}</option>
+                {% endif %}
+            {% endfor %}
+          </select>
+        {% else %}
+          <select name="type_task" readonly>
+            {% for type_task in typies_task %}
+                <option value="{{ type_task.id }}">{{ type_task.name }}</option>
+            {% endfor %}
+          </select>
+        {% endif %}
+        {% for error in form.type_task.errors %}
+          <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+      </p>
+      <p>
+        <table id="period">
+          <thead>
+            <th>{{ form.period_count.label }}</th>
+            <th>Period Time</th>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                {{ form.period_count(size=64) }}
+                {% for error in form.period_count.errors %}
+                  <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+              </td>
+              <td>
+                <select style="width: 100px; height: 26px;" name="period_time" readonly>
+                  <option value="Days">Days</option>
+                  <option value="Weeks">Weeks</option>
+                  <option value="Months">Months</option>
+                  <option value="Years">Years</option>
+                </select>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        {{ form.period_time(size=10) }}
+      </p>
+      <p>
+        {{ form.title.label }}<br>
+        {% for error in form.type_task.errors %}
+          <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+        {{ form.title(size=64) }}<br>
+        {% for error in form.title.errors %}
+          <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+      </p>
+      <p>
+        {{ form.category.label }}<br>
+        <select name="category" readonly>
+          {% for category in categories %}
+            <option value="{{ category.id }}">{{ category.name }}</option>
+          {% endfor %}
+        </select>
+        {% for error in form.category.errors %}
+          <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+      </p>
+      <p>
+        {{ form.priority.label }}<br>
+        <select name="priority">
+          {% for priority in priorities %}
+            <option value="{{ priority.id }}">{{ priority.name }}</option>
+          {% endfor %}
+        </select>
+        {% for error in form.priority.errors %}
+          <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+      </p>
+      <p>
+        {{ form.complexity.label }}<br>
+        <select name="complexity">
+          {% for complexity in complexities %}
+            <option value="{{ complexity.id }}">{{ complexity.name }}</option>
+          {% endfor %}
+        </select>
+        {% for error in form.complexity.errors %}
+          <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+      </p>
+      <p>
+        {{ form.deadline.label }}<br>
+        {{ form.deadline(size=64, class="datepicker") }}<br>
+        {% for error in form.deadline.errors %}
+          <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+      </p>
+      <p>
+        {{ form.description.label }}<br>
+        {{ form.description(rows=4, cols=67) }}<br>
+        {% for error in form.description.errors %}
+          <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+      </p>
+
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+    <button id="submit" type="submit" class="btn btn-success">OK</button>
+  </div>
+</form>
+
+{% block scripts %}
+    <script>
+        //скрытие полей с периодами
+        $('#period').hide();
+        $('#period_time').hide();
+        $('#period_count').val(1);
+        $('select[name=type_task]').change(
+            function() {
+                if (+$(this).val() === 3) {
+
+                    $('#period').show();
+
+                } else {
+
+                    $('#period').hide();
+                    $('#period_time').val("");
+
+                }
+
+            }
+
+        );
+
+        $('select[name=period_time]').change(
+        function() {
+
+           const deadline = new Date(); //прибавляем срок по периоду к текущей дате
+           if ($(this).val() === "Days") {
+
+               deadline.setDate(deadline.getDate() + Number($('#period_count').val()));
+
+           }
+           if ($(this).val() === "Weeks") {
+
+               deadline.setDate(deadline.getDate() + Number($('#period_count').val()) * 7);
+
+           }
+           if ($(this).val() === "Months") {
+
+               deadline.setMonth(deadline.getMonth() + Number($('#period_count').val()));
+
+           }
+           if ($(this).val() === "Years") {
+
+               deadline.setFullYear(deadline.getFullYear() + Number($('#period_count').val()));
+
+           }
+
+           let sDeadlineByDate = deadline.getFullYear() + "-" + (deadline.getMonth() + 1);
+           if (deadline.getDate() < 10) {
+
+               sDeadlineByDate += "-0" + deadline.getDate();
+
+           } else {
+
+               sDeadlineByDate += "-" + deadline.getDate();
+
+           }
+
+           $('#deadline').val(sDeadlineByDate);
+
+        });
+    </script>
+{% endblock %}

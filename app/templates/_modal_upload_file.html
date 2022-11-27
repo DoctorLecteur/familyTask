@@ -1,0 +1,28 @@
+<form id="ModalForm" action="" method="post" novalidate>
+  {{ form.hidden_tag() }}
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h4 class="modal-title">{{ title }}</h4>
+  </div>
+  <div class="modal-body">
+
+    {% if current_user.url_photo %}
+        <img id="imgPhoto" src="{{ current_user.get_photo_by_username(current_user.username) }}" width="120" height="120"><br>
+    {% else %}
+        <img id="imgPhotoDef" src="/static/img/default.svg" width="120" height="120"><br>
+    {% endif %}
+    <p>
+        {{ form.photo }}
+        {% for error in form.photo.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+        {{ form.submit }}
+    </p>
+
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+  </div>
+</form>

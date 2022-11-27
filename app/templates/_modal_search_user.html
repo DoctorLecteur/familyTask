@@ -1,0 +1,25 @@
+<form id="ModalForm" name="stepForm" class="form" method="post">
+
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h4 class="modal-title">{{ title }}</h4>
+  </div>
+  <div class="modal-body">
+
+    {{ form.hidden_tag() }}
+      <p>
+        {{ form.username.label }}<br>
+        {{ form.username(size=64) }}<br>
+        {% for error in form.username.errors %}
+          <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+      </p>
+
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+    <button id="submit" type="submit" class="btn btn-success">OK</button>
+  </div>
+</form>

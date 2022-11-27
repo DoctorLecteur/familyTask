@@ -1,0 +1,412 @@
+# Russian translations for PROJECT.
+# Copyright (C) 2022 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2022-10-15 18:41+0300\n"
+"PO-Revision-Date: 2022-09-11 23:58+0300\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: ru\n"
+"Language-Team: ru <LL@li.org>\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.10.3\n"
+
+#: app/__init__.py:21
+msgid "Please log in to access this page."
+msgstr "Пожалуйста, войдите, чтобы получить доступ к своей странице."
+
+#: app/email.py:20
+msgid "[FamilyTask] Reset Your Password"
+msgstr "[FamilyTask] Сброс пароля"
+
+#: app/forms.py:10 app/forms.py:18 app/forms.py:38
+msgid "Username"
+msgstr "Пользователь"
+
+#: app/forms.py:12 app/forms.py:20 app/forms.py:40
+#, python-format
+msgid "Name length must be between %(min)d and %(max)d characters"
+msgstr "Длина имени должна составлять от %(min)d до %(max)d символов."
+
+#: app/forms.py:13 app/forms.py:22 app/forms.py:84
+msgid "Password"
+msgstr "Пароль"
+
+#: app/forms.py:14
+msgid "Remember me"
+msgstr "Запомнить меня"
+
+#: app/forms.py:15 app/routes.py:51 app/templates/login.html:5
+msgid "Sign In"
+msgstr "Войти"
+
+#: app/forms.py:21 app/forms.py:44 app/forms.py:80
+msgid "Email"
+msgstr "Почта"
+
+#: app/forms.py:24 app/forms.py:85
+msgid "Repeat Password"
+msgstr "Повторите пароль"
+
+#: app/forms.py:25 app/routes.py:70 app/templates/register.html:5
+msgid "Register"
+msgstr "Регистрация"
+
+#: app/forms.py:30
+msgid "Please use a different username."
+msgstr "Пожалуйста, используйте другое имя пользователя."
+
+#: app/forms.py:35
+msgid "Please use a different email address."
+msgstr "Пожалуйста, используйте другую электронную почту."
+
+#: app/forms.py:47 app/forms.py:67
+msgid "Type task"
+msgstr "Тип задачи"
+
+#: app/forms.py:48 app/forms.py:68
+msgid "Period Count"
+msgstr "Время"
+
+#: app/forms.py:49 app/forms.py:69
+msgid "Period Time"
+msgstr "Период"
+
+#: app/forms.py:50 app/forms.py:63
+msgid "Title"
+msgstr "Заголовок"
+
+#: app/forms.py:52 app/forms.py:66
+#, python-format
+msgid "Name length must be between %(min)d and %(max)dcharacters"
+msgstr "Длина имени должна составлять от %(min)d до %(max)d символов."
+
+#: app/forms.py:53 app/forms.py:73
+msgid "Priority"
+msgstr "Приоритет"
+
+#: app/forms.py:54 app/forms.py:74
+msgid "Complexity"
+msgstr "Сложность"
+
+#: app/forms.py:55 app/forms.py:75
+msgid "Category"
+msgstr "Категория"
+
+#: app/forms.py:56 app/forms.py:76 app/templates/_task.html:66
+msgid "Deadline"
+msgstr "Срок"
+
+#: app/forms.py:57 app/forms.py:71
+msgid "Description"
+msgstr "Описание"
+
+#: app/forms.py:70
+msgid "Status"
+msgstr "Статус"
+
+#: app/forms.py:72 app/templates/_task.html:57 app/templates/_task.html:59
+msgid "Performer"
+msgstr "Исполнитель"
+
+#: app/forms.py:77
+msgid "Save"
+msgstr "Сохранить"
+
+#: app/forms.py:81 app/forms.py:86
+msgid "Request Password Reset"
+msgstr "Запросить сброс пароля"
+
+#: app/forms.py:90
+msgid "Upload"
+msgstr "Загрузить"
+
+#: app/routes.py:34
+msgid "Home Page"
+msgstr "Домашняя страница"
+
+#: app/routes.py:44
+msgid "Invalid username or password"
+msgstr "Некорректное имя пользователя или пароль"
+
+#: app/routes.py:68
+msgid "Congratulations, you are now a registered user!"
+msgstr "Поздравляем, вы стали зарегистрированным пользователем!"
+
+#: app/routes.py:86
+#, python-format
+msgid "User %(username)s not found. Repeat search."
+msgstr "Пользователь %(username)s не найден. Повторите поиск."
+
+#: app/routes.py:91
+msgid "You cannot create family only yourself!"
+msgstr "Вы не можете создать семью"
+
+#: app/routes.py:95
+#, python-format
+msgid "User %(username)s have family!"
+msgstr "У пользователя %(username)s есть семья!"
+
+#: app/routes.py:102
+#, python-format
+msgid "You are creating family with %(username)s!"
+msgstr "Вы создали семью с %(username)s!"
+
+#: app/routes.py:110
+msgid "Search User"
+msgstr "Поиск пользователя"
+
+#: app/routes.py:119
+msgid "Your changes have been saved."
+msgstr "Ваши изменения были успешно сохранены"
+
+#: app/routes.py:126 app/templates/user.html:31
+msgid "Edit Profile"
+msgstr "Редактировать профиль"
+
+#: app/routes.py:131 app/templates/base.html:26 app/templates/family.html:5
+msgid "Family"
+msgstr "Семья"
+
+#: app/routes.py:207 app/routes.py:262 app/templates/base.html:27
+#: app/templates/tasks.html:14
+msgid "Tasks"
+msgstr "Задачи"
+
+#: app/routes.py:335 app/routes.py:629
+msgid "Task success added."
+msgstr "Задача успешно добавлена."
+
+#: app/routes.py:342 app/templates/tasks.html:16
+msgid "Add Task"
+msgstr "Добавить задачу"
+
+#: app/routes.py:363
+msgid "Subtask success added."
+msgstr "Подзадача успешно добавлена."
+
+#: app/routes.py:370
+msgid "Add Subtask"
+msgstr "Добавить подзадачу"
+
+#: app/routes.py:399 app/routes.py:420 app/routes.py:481
+#, python-format
+msgid "Task %(title)s success update"
+msgstr "Задача %(title)s успешно обновлена"
+
+#: app/routes.py:462 app/routes.py:482 app/templates/show_task.html:384
+msgid "Task"
+msgstr "Задача"
+
+#: app/routes.py:565
+msgid "Check your email for the instructions to reset your password"
+msgstr ""
+"Проверьте свою электронную почту, чтобы получить инструкции по сбросу "
+"пароля"
+
+#: app/routes.py:567 app/templates/reset_password.html:5
+msgid "Reset Password"
+msgstr "Сбросить пароль"
+
+#: app/routes.py:580
+msgid "Your password has been reset."
+msgstr "Ваш пароль успешно сброшен"
+
+#: app/routes.py:601
+msgid "Your photo has been update."
+msgstr "Ваше фото успешно обновлено"
+
+#: app/routes.py:604
+msgid "This photo is exists."
+msgstr "Данное фото уже существует"
+
+#: app/routes.py:610 app/templates/user.html:24
+msgid "Edit Photo"
+msgstr "Редактировать фото"
+
+#: app/routes.py:637
+#, python-format
+msgid "Task %(title)s success delete"
+msgstr "Задача %(title)s успешно удалена"
+
+#: app/templates/404.html:4
+msgid "File Not Found"
+msgstr "Страница не найдена"
+
+#: app/templates/404.html:5 app/templates/500.html:6
+#: app/templates/show_task.html:16
+msgid "Back"
+msgstr "Назад"
+
+#: app/templates/500.html:4
+msgid "An unexpected error has occurred"
+msgstr "Произошла неожиданная ошибка"
+
+#: app/templates/500.html:5
+msgid "The administrator has been notified. Sorry for the inconvenience!"
+msgstr "Администратор уведомлен. Извините за беспокойство!"
+
+#: app/templates/_task.html:54
+msgid "Type Task"
+msgstr "Тип задачи"
+
+#: app/templates/_task.html:63 app/templates/show_task.html:19
+#: app/templates/tasks.html:19
+msgid "Done"
+msgstr "Готово"
+
+#: app/templates/_task.html:71 app/templates/_task.html:73
+msgid "Author"
+msgstr "Автор"
+
+#: app/templates/base.html:4
+msgid "Welcome to FamilyTask"
+msgstr "Добро пожаловать в FamilyTask"
+
+#: app/templates/base.html:22
+msgid "Login"
+msgstr "Войти"
+
+#: app/templates/base.html:24
+msgid "Profile"
+msgstr "Профиль"
+
+#: app/templates/base.html:34
+msgid "Logout"
+msgstr "Выйти"
+
+#: app/templates/base.html:99
+msgid "Add New Task"
+msgstr "Добавлена новая задача"
+
+#: app/templates/family.html:16
+msgid "Family member№1 (You)"
+msgstr "Участник семьи№1 (Вы)"
+
+#: app/templates/family.html:18 app/templates/family.html:33
+msgid "Last seen on"
+msgstr "Последний раз был"
+
+#: app/templates/family.html:31
+msgid "Family member№2"
+msgstr "Участник семьи№2"
+
+#: app/templates/login.html:12
+msgid "New User?"
+msgstr "Новый пользователь?"
+
+#: app/templates/login.html:12
+msgid "Click to Register!"
+msgstr "Нажмите, чтобы зарегистрироваться!"
+
+#: app/templates/login.html:14
+msgid "Forgot Your Password?"
+msgstr "Забыли свой пароль?"
+
+#: app/templates/login.html:15
+msgid "Click to Reset It"
+msgstr "Нажмите, чтобы сбросить его"
+
+#: app/templates/reset_password_request.html:5
+msgid "Reset Your Password"
+msgstr "Сбросить пароль"
+
+#: app/templates/show_task.html:18 app/templates/tasks.html:18
+msgid "To Work"
+msgstr "В работу"
+
+#: app/templates/show_task.html:22
+msgid "Create Subtask"
+msgstr "Создать подзадачу"
+
+#: app/templates/show_task.html:24 app/templates/tasks.html:20
+msgid "Delete Task"
+msgstr "Удалить задачу"
+
+#: app/templates/show_task.html:108
+msgid "Subtask"
+msgstr "Подзадачи"
+
+#: app/templates/show_task.html:124 app/templates/show_task.html:135
+msgid "Assign partner"
+msgstr "Назначить на партнера"
+
+#: app/templates/show_task.html:126 app/templates/show_task.html:131
+msgid "Remove the performer"
+msgstr "Убрать исполнителя"
+
+#: app/templates/show_task.html:129 app/templates/show_task.html:135
+msgid "Assign me"
+msgstr "Назначить на меня"
+
+#: app/templates/show_task.html:230
+msgid "Date Completion"
+msgstr "Дата завершения"
+
+#: app/templates/show_task.html:344 app/templates/tasks.html:172
+msgid "In the "
+msgstr "По задаче"
+
+#: app/templates/show_task.html:344 app/templates/tasks.html:172
+msgid " task, the status has been updated to "
+msgstr " был обновлен статус на"
+
+#: app/templates/show_task.html:384
+msgid "success update"
+msgstr "успешно обновлена"
+
+#: app/templates/show_task.html:419
+msgid "Task "
+msgstr "Задача"
+
+#: app/templates/show_task.html:419
+msgid "is assigned to you"
+msgstr "была назначена на вас"
+
+#: app/templates/tasks.html:21
+msgid "My Tasks (I\"m author)"
+msgstr "Мои задачи (Я автор)"
+
+#: app/templates/tasks.html:22
+msgid "My Tasks (I\"m performer)"
+msgstr "Мои задачи (Я исполнитель)"
+
+#: app/templates/tasks.html:47 app/templates/tasks.html:48
+#: app/templates/tasks.html:49
+msgid "Total"
+msgstr "Всего"
+
+#: app/templates/user.html:27
+msgid "User"
+msgstr "Пользователь"
+
+#: app/templates/user.html:34
+msgid "Search user"
+msgstr "Поиск пользователя"
+
+#~ msgid "You are creating family with {}!"
+#~ msgstr ""
+
+#~ msgid "Create Subtask"
+#~ msgstr "Создать подзадачу"
+
+#~ msgid "Subtask"
+#~ msgstr "Подзадача"
+
+#~ msgid "Assign partner"
+#~ msgstr "Назначить на партнера"
+
+#~ msgid "Assign me"
+#~ msgstr "Назначить на себя"
+
+#~ msgid "Date Completion"
+#~ msgstr "Дата завершения"
+

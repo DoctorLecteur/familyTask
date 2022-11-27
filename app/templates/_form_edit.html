@@ -1,0 +1,21 @@
+<form id="ModalForm" action="" method="post" novalidate>
+  {{ form.hidden_tag() }}
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h4 class="modal-title">{{ title }}</h4>
+  </div>
+  <div class="modal-body">
+
+    <p>
+      {{ form.email.label }}<br>
+      {{ form.email(size=64) }}
+    </p>
+
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+    <button id="submit" type="submit" class="btn btn-success">OK</button>
+  </div>
+</form>

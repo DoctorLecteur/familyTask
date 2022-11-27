@@ -1,0 +1,696 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+    <!-- Dynamic Modal -->
+    <div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="FormModal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+            </div>
+        </div>
+    </div>
+    <!-- End Dynamic Modal -->
+    <form id="editTask" method="post">
+        {{ form.hidden_tag() }}
+        <a class="btn btn-info" href="{{ url_for('tasks') }}">{{ _('Back') }}</a>
+        <a class="btn btn-danger" href="#">&larr;</a>
+        <a class="btn btn-warning" href="#">{{ _('To Work') }}</a>
+        <a class="btn btn-success" href="#">{{ _('Done') }}</a>
+        {% if task.id_type_task != 2 %}
+            <a class="edit-modal-opener btn btn-primary" data-toggle="modal"
+                data-whatever="{{ url_for('add_subtask', task_id=task.id) }}" href="#">{{ _('Create Subtask') }}</a>
+        {% endif %}
+        <a class="btn btn-dark" href="#">{{ _('Delete Task') }}</a>
+        <div>
+           <div style="float: left;">
+               <p>
+                   {{ form.title.label }}<br>
+                   {% if task.id_status == 3 %}
+                       {{ form.title(size=64, readonly=True) }}
+                   {% else %}
+                       {{ form.title(size=64) }}
+                       {% for error in form.title.errors %}
+                           <span style="color: red;">[{{ error }}]</span>
+                       {% endfor %}
+                   {% endif %}
+               </p>
+               <p>
+                   {% if task.id_status == 3 %}
+                       <select name="type_task" readonly>
+                       {% for type in typies %}
+                           {% if type.id == task.id_type_task %}
+                               <option disabled selected value="{{ type.id }}">{{ type.name }}</option>
+                           {% endif %}
+                       {% endfor %}
+                       </select>
+                   {% else %}
+                       <select name="type_task">
+                       {% for type in typies %}
+                           {% if type.id == task.id_type_task %}
+                               <option selected value="{{ type.id }}">{{ type.name }}</option>
+                           {% else %}
+                               <option value="{{ type.id }}">{{ type.name }}</option>
+                           {% endif %}
+                       {% endfor %}
+                       </select>
+                   {% endif %}
+                   {% for error in form.type_task.errors %}
+                       <span style="color: red;">[{{ error }}]</span>
+                   {% endfor %}
+               </p>
+               <p>
+                <table id="period">
+                  <thead>
+                    <th>{{ form.period_count.label }}</th>
+                    <th>Period Time</th>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        {{ form.period_count(size=64) }}
+                        {% for error in form.period_count.errors %}
+                          <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                      </td>
+                      <td>
+                        <select style="width: 100px; height: 26px;" name="period_type" readonly>
+                          <option value="Days">Days</option>
+                          <option value="Weeks">Weeks</option>
+                          <option value="Months">Months</option>
+                          <option value="Years">Years</option>
+                        </select>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                {{ form.period_time(size=10) }}
+               </p>
+               <p>
+                   {{ form.status.label }}<br>
+                   {{ form.status(size=16, readonly=True) }}
+                   {% for error in form.status.errors %}
+                       <span style="color: red;">[{{ error }}]</span>
+                   {% endfor %}
+               </p>
+               <p>
+                   {{ form.description.label }}<br>
+                   {% if task.id_status == 3 %}
+                       {{ form.description(rows=4, cols=65, readonly=True) }}<br>
+                   {% else %}
+                       {{ form.description(rows=4, cols=65) }}<br>
+                       {% for error in form.description.errors %}
+                          <span style="color: red;">[{{ error }}]</span>
+                       {% endfor %}
+                   {% endif %}
+               </p>
+               {% if task.is_subtask(task) %}
+                   <span style="font-size: 110%; font-weight: bold;">{{ _('Subtask') }}</span><br>
+                   {% for subtask in task.get_subtasks(task) %}
+                       <a style="font-size: 110%; font-weight: bold;" href="{{ url_for('edit_task', id_task=subtask.id) }}">{{ subtask.title }}</a><br>
+                   {% endfor %}
+               {% endif %}
+           </div>
+           <div style="float: right;">
+               <p>
+                   {{ form.user.label }}<br>
+                   {% if task.id_users %}
+                       <img src="/static/images/default.svg" width="20" height="20">
+                   {% endif %}
+                   {{ form.user(size=24) }}<br>
+                   {% if task.id_status != 3 %}
+                       {% if task.id_users %}
+                           {% if task.id_users == current_user.id %}
+                               <a id="link1" href="#">{{ _('Assign partner') }}</a>
+                               {% if task.id_status == 1%}
+                               |<a id="link5" href="#">{{ _('Remove the performer') }}</a>
+                               {% endif %}
+                           {% elif task.id_users != current_user.id %}
+                               <a id="link2" href="#">{{ _('Assign me') }}</a>
+                               {% if task.id_status == 1%}
+                               |<a id="link5" href="#">{{ _('Remove the performer') }}</a>
+                               {% endif %}
+                           {% endif %}
+                       {% else %}
+                            <a id="link3" href="#">{{ _('Assign me') }}</a>|<a id="link4" href="#">{{ _('Assign partner') }}</a>
+                       {% endif %}
+                       {% for error in form.user.errors %}
+                           <span style="color: red;">[{{ error }}]</span>
+                       {% endfor %}
+                   {% endif %}
+               </p>
+               <p>
+                   {{ form.category.label }}<br>
+                   {% if task.id_status == 3 %}
+                       <select name="category" readonly>
+                       {% for category in categories %}
+                           {% if category.id == task.id_category %}
+                               <option disabled selected value="{{ category.id }}">{{ category.name }}</option>
+                           {% endif %}
+                       {% endfor %}
+                       </select>
+                   {% else %}
+                       <select name="category">
+                       {% for category in categories %}
+                           {% if category.id == task.id_category %}
+                               <option selected value="{{ category.id }}">{{ category.name }}</option>
+                           {% else %}
+                               <option value="{{ category.id }}">{{ category.name }}</option>
+                           {% endif %}
+                       {% endfor %}
+                       </select>
+                   {% endif %}
+                   {% for error in form.category.errors %}
+                       <span style="color: red;">[{{ error }}]</span>
+                   {% endfor %}
+               </p>
+               <p>
+                   {{ form.priority.label }}<br>
+                   {% if task.id_status == 3 %}
+                       <select name="priority" readonly>
+                       {% for priority in priorities %}
+                           {% if priority.id == task.id_priority %}
+                               <option disabled selected value="{{ priority.id }}">{{ priority.name }}</option>
+                           {% endif %}
+                       {% endfor %}
+                       </select>
+                   {% else %}
+                       <select name="priority">
+                       {% for priority in priorities %}
+                           {% if priority.id == task.id_priority %}
+                               <option selected value="{{ priority.id }}">{{ priority.name }}</option>
+                           {% else %}
+                               <option value="{{ priority.id }}">{{ priority.name }}</option>
+                           {% endif %}
+                       {% endfor %}
+                       </select>
+                   {% endif %}
+                   {% for error in form.priority.errors %}
+                       <span style="color: red;">[{{ error }}]</span>
+                   {% endfor %}
+               </p>
+               <p>
+                   {{ form.complexity.label }}<br>
+                   {% if task.id_status == 3 %}
+                       <select name="complexity" readonly>
+                           {% for complexity in complexities %}
+                               {% if complexity.id == task.id_complexity %}
+                                   <option disabled selected value="{{ complexity.id }}">{{ complexity.name }}</option>
+                               {% endif %}
+                          {% endfor %}
+                       </select>
+                   {% else %}
+                       <select name="complexity">
+                           {% for complexity in complexities %}
+                               {% if complexity.id == task.id_complexity %}
+                                   <option selected value="{{ complexity.id }}">{{ complexity.name }}</option>
+                               {% else %}
+                                   <option value="{{ complexity.id }}">{{ complexity.name }}</option>
+                               {% endif %}
+                          {% endfor %}
+                       </select>
+                       {% for error in form.complexity.errors %}
+                           <span style="color: red;">[{{ error }}]</span>
+                       {% endfor %}
+                   {% endif %}
+               </p>
+               <p>
+                   {{ form.deadline.label }}<br>
+                   {% if task.id_status == 3 %}
+                       {{ form.deadline(size=24, readonly=True) }}
+                   {% else %}
+                       {{ form.deadline(size=24) }}
+                       {% for error in form.deadline.errors %}
+                           <span style="color: red;">[{{ error }}]</span>
+                       {% endfor %}
+                   {% endif %}
+               </p>
+               {% if task.id_status == 3 and task.date_completion %}
+               <p>
+                   <span style="font-weight: bold;">{{ _('Date Completion') }}</span><br>
+                   <span>{{ moment(task.date_completion).format('D.MM.YYYY, HH:mm') }}</span><br>
+               </p>
+               {% endif %}
+           </div>
+        </div>
+    </form>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script>
+        //отображение кнопок и перевод задач по статусам с помощью кнопок
+        $(document).ready(
+            function () {
+
+                $('.btn-warning').hide();
+                $('.btn-success').hide();
+                $('.btn-danger').hide();
+
+                const bIsSubTask = ("{{ task.is_subtask(task) }}" === "False") ? false : true;
+                if (bIsSubTask === false) { //скрытие кнопки удаления задачи, если есть подзадачи
+
+                    $('.btn-dark').show();
+
+                } else if (bIsSubTask === true) {
+
+                    $('.btn-dark').hide();
+
+                }
+
+                const nTaskStatusId = {{ task.id_status }};
+                const typeTaskId = {{ task.id_type_task }};
+
+                if (typeTaskId !== 3) {//показать и скрытие элементов для циклических задач
+
+                    $('#period').hide();
+                    $('#period_time').hide();
+                    $('#period_time').val("");
+                    $('#period_count').val(1);
+
+                } else {
+
+                    $('#period').show();
+                    $('#period_time').hide();
+                    $('select[name=period_type]').val($('#period_time').val());
+
+                }
+
+                if (nTaskStatusId === 1) {
+
+                    $('.btn-warning').show();
+                    $('.btn-danger').hide();
+
+                }
+                if (nTaskStatusId === 2) {
+
+                    if (bIsSubTask === false) {
+
+                        $('.btn-success').show();
+
+                    } else {
+
+                        $('.btn-success').hide();
+
+                    }
+
+                    if (typeTaskId !== 3) {
+
+                        $('.btn-danger').show();
+
+
+                    } else {
+
+                        $('.btn-danger').hide();
+
+                    }
+
+                }
+                if (nTaskStatusId === 3) {
+
+                    if (typeTaskId !== 3) {
+
+                        $('.btn-danger').show();
+
+                    } else {
+
+                        $('.btn-danger').hide();
+
+                    }
+
+                }
+
+            }
+        );
+
+        //функция для перевода задачи на следующий статус
+        function doUpdateStatus(strUrl, numIdTask) {
+
+            $.post(strUrl, {
+                id_task: numIdTask
+            }).done(function(response) {
+
+                //отправка оповещения после обновления статуса по задаче
+                $.ajax({
+
+                    type: 'POST',
+                    url: '/send_push',
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    dataType: 'json',
+                    data: JSON.stringify({
+                        "title": "FamilyTask",
+                        "body":  "{{ _("In the ") }} " + response["title_task"] + "{{ _(" task, the status has been updated to ") }} " + response["status_name"],
+                        "param": sessionStorage.getItem("PushParam")
+                    })
+
+                });
+
+                location.reload();
+            }).fail(function() {
+                console.log('fail');
+            });
+
+        }
+        const idTask = {{ task.id }};
+        //действие при нажатии кнопки в работу
+        $('.btn-warning').click(function() {
+
+            doUpdateStatus('/next_status', idTask);
+
+        });
+        //действие при нажатии кнопки готово
+        $('.btn-success').click(function() {
+
+            doUpdateStatus('/next_status', idTask);
+
+        });
+        //действие при нажатии кнопки стрелочки
+        $('.btn-danger').click(function() {
+
+            doUpdateStatus('/previous_status', idTask);
+
+        });
+
+        //функция для обновления задачи
+        function doPostUpdateTask(newValue, oldValue) {
+
+            if (newValue !== oldValue) {
+
+                $.post('/edit_task/{{ task.id }}', $('#editTask').serialize()
+                ).done(function(response) {
+
+                    const elem = '<div class="alert alert-info" role="alert">{{ _('Task') }} ' + $('#title').val() + ' {{ _('success update') }}</div>';
+                    $('#editTask').before(elem);
+                    setTimeout(
+                        function() {
+
+                            $('.alert-info').remove();
+
+                        },
+                    3000);
+
+                }).fail(function() {
+                    console.log("fail");
+                });
+
+            }
+
+        }
+        //изменение исполнителя
+        function doUpdatePerformer(oldUser, newUser) {
+
+            $('#user').val(newUser);
+            doPostUpdateTask(newUser, oldUser);
+            //отправка оповещения после обновления исполнителя по задаче
+            if (newUser !== "{{ current_user.get_user(current_user.id) }}") {
+
+                $.ajax({
+
+                    type: 'POST',
+                    url: '/send_push',
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    dataType: 'json',
+                    data: JSON.stringify({
+                        "title": "FamilyTask",
+                        "body":  "{{ _("Task ") }} " + "{{ task.title }}" + " {{ _("is assigned to you") }}",
+                        "param": sessionStorage.getItem("PushParam")
+                    })
+
+                });
+
+            }
+            setTimeout(
+                function() {
+
+                    location.reload();
+
+                },
+            1000);
+
+        }
+
+        $("#link1").click(
+            function() {
+
+                doUpdatePerformer($('#user').val(), "{{ current_user.get_partner(current_user) }}");
+
+            }
+        );
+        $("#link2").click(
+            function() {
+
+                doUpdatePerformer($('#user').val(), "{{ current_user.get_user(current_user.id) }}");
+
+            }
+
+        );
+        $("#link3").click(
+            function() {
+
+                doUpdatePerformer($('#user').val(), "{{ current_user.get_user(current_user.id) }}");
+
+            }
+        );
+        $("#link4").click(
+            function() {
+
+                doUpdatePerformer($('#user').val(), "{{ current_user.get_partner(current_user) }}");
+
+            }
+        );
+        //обновление заголовка
+        let oldTitle = $('#title').val();
+        $("#title").mouseleave(
+            function() {
+
+                doPostUpdateTask($(this).val(), oldTitle);
+                oldTitle = $(this).val();
+
+            }
+        );
+        //обновление типа задачи
+        let oldTypeTask = $('select[name=type_task]').val();
+        $('select[name=type_task]').change(
+            function() {
+
+                if (+$(this).val() === 3) {
+
+                    $('#period').show();
+
+                } else {
+
+                    $('#period').hide();
+                    $('#period_time').hide();
+                    $('#period_time').val("");
+
+                }
+
+                if (+$(this).val() === 3) {
+
+                    if ($('#period_count').val() && $('#period_time').val()) {
+
+                        doPostUpdateTask($(this).val(), oldTypeTask);
+                        oldTypeTask = $(this).val();
+
+                    }
+
+                } else {
+
+                    doPostUpdateTask($(this).val(), oldTypeTask);
+                    oldTypeTask = $(this).val();
+
+                }
+
+            }
+        );
+        //обвноления времени периода и срока в циклических задачах
+        let oldPeriodCount = $('#period_count').val();
+        $("#period_count").mouseleave(
+            function() {
+
+                const periodType = $('select[name=period_type]').val();
+                const deadline = new Date(); //прибавляем срок по периоду к текущей дате
+                if (periodType === "Days") {
+
+                    deadline.setDate(deadline.getDate() + Number($('#period_count').val()));
+
+                }
+                if (periodType === "Weeks") {
+
+                    deadline.setDate(deadline.getDate() + Number($('#period_count').val()) * 7);
+
+                }
+                if (periodType === "Months") {
+
+                    deadline.setMonth(deadline.getMonth() + Number($('#period_count').val()));
+
+                }
+                if (periodType === "Years") {
+
+                    deadline.setFullYear(deadline.getFullYear() + Number($('#period_count').val()));
+
+                }
+
+                let sDeadlineByDate = deadline.getFullYear();
+                if ((deadline.getMonth() + 1) < 10) {
+
+                    sDeadlineByDate += "-0" + (deadline.getMonth() + 1);
+
+                } else {
+
+                    sDeadlineByDate += "-" + (deadline.getMonth() + 1);
+
+                }
+                if (deadline.getDate() < 10) {
+
+                    sDeadlineByDate += "-0" + deadline.getDate();
+
+                } else {
+
+                    sDeadlineByDate += "-" + deadline.getDate();
+
+                }
+
+                $('#deadline').val(sDeadlineByDate);
+
+                doPostUpdateTask($(this).val(), oldPeriodCount);
+                oldPeriodCount = $(this).val();
+
+            }
+        );
+        //обвноления типа периода и срока в циклических задачах
+        let oldPeriodType = $('#period_time').val();
+        $("select[name=period_type]").change(
+            function() {
+
+                const periodType = $(this).val();
+                const deadline = new Date(); //прибавляем срок по периоду к текущей дате
+                if (periodType === "Days") {
+
+                    deadline.setDate(deadline.getDate() + Number($('#period_count').val()));
+
+                }
+                if (periodType === "Weeks") {
+
+                    deadline.setDate(deadline.getDate() + Number($('#period_count').val()) * 7);
+
+                }
+                if (periodType === "Months") {
+
+                    deadline.setMonth(deadline.getMonth() + Number($('#period_count').val()));
+
+                }
+                if (periodType === "Years") {
+
+                    deadline.setFullYear(deadline.getFullYear() + Number($('#period_count').val()));
+
+                }
+
+                let sDeadlineByDate = deadline.getFullYear();
+                if ((deadline.getMonth() + 1) < 10) {
+
+                    sDeadlineByDate += "-0" + (deadline.getMonth() + 1);
+
+                } else {
+
+                    sDeadlineByDate += "-" + (deadline.getMonth() + 1);
+
+                }
+                if (deadline.getDate() < 10) {
+
+                    sDeadlineByDate += "-0" + deadline.getDate();
+
+                } else {
+
+                    sDeadlineByDate += "-" + deadline.getDate();
+
+                }
+
+                $('#deadline').val(sDeadlineByDate);
+
+                $('#period_time').val(periodType);
+                doPostUpdateTask($('#period_time').val(), oldPeriodType);
+                oldPeriodType = $('#period_time').val();
+
+            }
+        );
+        //обновление описания
+        let oldDescr = $('#description').val();
+        $("#description").mouseleave(
+            function() {
+
+                doPostUpdateTask($(this).val(), oldDescr);
+                oldDescr = $(this).val();
+
+            }
+        );
+        //обновление приоритета
+        let oldPriority = $('select[name=priority]').val();
+        $('select[name=priority]').change(
+            function() {
+
+                doPostUpdateTask($(this).val(), oldPriority);
+                oldPriority = $(this).val();
+
+            }
+        );
+        //обновление сложности
+        let oldComplexity = $('select[name=complexity]').val();
+        $('select[name=complexity]').change(
+            function() {
+
+                doPostUpdateTask($(this).val(), oldComplexity);
+                oldComplexity = $(this).val();
+
+            }
+        );
+        //обновление деадлайна
+        let oldDeadline = $('#deadline').val();
+        $('#deadline').change(
+            function() {
+
+                doPostUpdateTask($(this).val(), oldDeadline);
+                oldDeadline = $(this).val();
+
+            }
+        );
+        //обновление категории
+        let oldCategory = $('select[name=category]').val();
+        $('select[name=category]').change(
+            function() {
+
+                doPostUpdateTask($(this).val(), oldCategory);
+                oldCategory = $(this).val();
+
+            }
+        );
+        //удаление задачи
+        $('.btn-dark').click(function() {
+            doDeleteTask({{ task.id }});
+        });
+        function doDeleteTask(numTaskId) {
+
+            $.post('/delete_task', {
+                id_task: numTaskId
+            }).done(function(response) {
+                console.log('success delete');
+                location.reload();
+            }).fail(function() {
+                console.log('fail delete');
+            });
+
+        }
+        //очистка исполнителя
+        $("#link5").click(
+            function() {
+
+                doUpdatePerformer($('#user').val(), "");
+
+            }
+        );
+    </script>
+{% endblock %}

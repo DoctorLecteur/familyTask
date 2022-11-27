@@ -1,0 +1,322 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+    <!-- Dynamic Modal -->
+    <div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="FormModal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+            </div>
+        </div>
+    </div>
+    <!-- End Dynamic Modal -->
+    <h1>{{ _('Tasks') }}</h1>
+    <a class="edit-modal-opener btn btn-primary" data-toggle="modal"
+       data-whatever="{{ url_for('add_task') }}" href="#">{{ _('Add Task') }}</a>
+    <a class="btn btn-danger" href="#">&larr;</a>
+    <a class="btn btn-warning" href="#">{{ _('To Work') }}</a>
+    <a class="btn btn-success" href="#">{{ _('Done') }}</a>
+    <a class="btn btn-dark" href="#">{{ _('Delete Task') }}</a><br>
+    <input class="form-check-input" type="checkbox" id="filterAuthor" name="filterTask" value="author"><span>{{ _('My Tasks (I"m author)') }}</span>
+    <input class="form-check-input" type="checkbox" id="filterPerformer" name="filterTask" value="performer"><span>{{ _('My Tasks (I"m performer)') }}</span>
+    <br>
+    {% if count_tasks.count_backlog > 0 or count_tasks.count_work > 0 or count_tasks.count_done > 0 %}
+        <div class="table-responsive ">
+            <table class="table table-bordered border-primary table-hover">
+                <thead>
+                    {% for item_status in status %}
+                        <th> {{ item_status.name }} </th>
+                    {% endfor %}
+                </thead>
+                <tbody>
+                    {% for task_tr in tasks %}
+                        <tr>
+                            {% for task_td in task_tr %}
+                                {% if task_td != 0 %}
+                                    <td>{% include '_task.html' %}</td>
+                                {% else %}
+                                    <td></td>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td>{{ _('Total') }}: {{ count_tasks.count_backlog }}</td>
+                        <td>{{ _('Total') }}: {{ count_tasks.count_work }}</td>
+                        <td>{{ _('Total') }}: {{ count_tasks.count_done }}</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script>
+    let idTask = 0;//переменная для id задач для перевода задачи по статусу
+    let prevIdTask = 0; //переменная для id предыдущей задачи по клику или курсору
+    //скрытие кнопок при отображении задач
+    $('.btn-warning').hide();
+    $('.btn-success').hide();
+    $('.btn-danger').hide();
+    $('.btn-dark').hide();
+    //действия при наведение курсора на блок с задачей
+    $('.div-hover').click(function() {
+        $('.btn-warning').hide();
+        $('.btn-success').hide();
+        $('.btn-danger').hide();
+        let url = '/check_task';
+        //добавляем рамку на текущий блок с задачей и убираем с предыдущего
+        $(this).css("border", "2px solid #21c1cc");
+        (prevIdTask > 0) ? $("#" + prevIdTask).css("border", ""): "";
+        const nIdMovePreviousTask = sessionStorage.getItem("IdMovePreviousTask");
+        if (nIdMovePreviousTask && nIdMovePreviousTask !== this["id"]) {
+
+            $("#" + nIdMovePreviousTask).css("border", "");
+            sessionStorage.removeItem("IdMovePreviousTask");
+
+        }
+        idTask = this["id"];
+        prevIdTask = idTask;
+        $.post(url, {
+            id_task: idTask
+        }).done(function(response) {
+
+            if (response["status"] == "В куче") {
+                $('.btn-warning').show();
+                $('.btn-success').hide();
+                $('.btn-danger').hide();
+            }
+
+            if (response["status"] == "В работе") {
+                $('.btn-warning').hide();
+                $('.btn-success').show();
+                if (response["type"] !== 3) {
+
+                    $('.btn-danger').show();
+
+                } else {
+
+                    $('.btn-danger').hide();
+
+                }
+
+            }
+
+            if (response["status"] == "Готово") {
+                $('.btn-warning').hide();
+                $('.btn-success').hide();
+                if (response["type"] !== 3) {
+
+                    $('.btn-danger').show();
+
+                } else {
+
+                    $('.btn-danger').hide();
+
+                }
+            }
+            //сохраняем номер преыдущей задачи, которую подвигали
+            sessionStorage.setItem("IdMovePreviousTask", idTask);
+
+        }).fail(function() {
+            console.log('fail');
+        });
+
+        $.post('/check_subtask', {//скрываем кнопки Готово и Удалить задачу, если есть подзадачи
+            id_task: this["id"]
+        }).done(function(response) {
+            const bIsSubTask = (response === "false") ? false : true;
+            if (bIsSubTask === true) {
+
+                $('.btn-dark').hide();
+                $('.btn-success').hide();
+
+            } else {
+
+                $('.btn-dark').show();
+
+            }
+        }).fail(function() {
+            console.log('check_subtask fail');
+        });
+
+        $('.btn-dark').click(function() {
+            doDeleteTask(idTask);
+        });
+
+    });
+
+    //функция для перевода задачи по статусам
+    function doUpdateStatus(strUrl, numIdTask) {
+
+        $.post(strUrl, {
+            id_task: numIdTask
+        }).done(function(response) {
+
+            //отправка оповещения после обновления статуса по задаче
+            $.ajax({
+
+                type: 'POST',
+                url: '/send_push',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                dataType: 'json',
+                data: JSON.stringify({
+                    "title": "FamilyTask",
+                    "body":  "{{ _("In the ") }} " + response["title_task"] + "{{ _(" task, the status has been updated to ") }} " + response["status_name"],
+                    "param": sessionStorage.getItem("PushParam")
+                })
+
+            });
+
+            location.reload();
+        }).fail(function() {
+            console.log('fail');
+        });
+
+    }
+    //действие при нажатии кнопки в работу
+    $('.btn-warning').click(function() {
+
+        doUpdateStatus('/next_status', idTask);
+
+    });
+    //действие при нажатии кнопки готово
+    $('.btn-success').click(function() {
+
+        doUpdateStatus('/next_status', idTask);
+
+    });
+    //действие при нажатии кнопки стрелочки
+    $('.btn-danger').click(function() {
+
+        doUpdateStatus('/previous_status', idTask);
+
+    });
+    //действие при перетаскивании блока с задачей
+    const taskTable = document.querySelector('.table-responsive ');
+    taskTable.addEventListener('dragstart', (evt) => {
+
+        evt.target.classList.add('selected');
+
+    });
+    let currentTask = null;//переменная для задачи, над которой перетаскивает другую задачу
+    taskTable.addEventListener('dragover', (evt) => {
+
+        evt.preventDefault();
+
+        const activeTask = taskTable.querySelector('.selected');
+        currentTask = evt.target;
+        //возращает блок с задачей назад, если блок перенесли за таблицу
+        const bIsMoveable = activeTask !== currentTask && currentTask.classList.contains('div-hover');
+        if (!bIsMoveable) {
+            return;
+        }
+
+    });
+    //обновление статуса по задаче, когда её отпустили после перемещения
+    taskTable.addEventListener('dragend', (evt) => {
+
+        const numIdTaskMove = evt.target.getAttribute("id"); //id задачи, которую двигают
+        if (numIdTaskMove) {
+
+            evt.target.classList.remove('selected');
+            let cellIndex = null; //id столбца со следующем статусом для задачи
+            if (currentTask.parentNode.cellIndex !== undefined) {
+
+                cellIndex = currentTask.parentNode.cellIndex;
+
+            } else {
+
+                cellIndex = currentTask.cellIndex;
+
+            }
+
+            let cellIndexMove = evt.target.parentNode.cellIndex; //id столбца с текущем статусом для задачи
+            let sUrl = null; //переменная для перемещения задачи по статусам
+            if (cellIndexMove !== cellIndex && cellIndexMove !== undefined && cellIndex !== undefined) {
+
+                if (cellIndexMove < cellIndex) {
+
+                    sUrl = '/next_status';
+
+                } else {
+
+                    sUrl = '/previous_status';
+
+                }
+
+            }
+
+            if (sUrl && numIdTaskMove) {
+
+                doUpdateStatus(sUrl, numIdTaskMove);
+                //сохраняем номер преыдущей задачи, которую подвигали
+                sessionStorage.setItem("IdMovePreviousTask", numIdTaskMove);
+
+            }
+
+        } else {
+
+            evt.target.classList.remove('selected');
+
+        }
+
+    });
+    //фильтрация задач по checkbox
+    $("input[type=checkbox]").on("change", function() {
+
+        if ($(this).prop("checked")) {
+
+            const sTypeFilter = this["value"];
+            $.get('/tasks_by_user/' + sTypeFilter
+            ).done(function (response) {
+                const json = $.parseJSON(response);
+                $("body").html(json.data);
+                if (sTypeFilter === "author") {
+
+                    $("#filterAuthor").prop("checked", true);
+                    $("#filterPerformer").prop("checked", false);
+
+                } else if (sTypeFilter === "performer") {
+
+                    $("#filterAuthor").prop("checked", false);
+                    $("#filterPerformer").prop("checked", true);
+
+                }
+            }).fail(function () {
+                console.log('fail filter');
+            });
+
+        } else {
+
+            if (!$("#filterAuthor").prop("checked") && !$("#filterPerformer").prop("checked")) {
+
+                location.reload();
+
+            }
+
+        }
+
+    });
+    //удаление задачи
+    function doDeleteTask(numTaskId) {
+
+        $.post('/delete_task', {
+            id_task: numTaskId
+        }).done(function(response) {
+            console.log('success delete');
+            location.reload();
+        }).fail(function() {
+            console.log('fail delete');
+        });
+
+    }
+    </script>
+{% endblock %}
