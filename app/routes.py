@@ -133,21 +133,6 @@ def family():
 @app.route('/tasks', methods=['GET', 'POST'])
 @login_required
 def tasks():
-    category1 = Category(name='Дом')
-    category2 = Category(name='Животные')
-    category3 = Category(name='Готовка')
-    category4 = Category(name='Досуг')
-    category5 = Category(name='Поездки')
-    category6 = Category(name='Покупки')
-    category7 = Category(name='Другое')
-    db.session.add(category1)
-    db.session.add(category2)
-    db.session.add(category3)
-    db.session.add(category4)
-    db.session.add(category5)
-    db.session.add(category6)
-    db.session.add(category7)
-    db.session.commit()
     form = EmptyForm()
     status = get_status()
     type_user = None
