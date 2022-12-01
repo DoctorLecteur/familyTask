@@ -133,8 +133,12 @@ def family():
 @app.route('/tasks', methods=['GET', 'POST'])
 @login_required
 def tasks():
-    type_task = TypeTask(name='Циклическая')
-    db.session.add(type_task)
+    priority1 = Priority(name='Низкий')
+    priority2 = Priority(name='Средний')
+    priority3 = Priority(name='Высокий')
+    db.session.add(priority1)
+    db.session.add(priority2)
+    db.session.add(priority3)
     db.session.commit()
     form = EmptyForm()
     status = get_status()
