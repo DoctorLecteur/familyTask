@@ -135,7 +135,7 @@ def family():
 def tasks():
     form = EmptyForm()
     status = get_status()
-    
+
     type_user = None
     if request.method == "POST":
         type_user = request.form['type_user']
@@ -208,7 +208,8 @@ def tasks():
 
     arr_new = []
     for tr_item_task_done in range(0, len(list_tasks)):
-        arr_new.append(list_tasks[tr_item_task_done][2].date_completion)
+        if list_tasks[tr_item_task_done][2] != 0:
+            arr_new.append(list_tasks[tr_item_task_done][2].date_completion)
 
     arr_new.sort(reverse=True)
     for item_sort in range(0, len(arr_new)):
