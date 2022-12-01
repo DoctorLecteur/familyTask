@@ -329,14 +329,6 @@ def get_category():
 @app.route('/add_task', methods=['GET', 'POST'])
 @login_required
 def add_task():
-    status1 = Status(name='В куче')
-    status2 = Status(name='В работе')
-    status3 = Status(name='Готово')
-    db.session.add(status1)
-    db.session.add(status2)
-    db.session.add(status3)
-
-    db.session.commit()
     form = AddTaskForm()
     type_task = get_type_task()
     priority = get_priotity()
