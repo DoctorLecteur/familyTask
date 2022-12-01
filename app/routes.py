@@ -135,6 +135,7 @@ def family():
 def tasks():
     form = EmptyForm()
     status = get_status()
+    
     type_user = None
     if request.method == "POST":
         type_user = request.form['type_user']
