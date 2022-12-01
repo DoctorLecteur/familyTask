@@ -141,6 +141,7 @@ def tasks():
     db.session.add(status3)
     db.session.commit()
     flash('status add success')
+    
     form = EmptyForm()
     status = get_status()
     type_user = None
