@@ -133,6 +133,14 @@ def family():
 @app.route('/tasks', methods=['GET', 'POST'])
 @login_required
 def tasks():
+    status1 = Status(name='В куче')
+    status2 = Status(name='В работе')
+    status3 = Status(name='Готово')
+    db.session.add(status1)
+    db.session.add(status2)
+    db.session.add(status3)
+    db.session.commit()
+    flash('status add success')
     form = EmptyForm()
     status = get_status()
     type_user = None
