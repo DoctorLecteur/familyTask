@@ -133,7 +133,7 @@ def family():
 @app.route('/tasks', methods=['GET', 'POST'])
 @login_required
 def tasks():
-    type_task = TypeTask(name='Подзадача')
+    type_task = TypeTask(name='Циклическая')
     db.session.add(type_task)
     db.session.commit()
     form = EmptyForm()
