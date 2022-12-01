@@ -201,74 +201,78 @@
     });
     //действие при перетаскивании блока с задачей
     const taskTable = document.querySelector('.table-responsive ');
-    taskTable.addEventListener('dragstart', (evt) => {
+    if (taskTable !== null) {
 
-        evt.target.classList.add('selected');
+        taskTable.addEventListener('dragstart', (evt) => {
 
-    });
-    let currentTask = null;//переменная для задачи, над которой перетаскивает другую задачу
-    taskTable.addEventListener('dragover', (evt) => {
+            evt.target.classList.add('selected');
 
-        evt.preventDefault();
+        });
+        let currentTask = null;//переменная для задачи, над которой перетаскивает другую задачу
+        taskTable.addEventListener('dragover', (evt) => {
 
-        const activeTask = taskTable.querySelector('.selected');
-        currentTask = evt.target;
-        //возращает блок с задачей назад, если блок перенесли за таблицу
-        const bIsMoveable = activeTask !== currentTask && currentTask.classList.contains('div-hover');
-        if (!bIsMoveable) {
-            return;
-        }
+            evt.preventDefault();
 
-    });
-    //обновление статуса по задаче, когда её отпустили после перемещения
-    taskTable.addEventListener('dragend', (evt) => {
-
-        const numIdTaskMove = evt.target.getAttribute("id"); //id задачи, которую двигают
-        if (numIdTaskMove) {
-
-            evt.target.classList.remove('selected');
-            let cellIndex = null; //id столбца со следующем статусом для задачи
-            if (currentTask.parentNode.cellIndex !== undefined) {
-
-                cellIndex = currentTask.parentNode.cellIndex;
-
-            } else {
-
-                cellIndex = currentTask.cellIndex;
-
+            const activeTask = taskTable.querySelector('.selected');
+            currentTask = evt.target;
+            //возращает блок с задачей назад, если блок перенесли за таблицу
+            const bIsMoveable = activeTask !== currentTask && currentTask.classList.contains('div-hover');
+            if (!bIsMoveable) {
+                return;
             }
 
-            let cellIndexMove = evt.target.parentNode.cellIndex; //id столбца с текущем статусом для задачи
-            let sUrl = null; //переменная для перемещения задачи по статусам
-            if (cellIndexMove !== cellIndex && cellIndexMove !== undefined && cellIndex !== undefined) {
+        });
+        //обновление статуса по задаче, когда её отпустили после перемещения
+        taskTable.addEventListener('dragend', (evt) => {
 
-                if (cellIndexMove < cellIndex) {
+            const numIdTaskMove = evt.target.getAttribute("id"); //id задачи, которую двигают
+            if (numIdTaskMove) {
 
-                    sUrl = '/next_status';
+                evt.target.classList.remove('selected');
+                let cellIndex = null; //id столбца со следующем статусом для задачи
+                if (currentTask.parentNode.cellIndex !== undefined) {
+
+                    cellIndex = currentTask.parentNode.cellIndex;
 
                 } else {
 
-                    sUrl = '/previous_status';
+                    cellIndex = currentTask.cellIndex;
 
                 }
 
+                let cellIndexMove = evt.target.parentNode.cellIndex; //id столбца с текущем статусом для задачи
+                let sUrl = null; //переменная для перемещения задачи по статусам
+                if (cellIndexMove !== cellIndex && cellIndexMove !== undefined && cellIndex !== undefined) {
+
+                    if (cellIndexMove < cellIndex) {
+
+                        sUrl = '/next_status';
+
+                    } else {
+
+                        sUrl = '/previous_status';
+
+                    }
+
+                }
+
+                if (sUrl && numIdTaskMove) {
+
+                    doUpdateStatus(sUrl, numIdTaskMove);
+                    //сохраняем номер преыдущей задачи, которую подвигали
+                    sessionStorage.setItem("IdMovePreviousTask", numIdTaskMove);
+
+                }
+
+            } else {
+
+                evt.target.classList.remove('selected');
+
             }
 
-            if (sUrl && numIdTaskMove) {
+        });
 
-                doUpdateStatus(sUrl, numIdTaskMove);
-                //сохраняем номер преыдущей задачи, которую подвигали
-                sessionStorage.setItem("IdMovePreviousTask", numIdTaskMove);
-
-            }
-
-        } else {
-
-            evt.target.classList.remove('selected');
-
-        }
-
-    });
+    }
     //фильтрация задач по checkbox
     $("input[type=checkbox]").on("change", function() {
 
