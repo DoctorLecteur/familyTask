@@ -329,6 +329,13 @@ def get_category():
 @app.route('/add_task', methods=['GET', 'POST'])
 @login_required
 def add_task():
+    status1 = Status(name='В куче')
+    status2 = Status(name='В работе')
+    status3 = Status(name='Готово')
+    db.session.add(status1)
+    db.session.add(status2)
+    db.session.add(status3)
+    db.session.commit()
     form = AddTaskForm()
     type_task = get_type_task()
     priority = get_priotity()
@@ -337,7 +344,6 @@ def add_task():
     category = get_category()
 
     if form.validate_on_submit():
-       flash('valid on submit')
        if form.type_task.data == 3:
            if form.period_count.data is not None:
                task = Tasks(id_type_task=form.type_task.data, title=form.title.data, id_priority=form.priority.data,
@@ -351,7 +357,6 @@ def add_task():
                         create_user=current_user.id, create_date=datetime.utcnow(), date_completion=datetime.utcnow(),
                         id_complexity=form.complexity.data, id_category=form.category.data)
        db.session.add(task)
-       flash(task)
        db.session.commit()
        flash(_('Task success added.'))
        return jsonify(status='ok', title_task=form.title.data)
