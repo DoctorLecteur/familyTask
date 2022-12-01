@@ -335,6 +335,7 @@ def add_task():
     db.session.add(status1)
     db.session.add(status2)
     db.session.add(status3)
+    
     db.session.commit()
     form = AddTaskForm()
     type_task = get_type_task()
