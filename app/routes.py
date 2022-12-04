@@ -214,7 +214,7 @@ def tasks():
     arr_new.sort(reverse=True)
     for item_sort in range(0, len(arr_new)):
         for item_task in range(0, len(list_tasks)):
-            if list_tasks[item_task][2].date_completion != 0:
+            if list_tasks[item_task][2] != 0:
                 if arr_new[item_sort] == list_tasks[item_task][2].date_completion:
                     temp_task = list_tasks[item_sort][2]
                     list_tasks[item_sort][2] = list_tasks[item_task][2]
