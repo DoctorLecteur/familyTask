@@ -1,3 +1,8 @@
 /app/static/img/
 /logs/
 /app/static/img/
+/.idea/
+/__pycache__/
+app/__pycache__/
+migrations/__pycache__/
+migrations/versions/__pycache__/
