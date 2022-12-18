@@ -221,5 +221,23 @@
 
         }
 
+        //отправка уведомлений о нормативе
+        {% if current_user.is_authenticated %}
+        $(function() {
+            setInterval(function() {
+                console.log('test');
+                $.ajax({
+
+                    type: 'POST',
+                    url: '/send_push_by_normativ',
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    dataType: 'json'
+                })
+            }, 1800000);
+        });
+        {% endif %}
+
     </script>
 {% endblock %}

@@ -5,6 +5,7 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', '').replace(
         'postgres://', 'postgresql://') or \
                               ''test''
+                              #''test''
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     NOTIFICATION_KEY = ''test''
     MAIL_SERVER = os.environ.get('MAIL_SERVER') or ''test''

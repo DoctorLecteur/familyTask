@@ -208,14 +208,23 @@ def tasks():
     arr_new = []
     for tr_item_task_done in range(0, len(list_tasks)):
         arr_new.append(list_tasks[tr_item_task_done][2].date_completion)
+        if list_tasks[tr_item_task_done][2] != 0:
+            arr_new.append(list_tasks[tr_item_task_done][2].date_completion)
 
     arr_new.sort(reverse=True)
     for item_sort in range(0, len(arr_new)):
         for item_task in range(0, len(list_tasks)):
+
             if arr_new[item_sort] == list_tasks[item_task][2].date_completion:
                 temp_task = list_tasks[item_sort][2]
                 list_tasks[item_sort][2] = list_tasks[item_task][2]
                 list_tasks[item_task][2] = temp_task
+
+            if list_tasks[item_task][2] != 0:
+                if arr_new[item_sort] == list_tasks[item_task][2].date_completion:
+                    temp_task = list_tasks[item_sort][2]
+                    list_tasks[item_sort][2] = list_tasks[item_task][2]
+                    list_tasks[item_task][2] = temp_task
 
     count_dict = {
         'count_backlog': count_backlog,
@@ -681,3 +690,74 @@ def check_subtask():
         return make_response("true")
     else:
         return make_response("false")
+
+@app.route('/send_push_by_normativ', methods=['POST'])
+@login_required
+def send_push_notification_by_normativ():
+    user_partner = current_user.get_partner(current_user)
+    user_partner_id = current_user.get_id_by_username(user_partner)
+    partner_email = current_user.get_email_by_username(user_partner)
+    tasks_by_current_user = Tasks.query.filter_by(create_user=current_user.id)
+    tasks_by_partner_user = Tasks.query.filter_by(create_user=user_partner_id)
+
+    tasks_by_family = tasks_by_current_user.union(tasks_by_partner_user).all()
+    text_push_notify = []
+    for index_task in range(0, len(tasks_by_family), 1):
+        if tasks_by_family[index_task].id_status != 3: #у выполненных задач норматив не рассчитываем
+            percent_after_create_date = int((1 - ((tasks_by_family[index_task].deadline - datetime.now()).total_seconds() /
+                  (tasks_by_family[index_task].deadline - tasks_by_family[index_task].create_date).total_seconds())) * 100)
+            if percent_after_create_date == 25 or percent_after_create_date == 50 or percent_after_create_date == 75:
+                text_push_notify.append({'title': 'Истекло ' + str(percent_after_create_date)
+                                                  + '% отведенного времени на выполнение задачи '
+                                                  + tasks_by_family[index_task].title,
+                                         'body': 'По задаче ' + tasks_by_family[index_task].title + ' истекло '
+                                                + str(percent_after_create_date) + '% отведенного времени на выполнение'
+                                         })
+            elif percent_after_create_date == 100:
+                text_push_notify.append({'title': 'Истек срок выполнения задачи ' + tasks_by_family[index_task].title,
+                                         'body': 'По задаче ' + tasks_by_family[index_task].title + ' истек срок выполнения'
+                                         })
+
+    subscr_by_current_user = Subscription.query.filter_by(id_users=current_user.id)
+    subscr_by_partner_user = Subscription.query.filter_by(id_users=user_partner_id)
+    subscr_by_users = subscr_by_current_user.union(subscr_by_partner_user).all()
+    for index_subscr in range(0, len(subscr_by_users), 1):
+        push_param = json.loads((subscr_by_users[index_subscr].push_param).replace('\'', '\"').replace("None", "\"\""))
+        for item_notify in text_push_notify:
+            data_push = json.dumps({
+                'title':  item_notify['title'],
+                'body': item_notify['body']
+            })
+            try:
+                webpush(
+                    subscription_info=push_param,
+                    data=data_push,
+                    vapid_private_key='./private_key.pem',
+                    vapid_claims={
+                        'sub': 'mailto:{}'.format(app.config['ADMINS'][0])
+                    }
+                )
+            except WebPushException as ex:
+                print('I can\'t do that: {}'.format(repr(ex)))
+                print(ex)
+                if ex.response.status_code == 410:
+                    print('subscr 410 error', subscr_by_users[index_subscr].id_users,
+                          subscr_by_users[index_subscr].push_param)
+                    db.session.delete(subscr_by_users[index_subscr])
+                    db.session.commit()
+                # Mozilla returns additional information in the body of the response.
+                if ex.response and ex.response.json():
+                    extra = ex.response.json()
+                    print('Remote service replied with a {}:{}, {}',
+                          extra.code,
+                          extra.errno,
+                          extra.message)
+            # дублирование оповещения на почту
+            send_email(item_notify['title'],
+                       sender=app.config['ADMINS'][0],
+                       recipients=[current_user.email, partner_email],
+                       text_body=item_notify['body'],
+                       html_body=""
+                       )
+
+    return make_response('success')
