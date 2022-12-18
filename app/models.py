@@ -128,6 +128,10 @@ class Tasks(db.Model):
     id_category = db.Column(db.Integer, db.ForeignKey('category.id'))
     period = db.Column(db.Integer)
     period_type = db.Column(db.String(24))
+    deadline_25_percent = db.Column(db.String(1))
+    deadline_50_percent = db.Column(db.String(1))
+    deadline_75_percent = db.Column(db.String(1))
+    deadline_100_percent = db.Column(db.String(1))
 
     subtask =  db.relationship(
         'Tasks', secondary=subtasks,
