@@ -225,9 +225,7 @@
         {% if current_user.is_authenticated %}
         $(function() {
             setInterval(function() {
-                console.log('test');
                 $.ajax({
-
                     type: 'POST',
                     url: '/send_push_by_normativ',
                     headers: {
