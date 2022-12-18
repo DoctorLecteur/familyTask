@@ -207,7 +207,6 @@ def tasks():
 
     arr_new = []
     for tr_item_task_done in range(0, len(list_tasks)):
-        arr_new.append(list_tasks[tr_item_task_done][2].date_completion)
         if list_tasks[tr_item_task_done][2] != 0:
             arr_new.append(list_tasks[tr_item_task_done][2].date_completion)
 
@@ -702,21 +701,55 @@ def send_push_notification_by_normativ():
 
     tasks_by_family = tasks_by_current_user.union(tasks_by_partner_user).all()
     text_push_notify = []
+    flag_update_task = False #флаг для обновления задачи
     for index_task in range(0, len(tasks_by_family), 1):
         if tasks_by_family[index_task].id_status != 3: #у выполненных задач норматив не рассчитываем
-            percent_after_create_date = int((1 - ((tasks_by_family[index_task].deadline - datetime.now()).total_seconds() /
+
+            percent_after_create_date = int((1 - ((tasks_by_family[index_task].deadline - (datetime.now() - timedelta(hours=3))).total_seconds() /
                   (tasks_by_family[index_task].deadline - tasks_by_family[index_task].create_date).total_seconds())) * 100)
-            if percent_after_create_date == 25 or percent_after_create_date == 50 or percent_after_create_date == 75:
+            if percent_after_create_date >= 25 and percent_after_create_date < 50 \
+                    and tasks_by_family[index_task].deadline_25_percent != 't':
+                tasks_by_family[index_task].deadline_25_percent = 't'
+                flag_update_task = True
                 text_push_notify.append({'title': 'Истекло ' + str(percent_after_create_date)
                                                   + '% отведенного времени на выполнение задачи '
                                                   + tasks_by_family[index_task].title,
                                          'body': 'По задаче ' + tasks_by_family[index_task].title + ' истекло '
-                                                + str(percent_after_create_date) + '% отведенного времени на выполнение'
+                                                 + str(
+                                             percent_after_create_date) + '% отведенного времени на выполнение'
                                          })
-            elif percent_after_create_date == 100:
+            elif percent_after_create_date >= 50 and percent_after_create_date < 75 \
+                    and tasks_by_family[index_task].deadline_50_percent != 't':
+                tasks_by_family[index_task].deadline_50_percent = 't'
+                flag_update_task = True
+                text_push_notify.append({'title': 'Истекло ' + str(percent_after_create_date)
+                                                  + '% отведенного времени на выполнение задачи '
+                                                  + tasks_by_family[index_task].title,
+                                         'body': 'По задаче ' + tasks_by_family[index_task].title + ' истекло '
+                                                 + str(
+                                             percent_after_create_date) + '% отведенного времени на выполнение'
+                                         })
+            elif percent_after_create_date >= 75 and percent_after_create_date < 100 \
+                    and tasks_by_family[index_task].deadline_75_percent != 't':
+                tasks_by_family[index_task].deadline_75_percent = 't'
+                flag_update_task = True
+                text_push_notify.append({'title': 'Истекло ' + str(percent_after_create_date)
+                                                  + '% отведенного времени на выполнение задачи '
+                                                  + tasks_by_family[index_task].title,
+                                         'body': 'По задаче ' + tasks_by_family[index_task].title + ' истекло '
+                                                 + str(
+                                             percent_after_create_date) + '% отведенного времени на выполнение'
+                                         })
+            elif percent_after_create_date >= 100 and tasks_by_family[index_task].deadline_100_percent != 't':
+                tasks_by_family[index_task].deadline_100_percent = 't'
+                flag_update_task = True
                 text_push_notify.append({'title': 'Истек срок выполнения задачи ' + tasks_by_family[index_task].title,
-                                         'body': 'По задаче ' + tasks_by_family[index_task].title + ' истек срок выполнения'
+                                         'body': 'По задаче ' + tasks_by_family[index_task].title
+                                                 + ' истек срок выполнения'
                                          })
+
+            if flag_update_task:
+                db.session.commit()
 
     subscr_by_current_user = Subscription.query.filter_by(id_users=current_user.id)
     subscr_by_partner_user = Subscription.query.filter_by(id_users=user_partner_id)
