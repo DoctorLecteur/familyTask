@@ -1,6 +1,5 @@
 /app/static/img/
 /logs/
-/app/static/img/
 /.idea/
 /__pycache__/
 app/__pycache__/
