@@ -707,45 +707,55 @@ def send_push_notification_by_normativ():
 
             percent_after_create_date = int((1 - ((tasks_by_family[index_task].deadline - (datetime.now() - timedelta(hours=3))).total_seconds() /
                   (tasks_by_family[index_task].deadline - tasks_by_family[index_task].create_date).total_seconds())) * 100)
+            remains_days = int((tasks_by_family[index_task].deadline - (datetime.now() - timedelta(hours=3))).total_seconds() / 60 / 60 / 24)
             if percent_after_create_date >= 25 and percent_after_create_date < 50 \
                     and tasks_by_family[index_task].deadline_25_percent != 't':
                 tasks_by_family[index_task].deadline_25_percent = 't'
                 flag_update_task = True
-                text_push_notify.append({'title': 'Истекло ' + str(percent_after_create_date)
-                                                  + '% отведенного времени на выполнение задачи '
-                                                  + tasks_by_family[index_task].title,
-                                         'body': 'По задаче ' + tasks_by_family[index_task].title + ' истекло '
-                                                 + str(
-                                             percent_after_create_date) + '% отведенного времени на выполнение'
-                                         })
+                if remains_days >= 1:
+                    text_push_notify.append({'title': 'Внимание!',
+                                             'body': 'Остался(-ось) ' + str(remains_days) + ' день(дней) на '
+                                                     + 'выполнение задачи ' + tasks_by_family[index_task].title
+                                             })
+                else:
+                    text_push_notify.append({'title': 'Внимание!',
+                                             'body': 'На выполнение задачи ' + tasks_by_family[index_task].title
+                                                     + ' осталось меньше 24 часов'
+                                             })
             elif percent_after_create_date >= 50 and percent_after_create_date < 75 \
                     and tasks_by_family[index_task].deadline_50_percent != 't':
                 tasks_by_family[index_task].deadline_50_percent = 't'
                 flag_update_task = True
-                text_push_notify.append({'title': 'Истекло ' + str(percent_after_create_date)
-                                                  + '% отведенного времени на выполнение задачи '
-                                                  + tasks_by_family[index_task].title,
-                                         'body': 'По задаче ' + tasks_by_family[index_task].title + ' истекло '
-                                                 + str(
-                                             percent_after_create_date) + '% отведенного времени на выполнение'
-                                         })
+                if remains_days >= 1:
+                    text_push_notify.append({'title': 'Внимание!',
+                                             'body': 'Остался(-ось) ' + str(remains_days) + ' день(дней) на '
+                                                     + 'выполнение задачи ' + tasks_by_family[index_task].title
+                                             })
+                else:
+                    text_push_notify.append({'title': 'Внимание!',
+                                             'body': 'На выполнение задачи ' + tasks_by_family[index_task].title
+                                                     + ' осталось меньше 24 часов'
+                                             })
             elif percent_after_create_date >= 75 and percent_after_create_date < 100 \
                     and tasks_by_family[index_task].deadline_75_percent != 't':
                 tasks_by_family[index_task].deadline_75_percent = 't'
                 flag_update_task = True
-                text_push_notify.append({'title': 'Истекло ' + str(percent_after_create_date)
-                                                  + '% отведенного времени на выполнение задачи '
-                                                  + tasks_by_family[index_task].title,
-                                         'body': 'По задаче ' + tasks_by_family[index_task].title + ' истекло '
-                                                 + str(
-                                             percent_after_create_date) + '% отведенного времени на выполнение'
-                                         })
+                if remains_days >= 1:
+                    text_push_notify.append({'title': 'Внимание!',
+                                             'body': 'Остался(-ось) ' + str(remains_days) + ' день(дней) на '
+                                                     + 'выполнение задачи ' + tasks_by_family[index_task].title
+                                             })
+                else:
+                    text_push_notify.append({'title': 'Внимание!',
+                                             'body': 'На выполнение задачи ' + tasks_by_family[index_task].title
+                                                     + ' осталось меньше 24 часов'
+                                             })
             elif percent_after_create_date >= 100 and tasks_by_family[index_task].deadline_100_percent != 't':
                 tasks_by_family[index_task].deadline_100_percent = 't'
                 flag_update_task = True
-                text_push_notify.append({'title': 'Истек срок выполнения задачи ' + tasks_by_family[index_task].title,
+                text_push_notify.append({'title': 'Внимание!',
                                          'body': 'По задаче ' + tasks_by_family[index_task].title
-                                                 + ' истек срок выполнения'
+                                                 + ' истекло время на её выполнение:('
                                          })
 
             if flag_update_task:
