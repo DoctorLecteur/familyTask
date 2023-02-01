@@ -11,7 +11,7 @@
       <p>
         {{ form.type_task.label }}<br>
         {% if task_id %}
-          <select name="type_task" disabled="true">
+          <select style="height: 25px; width: 100%;" name="type_task" disabled="true">
             {% for type_task in typies_task %}
                 {% if type_task.id == 2 %}
                   <option disabled selected value="{{ type_task.id }}">{{ type_task.name }}</option>
@@ -19,7 +19,7 @@
             {% endfor %}
           </select>
         {% else %}
-          <select name="type_task" readonly>
+          <select style="height: 25px; width: 100%;" name="type_task" readonly>
             {% for type_task in typies_task %}
                 <option value="{{ type_task.id }}">{{ type_task.name }}</option>
             {% endfor %}
@@ -61,14 +61,14 @@
         {% for error in form.type_task.errors %}
           <span style="color: red;">[{{ error }}]</span>
         {% endfor %}
-        {{ form.title(size=64) }}<br>
+        {{ form.title(style='width: 100%;') }}<br>
         {% for error in form.title.errors %}
           <span style="color: red;">[{{ error }}]</span>
         {% endfor %}
       </p>
       <p>
         {{ form.category.label }}<br>
-        <select name="category" readonly>
+        <select style="height: 25px; width: 100%;" name="category" readonly>
           {% for category in categories %}
             <option value="{{ category.id }}">{{ category.name }}</option>
           {% endfor %}
@@ -79,7 +79,7 @@
       </p>
       <p>
         {{ form.priority.label }}<br>
-        <select name="priority">
+        <select style="height: 25px; width: 100%;" name="priority">
           {% for priority in priorities %}
             <option value="{{ priority.id }}">{{ priority.name }}</option>
           {% endfor %}
@@ -90,7 +90,7 @@
       </p>
       <p>
         {{ form.complexity.label }}<br>
-        <select name="complexity">
+        <select style="height: 25px; width: 100%;" name="complexity">
           {% for complexity in complexities %}
             <option value="{{ complexity.id }}">{{ complexity.name }}</option>
           {% endfor %}
@@ -101,14 +101,14 @@
       </p>
       <p>
         {{ form.deadline.label }}<br>
-        {{ form.deadline(size=64, class="datepicker") }}<br>
+        {{ form.deadline(size=64, class="datepicker", style="height: 25px; width: 100%;") }}<br>
         {% for error in form.deadline.errors %}
           <span style="color: red;">[{{ error }}]</span>
         {% endfor %}
       </p>
       <p>
         {{ form.description.label }}<br>
-        {{ form.description(rows=4, cols=67) }}<br>
+        {{ form.description(rows=4, style="min-width: 100%; max-width: 100%; width: 100%;") }}<br>
         {% for error in form.description.errors %}
           <span style="color: red;">[{{ error }}]</span>
         {% endfor %}

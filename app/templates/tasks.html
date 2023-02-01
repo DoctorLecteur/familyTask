@@ -18,8 +18,9 @@
     <a class="btn btn-warning" href="#">{{ _('To Work') }}</a>
     <a class="btn btn-success" href="#">{{ _('Done') }}</a>
     <a class="btn btn-dark" href="#">{{ _('Delete Task') }}</a><br>
-    <input class="form-check-input" type="checkbox" id="filterAuthor" name="filterTask" value="author"><span>{{ _('My Tasks (I"m author)') }}</span>
-    <input class="form-check-input" type="checkbox" id="filterPerformer" name="filterTask" value="performer"><span>{{ _('My Tasks (I"m performer)') }}</span>
+    <input style="zoom: 1.35;" class="form-check-input" type="checkbox" id="filterAuthor" name="filterTask" value="author"><span style="font-size: 110%;">{{ _('My Tasks (I"m author)') }}</span>
+    <br>
+    <input style="zoom: 1.35;" class="form-check-input" type="checkbox" id="filterPerformer" name="filterTask" value="performer"><span style="font-size: 110%;">{{ _('My Tasks (I"m performer)') }}</span>
     <br>
     {% if count_tasks.count_backlog > 0 or count_tasks.count_work > 0 or count_tasks.count_done > 0 %}
         <div class="table-responsive ">
