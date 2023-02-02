@@ -17,17 +17,38 @@
     <a class="btn btn-danger" href="#">&larr;</a>
     <a class="btn btn-warning" href="#">{{ _('To Work') }}</a>
     <a class="btn btn-success" href="#">{{ _('Done') }}</a>
-    <a class="btn btn-dark" href="#">{{ _('Delete Task') }}</a><br>
+    <a class="btn btn-dark" href="#">{{ _('Delete Task') }}</a>
+    <br>
     <input style="zoom: 1.35;" class="form-check-input" type="checkbox" id="filterAuthor" name="filterTask" value="author"><span style="font-size: 110%;">{{ _('My Tasks (I"m author)') }}</span>
     <br>
     <input style="zoom: 1.35;" class="form-check-input" type="checkbox" id="filterPerformer" name="filterTask" value="performer"><span style="font-size: 110%;">{{ _('My Tasks (I"m performer)') }}</span>
-    <br>
+    <!--<br>
+    <a id="hide_done" style="float: right;" class="btn btn-info" href="#">Скрыть</a>
+    <a id="show_done" style="float: right;" class="btn btn-info" href="#">Показать</a>
+    <br><br>
+    -->
     {% if count_tasks.count_backlog > 0 or count_tasks.count_work > 0 or count_tasks.count_done > 0 %}
         <div class="table-responsive ">
             <table class="table table-bordered border-primary table-hover">
                 <thead>
                     {% for item_status in status %}
-                        <th> {{ item_status.name }} </th>
+                        <th>
+                            {% if item_status.name == "Готово" %}
+                                <p align="left" style="vertical-align: text-top">
+                                    {{ item_status.name }}
+                                    <a id="hide_done" style="float: right;" class="btn btn-info" href="#">Скрыть</a>
+                                </p>
+                            {% elif item_status.name == "В работе" %}
+                                <p align="left" style="vertical-align: text-top">
+                                    {{ item_status.name }}
+                                    <a id="show_done" style="float: right;" class="btn btn-info" href="#">Показать</a>
+                                </p>
+                            {% else %}
+                                <p align="left" style="vertical-align: text-top">
+                                    {{ item_status.name }}
+                                </p>
+                            {% endif %}
+                        </th>
                     {% endfor %}
                 </thead>
                 <tbody>
@@ -393,5 +414,62 @@
         });
 
     }
+
+    $(window).load(
+        function() {
+
+            $("#hide_done").show();
+            $("#show_done").hide();
+
+        }
+
+    );
+
+    //кнопка скрытия последнего столбца в таблице
+    $("#hide_done").click(function() {
+        //remove the 1st column
+        $('table tr').find('td:eq(2),th:eq(2)').remove();
+        $("#hide_done").hide();
+        $("#show_done").show();
+
+        const nCntDone = {{ count_tasks.count_done }};
+        const nCntWork = {{ count_tasks.count_work }};
+        const nCntBacklog = {{ count_tasks.count_backlog }};
+
+        if (nCntDone > nCntBacklog & nCntDone > nCntWork) {
+
+            let nCntRows = 0;
+            if (nCntWork > nCntBacklog) {
+
+                nCntRows = nCntWork;
+
+            } else {
+
+                nCntRows = nCntBacklog;
+
+            }
+
+            let nCntTr = nCntDone;
+            while (nCntTr !== nCntRows) {
+
+                $('table').find('tr').eq(nCntTr).remove();
+                nCntTr--;
+
+            }
+            nCntRows = null;
+            nCntTr = null;
+
+        }
+
+    });
+    //кнопка показа последнего столбца в таблице
+    $("#show_done").click(function() {
+
+        location.reload();
+        $("#hide_done").show();
+        $("#show_done").hide();
+
+    });
+
     </script>
 {% endblock %}
