@@ -4,7 +4,7 @@
 {% block app_content %}
     <link type="text/css" href="{{ url_for('static', filename='css/style_tasks.css')}}" rel="stylesheet" />
     <!-- Dynamic Modal -->
-    <div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="FormModal" aria-hidden="true">
+    <div class="modal fade post" id="Modal" tabindex="-1" role="dialog" aria-labelledby="FormModal" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
 
@@ -30,19 +30,32 @@
                     {% for item_status in status %}
                         <th>
                             {% if item_status.name == "Готово" %}
-                                <p align="left" style="vertical-align: text-top; background: #e4fcbd; font-weight: normal;">
-                                    {{ item_status.name }} {{ count_tasks.count_done }}
-                                    <a id="hide_done" style="float: right; height: 25px; border-radius: 30%; display: inline-block; padding: 0px 10px; text-decoration: none; color: white; background: #ff3b3b;" href="#">&times;</a>
-                                </p>
+                                <span class="span-title-column-table span-status span-status-done">
+                                    {{ item_status.name }}
+                                </span>
+                                <span class="span-title-column-table">
+                                    {{ count_tasks.count_done }}
+                                </span>
+                                <span>
+                                    <a id="hide_done" class="btn-hide-show btn-hide-show-column-done" href="#">&times;</a>
+                                </span>
                             {% elif item_status.name == "В работе" %}
-                                <p align="left" style="vertical-align: text-top; background: #feffb3; font-weight: normal;">
-                                    {{ item_status.name }} {{ count_tasks.count_work }}
-                                    <a id="show_done" style="text-align: center; float: right; width: 25px; height: 25px; border-radius: 30%; display: inline-block; text-decoration: none; color: white; background: #ff3b3b;" href="#">&rarr;</a>
-                                </p>
+                                <span class="span-title-column-table span-status span-status-work">
+                                    {{ item_status.name }}
+                                </span>
+                                <span class="span-title-column-table">
+                                    {{ count_tasks.count_work }}
+                                </span>
+                                <span>
+                                    <a id="show_done" class="btn-hide-show btn-hide-show-column-work" href="#">&rarr;</a>
+                                </span>
                             {% else %}
-                                <p align="left" style="vertical-align: text-top; background: #fcc2c2; font-weight: normal;">
-                                    {{ item_status.name }} {{ count_tasks.count_backlog }}
-                                </p>
+                                <span class="span-title-column-table span-status span-status-backlog">
+                                    {{ item_status.name }}
+                                </span>
+                                <span class="span-title-column-table">
+                                    {{ count_tasks.count_backlog }}
+                                </span>
                             {% endif %}
                         </th>
                     {% endfor %}
