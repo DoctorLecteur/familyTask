@@ -24,11 +24,11 @@
     <br>
     <input style="zoom: 1.35;" class="form-check-input" type="checkbox" id="filterPerformer" name="filterTask" value="performer"><span style="font-size: 110%;">{{ _('My Tasks (I"m performer)') }}</span>
     {% if count_tasks.count_backlog > 0 or count_tasks.count_work > 0 or count_tasks.count_done > 0 %}
-        <div class="table-responsive post">
-            <table class="table table-bordered border-primary table-hover">
+        <div class="table table-responsive post" style="border: 0px;">
+            <table class="table table-borderless">
                 <thead>
                     {% for item_status in status %}
-                        <th>
+                        <th style="border: 0px;">
                             {% if item_status.name == "Готово" %}
                                 <span class="span-title-column-table span-status span-status-done">
                                     {{ item_status.name }}
@@ -65,9 +65,9 @@
                         <tr>
                             {% for task_td in task_tr %}
                                 {% if task_td != 0 %}
-                                    <td>{% include '_task.html' %}</td>
+                                    <td style="border: 0px">{% include '_task.html' %}</td>
                                 {% else %}
-                                    <td></td>
+                                    <td style="border: 0px"></td>
                                 {% endif %}
                             {% endfor %}
                         </tr>
@@ -94,13 +94,15 @@
         $('.btn-success').hide();
         $('.btn-danger').hide();
         let url = '/check_task';
-        //добавляем рамку на текущий блок с задачей и убираем с предыдущего
+        //добавляем рамку и тень на текущий блок с задачей и убираем с предыдущего
         $(this).css("border", "2px solid #21c1cc");
+        $(this).css("box-shadow", "5px 5px 5px 5px #ababab");
         (prevIdTask > 0) ? $("#" + prevIdTask).css("border", ""): "";
         const nIdMovePreviousTask = sessionStorage.getItem("IdMovePreviousTask");
         if (nIdMovePreviousTask && nIdMovePreviousTask !== this["id"]) {
 
             $("#" + nIdMovePreviousTask).css("border", "");
+            $("#" + nIdMovePreviousTask).css("box-shadow", "");
             sessionStorage.removeItem("IdMovePreviousTask");
 
         }
@@ -224,76 +226,7 @@
 
     });
     //действие при перетаскивании блока с задачей
-    const taskTable = document.querySelector('.table-responsive ');
-    taskTable.addEventListener('dragstart', (evt) => {
-
-        evt.target.classList.add('selected');
-
-    });
-    let currentTask = null;//переменная для задачи, над которой перетаскивает другую задачу
-    taskTable.addEventListener('dragover', (evt) => {
-
-        evt.preventDefault();
-
-        const activeTask = taskTable.querySelector('.selected');
-        currentTask = evt.target;
-        //возращает блок с задачей назад, если блок перенесли за таблицу
-        const bIsMoveable = activeTask !== currentTask && currentTask.classList.contains('div-hover');
-        if (!bIsMoveable) {
-            return;
-        }
-
-    });
-    //обновление статуса по задаче, когда её отпустили после перемещения
-    taskTable.addEventListener('dragend', (evt) => {
-
-        const numIdTaskMove = evt.target.getAttribute("id"); //id задачи, которую двигают
-        if (numIdTaskMove) {
-
-            evt.target.classList.remove('selected');
-            let cellIndex = null; //id столбца со следующем статусом для задачи
-            if (currentTask.parentNode.cellIndex !== undefined) {
-
-                cellIndex = currentTask.parentNode.cellIndex;
-
-            } else {
-
-                cellIndex = currentTask.cellIndex;
-
-            }
-
-            let cellIndexMove = evt.target.parentNode.cellIndex; //id столбца с текущем статусом для задачи
-            let sUrl = null; //переменная для перемещения задачи по статусам
-            if (cellIndexMove !== cellIndex && cellIndexMove !== undefined && cellIndex !== undefined) {
-
-                if (cellIndexMove < cellIndex) {
-
-                    sUrl = '/next_status';
-
-                } else {
-
-                    sUrl = '/previous_status';
-
-                }
-
-            }
-
-            if (sUrl && numIdTaskMove) {
-
-                doUpdateStatus(sUrl, numIdTaskMove);
-                //сохраняем номер преыдущей задачи, которую подвигали
-                sessionStorage.setItem("IdMovePreviousTask", numIdTaskMove);
-
-            }
-
-        } else {
-
-            evt.target.classList.remove('selected');
-
-        }
-
-    });
-
+    const taskTable = document.querySelector('.table-borderless');
     if (taskTable !== null) {
 
         taskTable.addEventListener('dragstart', (evt) => {
