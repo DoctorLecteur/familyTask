@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-10-15 18:41+0300\n"
+"POT-Creation-Date: 2023-01-31 23:43+0300\n"
 "PO-Revision-Date: 2022-09-11 23:58+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.10.3\n"
 
-#: app/__init__.py:21
+#: app/__init__.py:24
 msgid "Please log in to access this page."
 msgstr "Пожалуйста, войдите, чтобы получить доступ к своей странице."
 
@@ -101,7 +101,8 @@ msgstr "Сложность"
 msgid "Category"
 msgstr "Категория"
 
-#: app/forms.py:56 app/forms.py:76 app/templates/_task.html:66
+#: app/forms.py:56 app/forms.py:76 app/templates/_task.html:68
+#: app/templates/_task.html:94
 msgid "Deadline"
 msgstr "Срок"
 
@@ -113,7 +114,8 @@ msgstr "Описание"
 msgid "Status"
 msgstr "Статус"
 
-#: app/forms.py:72 app/templates/_task.html:57 app/templates/_task.html:59
+#: app/forms.py:72 app/templates/_task.html:59 app/templates/_task.html:61
+#: app/templates/_task.html:85 app/templates/_task.html:87
 msgid "Performer"
 msgstr "Исполнитель"
 
@@ -176,63 +178,63 @@ msgstr "Редактировать профиль"
 msgid "Family"
 msgstr "Семья"
 
-#: app/routes.py:207 app/routes.py:262 app/templates/base.html:27
+#: app/routes.py:228 app/routes.py:284 app/templates/base.html:27
 #: app/templates/tasks.html:14
 msgid "Tasks"
 msgstr "Задачи"
 
-#: app/routes.py:335 app/routes.py:629
+#: app/routes.py:357 app/routes.py:667
 msgid "Task success added."
 msgstr "Задача успешно добавлена."
 
-#: app/routes.py:342 app/templates/tasks.html:16
+#: app/routes.py:364 app/templates/tasks.html:16
 msgid "Add Task"
 msgstr "Добавить задачу"
 
-#: app/routes.py:363
+#: app/routes.py:385
 msgid "Subtask success added."
 msgstr "Подзадача успешно добавлена."
 
-#: app/routes.py:370
+#: app/routes.py:392
 msgid "Add Subtask"
 msgstr "Добавить подзадачу"
 
-#: app/routes.py:399 app/routes.py:420 app/routes.py:481
+#: app/routes.py:421 app/routes.py:442 app/routes.py:505
 #, python-format
 msgid "Task %(title)s success update"
 msgstr "Задача %(title)s успешно обновлена"
 
-#: app/routes.py:462 app/routes.py:482 app/templates/show_task.html:384
+#: app/routes.py:484 app/routes.py:508 app/templates/show_task.html:384
 msgid "Task"
 msgstr "Задача"
 
-#: app/routes.py:565
+#: app/routes.py:603
 msgid "Check your email for the instructions to reset your password"
 msgstr ""
 "Проверьте свою электронную почту, чтобы получить инструкции по сбросу "
 "пароля"
 
-#: app/routes.py:567 app/templates/reset_password.html:5
+#: app/routes.py:605 app/templates/reset_password.html:5
 msgid "Reset Password"
 msgstr "Сбросить пароль"
 
-#: app/routes.py:580
+#: app/routes.py:618
 msgid "Your password has been reset."
 msgstr "Ваш пароль успешно сброшен"
 
-#: app/routes.py:601
+#: app/routes.py:639
 msgid "Your photo has been update."
 msgstr "Ваше фото успешно обновлено"
 
-#: app/routes.py:604
+#: app/routes.py:642
 msgid "This photo is exists."
 msgstr "Данное фото уже существует"
 
-#: app/routes.py:610 app/templates/user.html:24
+#: app/routes.py:648 app/templates/user.html:24
 msgid "Edit Photo"
 msgstr "Редактировать фото"
 
-#: app/routes.py:637
+#: app/routes.py:675
 #, python-format
 msgid "Task %(title)s success delete"
 msgstr "Задача %(title)s успешно удалена"
@@ -254,18 +256,23 @@ msgstr "Произошла неожиданная ошибка"
 msgid "The administrator has been notified. Sorry for the inconvenience!"
 msgstr "Администратор уведомлен. Извините за беспокойство!"
 
-#: app/templates/_task.html:54
+#: app/templates/_task.html:56 app/templates/_task.html:82
 msgid "Type Task"
 msgstr "Тип задачи"
 
-#: app/templates/_task.html:63 app/templates/show_task.html:19
-#: app/templates/tasks.html:19
+#: app/templates/_task.html:65 app/templates/_task.html:91
+#: app/templates/show_task.html:19 app/templates/tasks.html:19
 msgid "Done"
 msgstr "Готово"
 
-#: app/templates/_task.html:71 app/templates/_task.html:73
+#: app/templates/_task.html:73 app/templates/_task.html:75
+#: app/templates/_task.html:99 app/templates/_task.html:101
 msgid "Author"
 msgstr "Автор"
+
+#: app/templates/_task.html:78 app/templates/_task.html:104
+msgid "Create date"
+msgstr "Дата создания"
 
 #: app/templates/base.html:4
 msgid "Welcome to FamilyTask"

@@ -1,0 +1,46 @@
+@import url(https://fonts.googleapis.com/css?family=Open+Sans|Playfair+Display:400,700,400italic,700italic&subset=latin,cyrillic);
+.post {
+  font-family: 'Open Sans', sans-serif;
+}
+
+.span-title-column-table {
+    vertical-align: text-top;
+    font-weight: normal;
+    display: inline-block;
+    font-size: medium;
+}
+.span-status {
+    padding: 0px 5px;
+    border-radius: 15%;
+    margin-right: 5px;
+}
+.span-status-done {
+    background: #e4fcbd;
+}
+.span-status-work {
+    background: #feffb3;
+    margin-bottom: 0.7em;
+}
+.span-status-backlog {
+    background: #fcc2c2;
+    margin-bottom: 0.7em;
+}
+
+a.btn-hide-show {
+    float: right;
+    border-radius: 30%;
+    display: inline-block;
+    text-decoration: none;
+    color: white;
+    background: #ff3b3b;
+}
+a.btn-hide-show-column-done {
+    height: 20px;
+    padding: 0px 10px;
+    margin-bottom: 0.95em;
+}
+a.btn-hide-show-column-work {
+    text-align: center;
+    width: 25px;
+    height: 25px;
+}

@@ -214,11 +214,6 @@ def tasks():
     for item_sort in range(0, len(arr_new)):
         for item_task in range(0, len(list_tasks)):
 
-            if arr_new[item_sort] == list_tasks[item_task][2].date_completion:
-                temp_task = list_tasks[item_sort][2]
-                list_tasks[item_sort][2] = list_tasks[item_task][2]
-                list_tasks[item_task][2] = temp_task
-
             if list_tasks[item_task][2] != 0:
                 if arr_new[item_sort] == list_tasks[item_task][2].date_completion:
                     temp_task = list_tasks[item_sort][2]
@@ -764,6 +759,7 @@ def send_push_notification_by_normativ():
     subscr_by_current_user = Subscription.query.filter_by(id_users=current_user.id)
     subscr_by_partner_user = Subscription.query.filter_by(id_users=user_partner_id)
     subscr_by_users = subscr_by_current_user.union(subscr_by_partner_user).all()
+    flag_send_email = False
     for index_subscr in range(0, len(subscr_by_users), 1):
         push_param = json.loads((subscr_by_users[index_subscr].push_param).replace('\'', '\"').replace("None", "\"\""))
         for item_notify in text_push_notify:
@@ -795,12 +791,15 @@ def send_push_notification_by_normativ():
                           extra.code,
                           extra.errno,
                           extra.message)
-            # дублирование оповещения на почту
-            send_email(item_notify['title'],
-                       sender=app.config['ADMINS'][0],
-                       recipients=[current_user.email, partner_email],
-                       text_body=item_notify['body'],
-                       html_body=""
-                       )
+
+            if flag_send_email == False:
+                # дублирование оповещения на почту
+                send_email(item_notify['title'],
+                           sender=app.config['ADMINS'][0],
+                           recipients=[current_user.email, partner_email],
+                           text_body=item_notify['body'],
+                           html_body=""
+                           )
+                flag_send_email = True
 
     return make_response('success')
