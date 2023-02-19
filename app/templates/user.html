@@ -2,6 +2,7 @@
 {% from 'bootstrap/wtf.html' import wtf %}
 
 {% block app_content %}
+<link type="text/css" href="{{ url_for('static', filename='css/style_user.css')}}" rel="stylesheet" />
     <!-- Dynamic Modal -->
     <div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="FormModal" aria-hidden="true">
         <div class="modal-dialog">
@@ -13,7 +14,7 @@
     <!-- End Dynamic Modal -->
     <table>
         <tr valign="top">
-            <td>
+            <td style="color:red;">
                 {% if current_user.is_authenticated %}
                     {% if current_user.url_photo %}
                         <img src="{{ current_user.get_photo_by_username(current_user.username) }}" width="120" height="120"><br>
