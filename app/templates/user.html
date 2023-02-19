@@ -12,35 +12,82 @@
         </div>
     </div>
     <!-- End Dynamic Modal -->
-    <table>
-        <tr valign="top">
-            <td style="color:red;">
-                {% if current_user.is_authenticated %}
+<!--    <table>-->
+<!--        <tr valign="top">-->
+<!--            <td >-->
+<!--                {% if current_user.is_authenticated %}-->
+<!--                    {% if current_user.url_photo %}-->
+<!--                        <img src="{{ current_user.get_photo_by_username(current_user.username) }}" width="120" height="120"><br>-->
+<!--                    {% else %}-->
+<!--                        <img src="/static/img/default.svg" width="120" height="120"><br>-->
+<!--                    {% endif %}-->
+<!--                {% endif %}-->
+<!--                <a class="edit-photo-modal btn btn-primary" data-toggle="modal" data-whatever="{{ url_for('upload') }}" href="#">{{ _('Edit Photo') }}</a><br>-->
+<!--            </td>-->
+<!--            <td>-->
+<!--                <h1>{{ _('User') }}: {{ user.username }}</h1>-->
+<!--                {% if current_user.is_authenticated %}-->
+<!--                    <p>Email: {{ user.email }}</p>-->
+<!--                    <a class="edit-modal-opener btn btn-primary" data-toggle="modal"-->
+<!--                              data-whatever="{{ url_for('edit_profile') }}" href="#">{{ _('Edit Profile') }}</a>-->
+<!--                    {% if not current_user.is_family(user) %}-->
+<!--                        <p><a class="edit-modal-opener btn btn-primary" data-toggle="modal"-->
+<!--                              data-whatever="{{ url_for('search') }}" href="#">{{ _('Search user') }}</a></p>-->
+<!--                        <p>У вас нет семьи</p>-->
+<!--                    {% else %}-->
+<!--                        <p>У вас есть семья c {{ current_user.get_partner(user) }}</p>-->
+<!--                    {% endif %}-->
+<!--                {% endif %}-->
+<!--            </td>-->
+<!--        </tr>-->
+<!--    </table>-->
+
+<div class="user__body">
+
+    <div class="user__photo">
+
+        <div class="user__image">{% if current_user.is_authenticated %}
                     {% if current_user.url_photo %}
                         <img src="{{ current_user.get_photo_by_username(current_user.username) }}" width="120" height="120"><br>
                     {% else %}
-                        <img src="/static/img/default.svg" width="120" height="120"><br>
+                        <img src="/static/img/default.svg" width="120" height="120">
                     {% endif %}
-                {% endif %}
-                <a class="edit-photo-modal btn btn-primary" data-toggle="modal" data-whatever="{{ url_for('upload') }}" href="#">{{ _('Edit Photo') }}</a><br>
-            </td>
-            <td>
-                <h1>{{ _('User') }}: {{ user.username }}</h1>
-                {% if current_user.is_authenticated %}
-                    <p>Email: {{ user.email }}</p>
-                    <a class="edit-modal-opener btn btn-primary" data-toggle="modal"
-                              data-whatever="{{ url_for('edit_profile') }}" href="#">{{ _('Edit Profile') }}</a>
-                    {% if not current_user.is_family(user) %}
-                        <p><a class="edit-modal-opener btn btn-primary" data-toggle="modal"
+                {% endif %}</div>
+        <div class="user__title user__title_mobile">
+            <h1 class="main__title">{{ _('User') }}: {{ user.username }}</h1>
+        </div>
+        <div class="user__btn user__btn_photo">
+
+            <a class="edit-photo-modal btn btn-primary" data-toggle="modal" data-whatever="{{ url_for('upload') }}" href="#">{{ _('Edit Photo') }}</a><br>
+        </div>
+    </div>
+    <div class="user__profile">
+        <div class="user__title user__title_pc">
+            <h1>{{ _('User') }}: {{ user.username }}</h1>
+        </div>
+        {% if current_user.is_authenticated %}
+        <div class="user__email">
+            <p class="mail">Email: {{ user.email }}</p>
+        </div>
+        <div class="user__family">
+            <p class="mail">У вас нет семьи</p>
+            {% else %}
+            <p class="mail">У вас есть семья c {{ current_user.get_partner(user) }}</p>
+            {% endif %}
+        </div>
+        <div class="user__btns">
+            <div class="user__btn"> <a class="edit-modal-opener btn btn-primary" data-toggle="modal"
+                              data-whatever="{{ url_for('edit_profile') }}" href="#">{{ _('Edit Profile') }}</a></div>
+            {% if not current_user.is_family(user) %}
+            <div class="user__btn">
+                <p><a class="edit-modal-opener btn btn-primary" data-toggle="modal"
                               data-whatever="{{ url_for('search') }}" href="#">{{ _('Search user') }}</a></p>
-                        <p>У вас нет семьи</p>
-                    {% else %}
-                        <p>У вас есть семья c {{ current_user.get_partner(user) }}</p>
-                    {% endif %}
-                {% endif %}
-            </td>
-        </tr>
-    </table>
+            </div>
+        </div>
+
+        {% endif %}
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
@@ -125,4 +172,5 @@
     });
 
     </script>
+
 {% endblock %}
