@@ -18,6 +18,10 @@ align-items: center;
 display:flex;
 flex-direction: column;
 align-items: center;
+border-radius: 50%;
+border: 2px solid #333;
+position: relative;
+overflow: hidden;
 }
 
 .user__profile{
@@ -37,7 +41,9 @@ margin-top:10px;
  .user__title_pc{
  display:block;
  }
-
+.user__image img{
+	
+}
 .user__btns{
 display:flex;
 flex-direction: column;
