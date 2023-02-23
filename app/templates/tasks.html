@@ -2,6 +2,7 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
+<link type="text/css" href="{{ url_for('static', filename='css/main_style.css')}}" rel="stylesheet" />
     <link type="text/css" href="{{ url_for('static', filename='css/style_tasks.css')}}" rel="stylesheet" />
     <!-- Dynamic Modal -->
     <div class="modal fade post" id="Modal" tabindex="-1" role="dialog" aria-labelledby="FormModal" aria-hidden="true">
@@ -15,7 +16,7 @@
     <h1>{{ _('Tasks') }}</h1>
     <a class="edit-modal-opener btn btn-primary" data-toggle="modal"
        data-whatever="{{ url_for('add_task') }}" href="#">{{ _('Add Task') }}</a>
-    <a class="btn btn-danger" href="#">&larr;</a>
+    <a class="btn btn-danger" href="#">Вернуть</a>
     <a class="btn btn-warning" href="#">{{ _('To Work') }}</a>
     <a class="btn btn-success" href="#">{{ _('Done') }}</a>
     <a class="btn btn-dark" href="#">{{ _('Delete Task') }}</a>
@@ -37,7 +38,12 @@
                                     {{ count_tasks.count_done }}
                                 </span>
                                 <span>
-                                    <a id="hide_done" class="btn-hide-show btn-hide-show-column-done" href="#">&times;</a>
+                                    <a id="hide_done" class="close" href="#">
+                                        <svg width="30" height="30" viewBox="0 0 30 30" fill="#333" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M10.4287 9.23864L15.7549 14.4239C16.0817 14.7421 16.0817 15.2579 15.7549 15.5761L10.4287 20.7614C10.1019 21.0795 9.57197 21.0795 9.24513 20.7614C8.91829 20.4432 8.91829 19.9273 9.24513 19.6091L13.9795 15L9.24513 10.3909C8.91829 10.0727 8.91829 9.55683 9.24513 9.23864C9.57197 8.92045 10.1019 8.92045 10.4287 9.23864Z" />
+<path fill-rule="evenodd" clip-rule="evenodd" d="M19.5713 9.23864L14.2451 14.4239C13.9183 14.7421 13.9183 15.2579 14.2451 15.5761L19.5713 20.7614C19.8981 21.0795 20.428 21.0795 20.7549 20.7614C21.0817 20.4432 21.0817 19.9273 20.7549 19.6091L16.0205 15L20.7549 10.3909C21.0817 10.0727 21.0817 9.55683 20.7549 9.23864C20.428 8.92045 19.8981 8.92045 19.5713 9.23864Z" />
+</svg>
+                                    </a>
                                 </span>
                             {% elif item_status.name == "В работе" %}
                                 <span class="span-title-column-table span-status span-status-work">
