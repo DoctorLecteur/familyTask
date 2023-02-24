@@ -5,7 +5,7 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', '').replace(
         'postgres://', 'postgresql://') or \
                             'postgresql://familytask_user:MtDx9XBHYQPW6JptbsAJjGhzVrlX71Uo@dpg-cfb9frcgqg4aqet37e7g-a/familytask'
-                            #''test''
+                            # ''test''
                             #''test''
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
