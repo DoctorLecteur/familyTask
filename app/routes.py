@@ -15,6 +15,7 @@ from dateutil.relativedelta import relativedelta
 from onesignal_sdk.client import Client
 import jwt
 from time import time
+import os
 
 @app.before_request
 def before_request():
@@ -630,6 +631,8 @@ def upload():
                 filename_photo = '_'.join(filename_str)
             else:
                 filename_photo = form.photo.data.filename
+            if not os.path.isdir(app.config['UPLOADED_PHOTOS_DEST']):
+                os.makedirs(app.config['UPLOADED_PHOTOS_DEST'], exist_ok=True)
             path = app.config['FOLDER_NAME_IMG'] + "/" + filename_photo
             user = Users.query.filter_by(username=current_user.username, url_photo=path).first()
             if user is None:
