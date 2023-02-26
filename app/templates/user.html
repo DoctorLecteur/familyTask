@@ -3,15 +3,15 @@
 
 {% block app_content %}
 <link type="text/css" href="{{ url_for('static', filename='css/main_style.css')}}" rel="stylesheet" />
-    <!-- Dynamic Modal -->
-    <div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="FormModal" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
+<!-- Dynamic Modal -->
+<div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="FormModal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
 
-            </div>
         </div>
     </div>
-    <!-- End Dynamic Modal -->
+</div>
+<!-- End Dynamic Modal -->
 <!--    <table>-->
 <!--        <tr valign="top">-->
 <!--            <td >-->
@@ -47,18 +47,20 @@
     <div class="user__photo">
 
         <div class="user__image">{% if current_user.is_authenticated %}
-                    {% if current_user.url_photo %}
-                        <img src="{{ current_user.get_photo_by_username(current_user.username) }}" width="120" height="120"><br>
-                    {% else %}
-                        <img src="/static/img/default.svg" width="120" height="120">
-                    {% endif %}
-                {% endif %}</div>
+            {% if current_user.url_photo %}
+            <img src="{{ current_user.get_photo_by_username(current_user.username) }}" width="120" height="120"><br>
+            {% else %}
+            <img src="/static/img/default.svg" width="120" height="120">
+            {% endif %}
+            {% endif %}
+        </div>
         <div class="user__title user__title_mobile">
             <h1 class="main__title">{{ _('User') }}: {{ user.username }}</h1>
         </div>
         <div class="user__btn user__btn_photo">
 
-            <a class="edit-photo-modal btn btn-primary" data-toggle="modal" data-whatever="{{ url_for('upload') }}" href="#">{{ _('Edit Photo') }}</a><br>
+            <a class="edit-photo-modal btn btn-primary" data-toggle="modal" data-whatever="{{ url_for('upload') }}"
+                href="#">{{ _('Edit Photo') }}</a><br>
         </div>
     </div>
     <div class="user__profile">
@@ -66,53 +68,57 @@
             <h1>{{ _('User') }}: {{ user.username }}</h1>
         </div>
         {% if current_user.is_authenticated %}
-        <div class="user__email">
+        <div data-da=".user__mob-content, 768" class="user__email">
             <p class="mail">Email: {{ user.email }}</p>
         </div>
-        <div class="user__family">
+        <div data-da=".user__mob-content, 768" class="user__family">
             {% if not current_user.is_family(user) %}
-        <p>
-            <a class="edit-modal-opener btn btn-primary" data-toggle="modal"
-                              data-whatever="{{ urlfor('search') }}" href="#">{{ ('Search user') }}</a>
-        </p>
-                        <p class="mail">У вас нет семьи</p>
-                    {% else %}
-                        <p class="mail">У вас есть семья c {{ current_user.get_partner(user) }}</p>
-                    {% endif %}
+            <p>
+                <a class="edit-modal-opener btn btn-primary" data-toggle="modal" data-whatever="{{ urlfor('search') }}"
+                    href="#">{{ ('Search user') }}</a>
+            </p>
+            <p class="mail">У вас нет семьи</p>
+            {% else %}
+            <p class="mail">У вас есть семья c {{ current_user.get_partner(user) }}</p>
+            {% endif %}
         </div>
 
 
-<!--        <div class="user__family">-->
-<!--            <p class="mail">У вас нет семьи</p>-->
-<!--            {% else %}-->
-<!--            <p class="mail">У вас есть семья c {{ current_user.get_partner(user) }}</p>-->
-<!--            {% endif %}-->
-<!--        </div>-->
+        <!--        <div class="user__family">-->
+        <!--            <p class="mail">У вас нет семьи</p>-->
+        <!--            {% else %}-->
+        <!--            <p class="mail">У вас есть семья c {{ current_user.get_partner(user) }}</p>-->
+        <!--            {% endif %}-->
+        <!--        </div>-->
         <div class="user__btns">
             <div class="user__btn"> <a class="edit-modal-opener btn btn-primary" data-toggle="modal"
-                              data-whatever="{{ url_for('edit_profile') }}" href="#">{{ _('Edit Profile') }}</a></div>
+                    data-whatever="{{ url_for('edit_profile') }}" href="#">{{ _('Edit Profile') }}</a></div>
             {% if not current_user.is_family(user) %}
             <div class="user__btn">
                 <p><a class="edit-modal-opener btn btn-primary" data-toggle="modal"
-                              data-whatever="{{ url_for('search') }}" href="#">{{ _('Search user') }}</a></p>
+                        data-whatever="{{ url_for('search') }}" href="#">{{ _('Search user') }}</a></p>
 
             </div>
         </div>
 
+
         {% endif %}
+        <div class="user__mob-content">
+
+        </div>
     </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
-    {{ super() }}
-    <script>
+{{ super() }}
+<script>
     function readURL(input) {
         console.log('readURL');
         if (input.files && input.files[0]) {
 
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = function (e) {
 
                 $("#imgPhoto").attr('src', e.target.result);
                 $("#imgPhotoDef").attr('src', e.target.result);
@@ -125,7 +131,7 @@
 
     }
 
-    $('.edit-photo-modal').click(function() {
+    $('.edit-photo-modal').click(function () {
         const url = $(this).data('whatever');
         $.get(url, function (data) {
 
@@ -146,7 +152,7 @@
                     processData: false,
                     data: formData,
                     dataType: 'json',
-                    success: function(response) {
+                    success: function (response) {
 
                         if (response["status"] === 'ok') {
 
@@ -177,7 +183,7 @@
 
             });
 
-            $("#photo").change(function() {
+            $("#photo").change(function () {
                 readURL(this);
             });
 
@@ -185,6 +191,7 @@
 
     });
 
-    </script>
+</script>
+<script src="/static/js/DynamicAdapt.js"></script>
 
 {% endblock %}
