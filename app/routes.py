@@ -536,6 +536,7 @@ def send_push_notification():
         "title": data_param["title"],
         "body": data_param["body"]
     })
+
     print('data param', data_param)
     if data_param["param"] is not None:
         data_param_push_json_endpoint = json.loads(data_param["param"])["endpoint"]
@@ -543,11 +544,11 @@ def send_push_notification():
         data_param_push_json_endpoint = ""
 
     user_partner = current_user.get_partner(current_user)
-    print('user_partner', user_partner)
-    partner_email = current_user.get_email_by_username(user_partner)
+    partner_user = Users.query.filter_by(username=user_partner).first()
+    partner_email = partner_user.email
     print('partner_email', partner_email)
-    id_user_partner = current_user.get_id_by_username(user_partner)
-    user_subscription = Subscription.query.filter_by(id_users=id_user_partner).all()
+    user_subscription = Subscription.query.filter_by(id_users=partner_user.id).all()
+
     for subscr in range(0, len(user_subscription)):#отправка оповещений по на подписанный устройства и браузеры партнера
         print('user_subscription[subscr].push_param', user_subscription[subscr].push_param)
         if user_subscription[subscr].push_param != partner_email:
@@ -582,13 +583,14 @@ def send_push_notification():
                               extra.message)
 
     #дублирование оповещения на почту партнера
-    print('send email notify')
-    send_email(data_param["title"],
-               sender=app.config['ADMINS'][0],
-               recipients=[partner_email],
-               text_body=data_param["body"],
-               html_body=""
-               )
+    if partner_user.is_send_email != 'f':
+        print('send email notify')
+        send_email(data_param["title"],
+                   sender=app.config['ADMINS'][0],
+                   recipients=[partner_email],
+                   text_body=data_param["body"],
+                   html_body=""
+                   )
 
     return make_response('success')
 
@@ -692,10 +694,9 @@ def check_subtask():
 @login_required
 def send_push_notification_by_normativ():
     user_partner = current_user.get_partner(current_user)
-    user_partner_id = current_user.get_id_by_username(user_partner)
-    partner_email = current_user.get_email_by_username(user_partner)
+    partner_user = Users.query.filter_by(username=user_partner).first()
     tasks_by_current_user = Tasks.query.filter_by(create_user=current_user.id)
-    tasks_by_partner_user = Tasks.query.filter_by(create_user=user_partner_id)
+    tasks_by_partner_user = Tasks.query.filter_by(create_user=partner_user.id)
 
     tasks_by_family = tasks_by_current_user.union(tasks_by_partner_user).all()
     text_push_notify = []
@@ -760,9 +761,66 @@ def send_push_notification_by_normativ():
                 db.session.commit()
 
     subscr_by_current_user = Subscription.query.filter_by(id_users=current_user.id)
-    subscr_by_partner_user = Subscription.query.filter_by(id_users=user_partner_id)
+    subscr_by_partner_user = Subscription.query.filter_by(id_users=partner_user.id)
     subscr_by_users = subscr_by_current_user.union(subscr_by_partner_user).all()
-    flag_send_email = False
+
+    for item_notify in text_push_notify:
+        flag_send_user = False
+        flag_send_user_partner = False
+        for index_subscr in range(0, len(subscr_by_users), 1):
+            push_param = json.loads(
+                (subscr_by_users[index_subscr].push_param).replace('\'', '\"').replace("None", "\"\""))
+            data_push = json.dumps({
+                'title': item_notify['title'],
+                'body': item_notify['body']
+            })
+            try:
+                webpush(
+                    subscription_info=push_param,
+                    data=data_push,
+                    vapid_private_key='./private_key.pem',
+                    vapid_claims={
+                        'sub': 'mailto:{}'.format(app.config['ADMINS'][0])
+                    }
+                )
+            except WebPushException as ex:
+                print('I can\'t do that: {}'.format(repr(ex)))
+                print(ex)
+                if ex.response.status_code == 410:
+                    print('subscr 410 error', subscr_by_users[index_subscr].id_users,
+                          subscr_by_users[index_subscr].push_param)
+                    db.session.delete(subscr_by_users[index_subscr])
+                    db.session.commit()
+                # Mozilla returns additional information in the body of the response.
+                if ex.response and ex.response.json():
+                    extra = ex.response.json()
+                    print('Remote service replied with a {}:{}, {}',
+                          extra.code,
+                          extra.errno,
+                          extra.message)
+
+            # дублирование оповещения на почту
+            if partner_user.id == subscr_by_users[index_subscr].id_users and partner_user.is_send_email != 'f'\
+                    and flag_send_user_partner == False:
+                send_email(item_notify['title'],
+                           sender=app.config['ADMINS'][0],
+                           recipients=[partner_user.email],
+                           text_body=item_notify['body'],
+                           html_body=""
+                           )
+                flag_send_user_partner = True
+
+            if current_user.id == subscr_by_users[index_subscr].id_users and current_user.is_send_email != 'f'\
+                    and flag_send_user == False:
+                send_email(item_notify['title'],
+                           sender=app.config['ADMINS'][0],
+                           recipients=[current_user.email],
+                           text_body=item_notify['body'],
+                           html_body=""
+                           )
+                flag_send_user = True
+
+    '''
     for index_subscr in range(0, len(subscr_by_users), 1):
         push_param = json.loads((subscr_by_users[index_subscr].push_param).replace('\'', '\"').replace("None", "\"\""))
         for item_notify in text_push_notify:
@@ -795,14 +853,28 @@ def send_push_notification_by_normativ():
                           extra.errno,
                           extra.message)
 
-            if flag_send_email == False:
-                # дублирование оповещения на почту
+            # дублирование оповещения на почту
+            if partner_user.id == subscr_by_users[index_subscr].id_users and partner_user.is_send_email != 'f':
                 send_email(item_notify['title'],
                            sender=app.config['ADMINS'][0],
-                           recipients=[current_user.email, partner_email],
+                           recipients=[partner_user.email],
                            text_body=item_notify['body'],
                            html_body=""
                            )
-                flag_send_email = True
 
+            if current_user.id == subscr_by_users[index_subscr].id_users and current_user.is_send_email != 'f':
+                send_email(item_notify['title'],
+                           sender=app.config['ADMINS'][0],
+                           recipients=[current_user.email],
+                           text_body=item_notify['body'],
+                           html_body=""
+                           )
+    '''
+    return make_response('success')
+
+@app.route('/is_send_email', methods=['POST'])
+@login_required
+def set_is_send_email():
+    current_user.is_send_email = request.form["value_send_email"]
+    db.session.commit()
     return make_response('success')
