@@ -10,7 +10,15 @@
 
     <p>
       {{ form.email.label }}<br>
-      {{ form.email(size=64) }}
+      {{ form.email(style='width: 100%;') }}
+    </p>
+    <p>
+      <label>Почтовые оповещения:</label>
+      {% if current_user.is_send_email == 't' %}
+        <input style="zoom: 1.35;" class="form-check-input" type="checkbox" id="sendEmailChecked" name="Email" checked>
+      {% else %}
+        <input style="zoom: 1.35;" class="form-check-input" type="checkbox" id="sendEmail" name="Email">
+      {% endif %}
     </p>
 
   </div>
@@ -19,3 +27,20 @@
     <button id="submit" type="submit" class="btn btn-success">OK</button>
   </div>
 </form>
+
+<script>
+    //Отключение оповещений по почте
+    $("input[type=checkbox]").on("change", function() {
+
+        const sSendEmail = $(this).prop("checked") ? "t" : "f";
+
+        $.post('/is_send_email', {
+            value_send_email: sSendEmail
+        }).done(function(response) {
+            console.log('success set is send email');
+        }).fail(function() {
+            console.log('fail set is send email');
+        });
+
+    });
+</script>
