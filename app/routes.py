@@ -116,11 +116,19 @@ def edit_profile():
     form = EditProfileForm()
     if form.validate_on_submit():
         current_user.email = form.email.data
+        if request.form.get('is_send_email') is not None:
+            current_user.is_send_email = 't'
+        else:
+            current_user.is_send_email = 'f'
         db.session.commit()
         flash(_('Your changes have been saved.'))
         return jsonify(status='ok')
     elif request.method == 'GET':
         form.email.data = current_user.email
+        if current_user.is_send_email == 't':
+            form.is_send_email.data = 'y'
+        else:
+            form.is_send_email.data = None
     else:
         data = json.dumps(form.errors, ensure_ascii=True)
         return jsonify(data)
@@ -820,61 +828,4 @@ def send_push_notification_by_normativ():
                            )
                 flag_send_user = True
 
-    '''
-    for index_subscr in range(0, len(subscr_by_users), 1):
-        push_param = json.loads((subscr_by_users[index_subscr].push_param).replace('\'', '\"').replace("None", "\"\""))
-        for item_notify in text_push_notify:
-            data_push = json.dumps({
-                'title':  item_notify['title'],
-                'body': item_notify['body']
-            })
-            try:
-                webpush(
-                    subscription_info=push_param,
-                    data=data_push,
-                    vapid_private_key='./private_key.pem',
-                    vapid_claims={
-                        'sub': 'mailto:{}'.format(app.config['ADMINS'][0])
-                    }
-                )
-            except WebPushException as ex:
-                print('I can\'t do that: {}'.format(repr(ex)))
-                print(ex)
-                if ex.response.status_code == 410:
-                    print('subscr 410 error', subscr_by_users[index_subscr].id_users,
-                          subscr_by_users[index_subscr].push_param)
-                    db.session.delete(subscr_by_users[index_subscr])
-                    db.session.commit()
-                # Mozilla returns additional information in the body of the response.
-                if ex.response and ex.response.json():
-                    extra = ex.response.json()
-                    print('Remote service replied with a {}:{}, {}',
-                          extra.code,
-                          extra.errno,
-                          extra.message)
-
-            # дублирование оповещения на почту
-            if partner_user.id == subscr_by_users[index_subscr].id_users and partner_user.is_send_email != 'f':
-                send_email(item_notify['title'],
-                           sender=app.config['ADMINS'][0],
-                           recipients=[partner_user.email],
-                           text_body=item_notify['body'],
-                           html_body=""
-                           )
-
-            if current_user.id == subscr_by_users[index_subscr].id_users and current_user.is_send_email != 'f':
-                send_email(item_notify['title'],
-                           sender=app.config['ADMINS'][0],
-                           recipients=[current_user.email],
-                           text_body=item_notify['body'],
-                           html_body=""
-                           )
-    '''
-    return make_response('success')
-
-@app.route('/is_send_email', methods=['POST'])
-@login_required
-def set_is_send_email():
-    current_user.is_send_email = request.form["value_send_email"]
-    db.session.commit()
     return make_response('success')
