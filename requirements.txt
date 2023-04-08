@@ -44,7 +44,7 @@ pycparser==2.21
 PyJWT==2.4.0
 pyparsing==3.0.9
 python-dateutil==2.8.2
-python-dotenv==1.0.0
+python-dotenv==0.21.1
 pytz==2022.2.1
 pywebpush==1.14.0
 requests==2.28.1
