@@ -2,8 +2,9 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
-<link type="text/css" href="{{ url_for('static', filename='css/main_style.css')}}" rel="stylesheet" />
+    <link type="text/css" href="{{ url_for('static', filename='css/main_style.css')}}" rel="stylesheet" />
     <link type="text/css" href="{{ url_for('static', filename='css/style_tasks.css')}}" rel="stylesheet" />
+    <script src="{{ url_for('static', filename='js/UpdateTask.js') }}"></script>
     <!-- Dynamic Modal -->
     <div class="modal fade post" id="Modal" tabindex="-1" role="dialog" aria-labelledby="FormModal" aria-hidden="true">
         <div class="modal-dialog">
@@ -104,7 +105,8 @@
 {% block scripts %}
     {{ super() }}
     <script>
-    let idTask = 0;//переменная для id задач для перевода задачи по статусу
+    initMoveTask();
+    /*let idTask = 0;//переменная для id задач для перевода задачи по статусу
     let prevIdTask = 0; //переменная для id предыдущей задачи по клику или курсору
     //скрытие кнопок при отображении задач
     $('.btn-warning').hide();
@@ -113,6 +115,7 @@
     $('.btn-dark').hide();
     //действия при наведение курсора на блок с задачей
     $('.div-hover').click(function() {
+        console.log("start funciton div hover");
         $('.btn-warning').hide();
         $('.btn-success').hide();
         $('.btn-danger').hide();
@@ -427,7 +430,7 @@
         $("#hide_done").show();
         $("#show_done").hide();
 
-    });
+    });*/
 
 
     </script>

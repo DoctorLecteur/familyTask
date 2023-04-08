@@ -16,6 +16,7 @@ from onesignal_sdk.client import Client
 import jwt
 from time import time
 import os
+from bs4 import BeautifulSoup
 
 @app.before_request
 def before_request():
@@ -146,7 +147,8 @@ def tasks():
     status = get_status()
     type_user = None
     if request.method == "POST":
-        type_user = request.form['type_user']
+        type_user = request.form.get('type_user')
+
     user_partner = current_user.get_partner(current_user)
     user_partner_id = current_user.get_id_by_username(user_partner)
 
@@ -234,6 +236,7 @@ def tasks():
         'count_work': count_work,
         'count_done': count_done
     }
+
     return render_template('tasks.html', title=_('Tasks'), form=form, status=status, tasks=list_tasks,
                            count_tasks=count_dict)
 @app.route('/tasks_by_user/<type_user>', methods=['GET'])
@@ -403,7 +406,7 @@ def add_subtask(task_id):
 @app.route('/check_task', methods=['POST'])
 @login_required
 def check_task():
-    task_id = request.form['id_task']
+    task_id = request.json.get('id_task', None)
     task = Tasks.query.filter_by(id=task_id).first()
     status = Status.query.filter_by(id=task.id_status).first()
     answer = {
@@ -416,7 +419,7 @@ def check_task():
 @login_required
 def next_status():
     status = get_status()
-    task_id = request.form['id_task']
+    task_id = request.json.get('id_task', None)
     task = Tasks.query.filter_by(id=task_id).first()
     old_id_status = task.id_status
     task.id_status = task.id_status + 1
@@ -432,16 +435,19 @@ def next_status():
     for s in range(0, len(status), 1):
         if status[s]["id"] == task.id_status:
             status_name = status[s]["name"]
+
+    soup = BeautifulSoup(tasks(), 'html.parser')
     response_answer = {
         'title_task': task.title,
-        'status_name': status_name
+        'status_name': status_name,
+        'html_tasks': str(soup.select_one('.table-responsive'))
     }
     return make_response(response_answer)
 
 @app.route('/previous_status', methods=['POST'])
 @login_required
 def previous_status():
-    task_id = request.form['id_task']
+    task_id = request.json.get('id_task', None)
     task = Tasks.query.filter_by(id=task_id).first()
     old_id_status = task.id_status
     task.id_status = task.id_status - 1
@@ -454,9 +460,12 @@ def previous_status():
     for s in range(0, len(status), 1):
         if status[s]["id"] == task.id_status:
             status_name = status[s]["name"]
+
+    soup = BeautifulSoup(tasks(), 'html.parser')
     response_answer = {
         'title_task': task.title,
-        'status_name': status_name
+        'status_name': status_name,
+        'html_tasks': str(soup.select_one('.table-responsive'))
     }
     return make_response(response_answer)
 
@@ -600,7 +609,10 @@ def send_push_notification():
                    html_body=""
                    )
 
-    return make_response('success')
+    response_answer = {
+        'response': 'Send notify success',
+    }
+    return make_response(response_answer)
 
 @app.route('/reset_password_request', methods = ['GET', 'POST'])
 def reset_password_request():
@@ -682,17 +694,23 @@ def duplicate_task(task, status):
 @app.route('/delete_task', methods=['GET', 'POST'])
 @login_required
 def delete_task():
-    task = Tasks.query.filter_by(id=request.form["id_task"]).first()
+    task = Tasks.query.filter_by(id=request.json.get('id_task', None)).first()
     if task is not None:
         db.session.delete(task)
         flash(_('Task %(title)s success delete', title=task.title))
         db.session.commit()
-    return make_response('success')
+
+    soup = BeautifulSoup(tasks(), 'html.parser')
+    response_answer = {
+        'title_task': task.title,
+        'html_tasks': str(soup.select_one('.table-responsive'))
+    }
+    return make_response(response_answer)
 
 @app.route('/check_subtask', methods=['POST'])
 @login_required
 def check_subtask():
-    task = Tasks.query.filter_by(id=request.form["id_task"]).first()
+    task = Tasks.query.filter_by(id=request.json.get('id_task', None)).first()
     if task.is_subtask(task):
         return make_response("true")
     else:
