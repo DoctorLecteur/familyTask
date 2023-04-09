@@ -42,6 +42,7 @@ class SearchUserForm(FlaskForm):
 
 class EditProfileForm(FlaskForm):
     email = StringField(_l('Email'), validators=[DataRequired(), Email()])
+    is_send_email = BooleanField(_l('Send Email:'))
 
 class AddTaskForm(FlaskForm):
     type_task = IntegerField(_l('Type task'))

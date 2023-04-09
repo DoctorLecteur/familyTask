@@ -22,6 +22,7 @@ class Users(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
     url_photo = db.Column(db.String(512))
+    is_send_email = db.Column(db.String(1), default=False)
 
     families = db.relationship(
         'Users', secondary=family,

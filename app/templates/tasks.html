@@ -2,7 +2,7 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
-<link type="text/css" href="{{ url_for('static', filename='css/main_style.css')}}" rel="stylesheet" />
+    <link type="text/css" href="{{ url_for('static', filename='css/main_style.css')}}" rel="stylesheet" />
     <link type="text/css" href="{{ url_for('static', filename='css/style_tasks.css')}}" rel="stylesheet" />
     <!-- Dynamic Modal -->
     <div class="modal fade post" id="Modal" tabindex="-1" role="dialog" aria-labelledby="FormModal" aria-hidden="true">
@@ -20,11 +20,25 @@
     <a class="btn btn-warning" href="#">{{ _('To Work') }}</a>
     <a class="btn btn-success" href="#">{{ _('Done') }}</a>
     <a class="btn btn-dark" href="#">{{ _('Delete Task') }}</a>
-    <br>
-    <input style="zoom: 1.35;" class="form-check-input" type="checkbox" id="filterAuthor" name="filterTask" value="author"><span style="font-size: 110%;">{{ _('My Tasks (I"m author)') }}</span>
-    <br>
-    <input style="zoom: 1.35;" class="form-check-input" type="checkbox" id="filterPerformer" name="filterTask" value="performer"><span style="font-size: 110%;">{{ _('My Tasks (I"m performer)') }}</span>
-    {% if count_tasks.count_backlog > 0 or count_tasks.count_work > 0 or count_tasks.count_done > 0 %}
+  <!-- <input style="zoom: 1.35;" class="form-check-input" type="checkbox" id="filterAuthor" name="filterTask" value="author"><span style="font-size: 110%;">{{ _('My Tasks (I"m author)') }}</span>-->
+  <!-- <input style="zoom: 1.35;" class="form-check-input" type="checkbox" id="filterPerformer" name="filterTask" value="performer"><span style="font-size: 110%;">{{ _('My Tasks (I"m performer)') }}</span>-->
+<div class="tasks-menu">
+    <div class="tasks-menu__filter">
+        <form action="" class="tasks-menu__form">
+            <select class="tasks-menu__select" name="" id="" >
+                <option value="">Все задачи</option>
+                <option value="">Мои задачи (Я автор)</option>
+                <option value="">Мои задачи (Я исполнитель)</option>
+            </select>
+        </form>
+    </div>
+    <div class="tasks-menu__search">
+        <form action="" class="tasks-input input">
+            <input class="input__search" type="text">
+        </form>
+    </div>
+</div>
+{% if count_tasks.count_backlog > 0 or count_tasks.count_work > 0 or count_tasks.count_done > 0 %}
         <div class="table table-responsive post" style="border: 0px;">
             <table class="table table-borderless">
                 <thead>
@@ -53,7 +67,10 @@
                                     {{ count_tasks.count_work }}
                                 </span>
                                 <span>
-                                    <a id="show_done" class="btn-hide-show btn-hide-show-column-work" href="#">&rarr;</a>
+                                    <a id="show_done" class="btn-hide-show btn-hide-show-column-work" href="#"><svg width="19" height="17" viewBox="0 0 19 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M17.6602 7.48C18.2235 7.48 18.6802 7.93667 18.6802 8.5C18.6802 9.06333 18.2235 9.52 17.6602 9.52L17.6602 7.48ZM0.61891 9.22129C0.220573 8.82295 0.220572 8.17712 0.618906 7.77879L7.11013 1.28753C7.50847 0.889198 8.15429 0.889197 8.55263 1.28753C8.95097 1.68587 8.95097 2.33169 8.55263 2.73003L2.78265 8.50003L8.55266 14.27C8.95099 14.6683 8.951 15.3142 8.55266 15.7125C8.15433 16.1108 7.5085 16.1108 7.11016 15.7125L0.61891 9.22129ZM17.6602 9.52L1.34016 9.52004L1.34015 7.48004L17.6602 7.48L17.6602 9.52Z" fill="#2D2D2D"/>
+</svg>
+</a>
                                 </span>
                             {% else %}
                                 <span class="span-title-column-table span-status span-status-backlog">
@@ -87,7 +104,8 @@
 {% block scripts %}
     {{ super() }}
     <script>
-    let idTask = 0;//переменная для id задач для перевода задачи по статусу
+    initMoveTask();
+    /*let idTask = 0;//переменная для id задач для перевода задачи по статусу
     let prevIdTask = 0; //переменная для id предыдущей задачи по клику или курсору
     //скрытие кнопок при отображении задач
     $('.btn-warning').hide();
@@ -96,6 +114,7 @@
     $('.btn-dark').hide();
     //действия при наведение курсора на блок с задачей
     $('.div-hover').click(function() {
+        console.log("start funciton div hover");
         $('.btn-warning').hide();
         $('.btn-success').hide();
         $('.btn-danger').hide();
@@ -410,7 +429,7 @@
         $("#hide_done").show();
         $("#show_done").hide();
 
-    });
+    });*/
 
 
     </script>

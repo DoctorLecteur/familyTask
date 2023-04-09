@@ -15,6 +15,8 @@ from dateutil.relativedelta import relativedelta
 from onesignal_sdk.client import Client
 import jwt
 from time import time
+import os
+from bs4 import BeautifulSoup
 
 @app.before_request
 def before_request():
@@ -115,11 +117,19 @@ def edit_profile():
     form = EditProfileForm()
     if form.validate_on_submit():
         current_user.email = form.email.data
+        if request.form.get('is_send_email') is not None:
+            current_user.is_send_email = 't'
+        else:
+            current_user.is_send_email = 'f'
         db.session.commit()
         flash(_('Your changes have been saved.'))
         return jsonify(status='ok')
     elif request.method == 'GET':
         form.email.data = current_user.email
+        if current_user.is_send_email == 't':
+            form.is_send_email.data = 'y'
+        else:
+            form.is_send_email.data = None
     else:
         data = json.dumps(form.errors, ensure_ascii=True)
         return jsonify(data)
@@ -137,7 +147,8 @@ def tasks():
     status = get_status()
     type_user = None
     if request.method == "POST":
-        type_user = request.form['type_user']
+        type_user = request.form.get('type_user')
+
     user_partner = current_user.get_partner(current_user)
     user_partner_id = current_user.get_id_by_username(user_partner)
 
@@ -225,6 +236,7 @@ def tasks():
         'count_work': count_work,
         'count_done': count_done
     }
+
     return render_template('tasks.html', title=_('Tasks'), form=form, status=status, tasks=list_tasks,
                            count_tasks=count_dict)
 @app.route('/tasks_by_user/<type_user>', methods=['GET'])
@@ -394,7 +406,7 @@ def add_subtask(task_id):
 @app.route('/check_task', methods=['POST'])
 @login_required
 def check_task():
-    task_id = request.form['id_task']
+    task_id = request.json.get('id_task', None)
     task = Tasks.query.filter_by(id=task_id).first()
     status = Status.query.filter_by(id=task.id_status).first()
     answer = {
@@ -407,7 +419,7 @@ def check_task():
 @login_required
 def next_status():
     status = get_status()
-    task_id = request.form['id_task']
+    task_id = request.json.get('id_task', None)
     task = Tasks.query.filter_by(id=task_id).first()
     old_id_status = task.id_status
     task.id_status = task.id_status + 1
@@ -423,16 +435,19 @@ def next_status():
     for s in range(0, len(status), 1):
         if status[s]["id"] == task.id_status:
             status_name = status[s]["name"]
+
+    soup = BeautifulSoup(tasks(), 'html.parser')
     response_answer = {
         'title_task': task.title,
-        'status_name': status_name
+        'status_name': status_name,
+        'html_tasks': str(soup.select_one('.table-responsive'))
     }
     return make_response(response_answer)
 
 @app.route('/previous_status', methods=['POST'])
 @login_required
 def previous_status():
-    task_id = request.form['id_task']
+    task_id = request.json.get('id_task', None)
     task = Tasks.query.filter_by(id=task_id).first()
     old_id_status = task.id_status
     task.id_status = task.id_status - 1
@@ -445,9 +460,12 @@ def previous_status():
     for s in range(0, len(status), 1):
         if status[s]["id"] == task.id_status:
             status_name = status[s]["name"]
+
+    soup = BeautifulSoup(tasks(), 'html.parser')
     response_answer = {
         'title_task': task.title,
-        'status_name': status_name
+        'status_name': status_name,
+        'html_tasks': str(soup.select_one('.table-responsive'))
     }
     return make_response(response_answer)
 
@@ -535,6 +553,7 @@ def send_push_notification():
         "title": data_param["title"],
         "body": data_param["body"]
     })
+
     print('data param', data_param)
     if data_param["param"] is not None:
         data_param_push_json_endpoint = json.loads(data_param["param"])["endpoint"]
@@ -542,11 +561,11 @@ def send_push_notification():
         data_param_push_json_endpoint = ""
 
     user_partner = current_user.get_partner(current_user)
-    print('user_partner', user_partner)
-    partner_email = current_user.get_email_by_username(user_partner)
+    partner_user = Users.query.filter_by(username=user_partner).first()
+    partner_email = partner_user.email
     print('partner_email', partner_email)
-    id_user_partner = current_user.get_id_by_username(user_partner)
-    user_subscription = Subscription.query.filter_by(id_users=id_user_partner).all()
+    user_subscription = Subscription.query.filter_by(id_users=partner_user.id).all()
+
     for subscr in range(0, len(user_subscription)):#отправка оповещений по на подписанный устройства и браузеры партнера
         print('user_subscription[subscr].push_param', user_subscription[subscr].push_param)
         if user_subscription[subscr].push_param != partner_email:
@@ -581,15 +600,19 @@ def send_push_notification():
                               extra.message)
 
     #дублирование оповещения на почту партнера
-    print('send email notify')
-    send_email(data_param["title"],
-               sender=app.config['ADMINS'][0],
-               recipients=[partner_email],
-               text_body=data_param["body"],
-               html_body=""
-               )
+    if partner_user.is_send_email != 'f':
+        print('send email notify')
+        send_email(data_param["title"],
+                   sender=app.config['ADMINS'][0],
+                   recipients=[partner_email],
+                   text_body=data_param["body"],
+                   html_body=""
+                   )
 
-    return make_response('success')
+    response_answer = {
+        'response': 'Send notify success',
+    }
+    return make_response(response_answer)
 
 @app.route('/reset_password_request', methods = ['GET', 'POST'])
 def reset_password_request():
@@ -630,6 +653,8 @@ def upload():
                 filename_photo = '_'.join(filename_str)
             else:
                 filename_photo = form.photo.data.filename
+            if not os.path.isdir(app.config['UPLOADED_PHOTOS_DEST']):
+                os.makedirs(app.config['UPLOADED_PHOTOS_DEST'], exist_ok=True)
             path = app.config['FOLDER_NAME_IMG'] + "/" + filename_photo
             user = Users.query.filter_by(username=current_user.username, url_photo=path).first()
             if user is None:
@@ -669,17 +694,23 @@ def duplicate_task(task, status):
 @app.route('/delete_task', methods=['GET', 'POST'])
 @login_required
 def delete_task():
-    task = Tasks.query.filter_by(id=request.form["id_task"]).first()
+    task = Tasks.query.filter_by(id=request.json.get('id_task', None)).first()
     if task is not None:
         db.session.delete(task)
         flash(_('Task %(title)s success delete', title=task.title))
         db.session.commit()
-    return make_response('success')
+
+    soup = BeautifulSoup(tasks(), 'html.parser')
+    response_answer = {
+        'title_task': task.title,
+        'html_tasks': str(soup.select_one('.table-responsive'))
+    }
+    return make_response(response_answer)
 
 @app.route('/check_subtask', methods=['POST'])
 @login_required
 def check_subtask():
-    task = Tasks.query.filter_by(id=request.form["id_task"]).first()
+    task = Tasks.query.filter_by(id=request.json.get('id_task', None)).first()
     if task.is_subtask(task):
         return make_response("true")
     else:
@@ -689,10 +720,9 @@ def check_subtask():
 @login_required
 def send_push_notification_by_normativ():
     user_partner = current_user.get_partner(current_user)
-    user_partner_id = current_user.get_id_by_username(user_partner)
-    partner_email = current_user.get_email_by_username(user_partner)
+    partner_user = Users.query.filter_by(username=user_partner).first()
     tasks_by_current_user = Tasks.query.filter_by(create_user=current_user.id)
-    tasks_by_partner_user = Tasks.query.filter_by(create_user=user_partner_id)
+    tasks_by_partner_user = Tasks.query.filter_by(create_user=partner_user.id)
 
     tasks_by_family = tasks_by_current_user.union(tasks_by_partner_user).all()
     text_push_notify = []
@@ -757,14 +787,17 @@ def send_push_notification_by_normativ():
                 db.session.commit()
 
     subscr_by_current_user = Subscription.query.filter_by(id_users=current_user.id)
-    subscr_by_partner_user = Subscription.query.filter_by(id_users=user_partner_id)
+    subscr_by_partner_user = Subscription.query.filter_by(id_users=partner_user.id)
     subscr_by_users = subscr_by_current_user.union(subscr_by_partner_user).all()
-    flag_send_email = False
-    for index_subscr in range(0, len(subscr_by_users), 1):
-        push_param = json.loads((subscr_by_users[index_subscr].push_param).replace('\'', '\"').replace("None", "\"\""))
-        for item_notify in text_push_notify:
+
+    for item_notify in text_push_notify:
+        flag_send_user = False
+        flag_send_user_partner = False
+        for index_subscr in range(0, len(subscr_by_users), 1):
+            push_param = json.loads(
+                (subscr_by_users[index_subscr].push_param).replace('\'', '\"').replace("None", "\"\""))
             data_push = json.dumps({
-                'title':  item_notify['title'],
+                'title': item_notify['title'],
                 'body': item_notify['body']
             })
             try:
@@ -792,14 +825,25 @@ def send_push_notification_by_normativ():
                           extra.errno,
                           extra.message)
 
-            if flag_send_email == False:
-                # дублирование оповещения на почту
+            # дублирование оповещения на почту
+            if partner_user.id == subscr_by_users[index_subscr].id_users and partner_user.is_send_email != 'f'\
+                    and flag_send_user_partner == False:
                 send_email(item_notify['title'],
                            sender=app.config['ADMINS'][0],
-                           recipients=[current_user.email, partner_email],
+                           recipients=[partner_user.email],
                            text_body=item_notify['body'],
                            html_body=""
                            )
-                flag_send_email = True
+                flag_send_user_partner = True
+
+            if current_user.id == subscr_by_users[index_subscr].id_users and current_user.is_send_email != 'f'\
+                    and flag_send_user == False:
+                send_email(item_notify['title'],
+                           sender=app.config['ADMINS'][0],
+                           recipients=[current_user.email],
+                           text_body=item_notify['body'],
+                           html_body=""
+                           )
+                flag_send_user = True
 
     return make_response('success')
