@@ -151,13 +151,6 @@
                     console.log('ServiceWorker registration failed: ', err);
                     return;
                 });
-                //подключение файла для асинхронного обновления задач на хосте через Worker, почему-то хост не находит js-файл
-                navigator.serviceWorker.register('/static/js/updateTask.js').then(function (registration) {
-                    console.log('ServiceWorker registration successful');
-                }, function (err) {
-                    console.log('ServiceWorker registration failed: ', err);
-                    return;
-                });
 
             });
             return true;
