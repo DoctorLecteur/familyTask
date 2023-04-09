@@ -55,7 +55,7 @@
 {% endblock %}
 
 {% block scripts %}
-    <script src="{{ url_for('static', filename='js/UpdateTask.js') }}"></script>
+    <script src="{{ url_for('static', filename='UpdateTask.js') }}"></script>
     {{ super() }}
     {{ moment.include_moment() }}
     {{ moment.lang(g.locale) }}
