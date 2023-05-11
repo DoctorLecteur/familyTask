@@ -234,6 +234,19 @@
                 .then(response => response.json())
                 .then(result => {
 
+                    const oldTable = document.querySelector('.table-borderless');
+                    let bIsViewDone = true;
+                    for (let iRow = 0; iRow < oldTable.rows.length; iRow++) {
+
+                        if (oldTable.rows[iRow].cells[oldTable.rows[0].cells.length - 1].style.display === 'none') {
+                            
+                            bIsViewDone = false;
+                            break;
+
+                        }
+
+                    }
+
                     const tableTask = document.querySelector('.table-responsive');
                     tableTask.innerHTML = result["html_tasks"];
 
@@ -262,6 +275,19 @@
                     spanTimeParamByTask = null;
                     initClickDivTask(); //добавляем функцию на клик для блока с задачами
                     initDragAndDropTask(); //добавляем возможность перемещения задачи с помощью мыши
+                    //показ последнего столбца таблицы
+                    initBtnHideShowDoneColumn();
+                    if (bIsViewDone === true) {
+
+                        doShowDoneColumn();
+                        
+                    } else {
+
+                        doHideDoneColumn();
+
+                    }
+                    bIsViewDone = null;
+
                     const divMoveTask = document.getElementById(nTaskId);
                     divMoveTask.style["border"] = "2px solid #21c1cc";
                     divMoveTask.style["box-shadow"] = "5px 5px 5px 5px #ababab";
@@ -307,6 +333,19 @@
                 .then(response => response.json())
                 .then(result => {
 
+                    const oldTable = document.querySelector('.table-borderless');
+                    let bIsViewDone = true;
+                    for (let iRow = 0; iRow < oldTable.rows.length; iRow++) {
+
+                        if (oldTable.rows[iRow].cells[oldTable.rows[0].cells.length - 1].style.display === 'none') {
+                            
+                            bIsViewDone = false;
+                            break;
+
+                        }
+
+                    }
+
                     const tableTask = document.querySelector('.table-responsive');
                     tableTask.innerHTML = result["html_tasks"];
 
@@ -334,6 +373,19 @@
                     }
                     spanTimeParamByTask = null;
                     initClickDivTask(); //добавляем функцию на клик для блока с задачами
+                    initDragAndDropTask(); //добавляем возможность перемещения задачи с помощью мыши
+                    //показ последнего столбца таблицы
+                    initBtnHideShowDoneColumn();
+                    if (bIsViewDone === true) {
+
+                        doShowDoneColumn();
+                        
+                    } else {
+
+                        doHideDoneColumn();
+
+                    }
+                    bIsViewDone = null;
 
                     //оповещение на странице с задачами
                     const alertMessageDiv = `<div class="alert alert-info" role="alert">Задача ${result["title_task"]} успешно удалена</div>`;
@@ -500,6 +552,26 @@
 
     }
 
+    function initBtnHideShowDoneColumn() {
+    
+        const btnHideDone = document.querySelector(".close"); //скрытие столбца "Готово" в таблице
+        btnHideDone.addEventListener("click", (e) =>{
+
+            e.preventDefault();
+            doHideDoneColumn();
+
+        });
+
+        const btnShowDone = document.querySelector(".btn-hide-show"); //показ столбца "Готово" в таблице
+        btnShowDone.addEventListener("click", (e) =>{
+
+            e.preventDefault();
+            doShowDoneColumn();
+
+        });
+
+    }
+
     function initMoveTask() {
 
         //скрытие кнопок при отображении задач
@@ -507,9 +579,9 @@
         $('.btn-success').hide();
         $('.btn-danger').hide();
         $('.btn-dark').hide();
-        //скрытие кнопок в таблице
         $("#hide_done").show();
         $("#show_done").hide();
+        
 
         initClickDivTask(); //добавляем функцию на клик для блока с задачами
 
@@ -546,22 +618,7 @@
         });
 
         initDragAndDropTask(); //добавляем возможность перемещения задачи с помощью мыши
-
-        const btnHideDone = document.querySelector(".close"); //скрытие столбца "Готово" в таблице
-        btnHideDone.addEventListener("click", (e) =>{
-
-            e.preventDefault();
-            doHideDoneColumn();
-
-        });
-
-        const btnShowDone = document.querySelector(".btn-hide-show"); //показ столбца "Готово" в таблице
-        btnShowDone.addEventListener("click", (e) =>{
-
-            e.preventDefault();
-            doShowDoneColumn();
-
-        });
+        initBtnHideShowDoneColumn(); //скрытие и показ последнего столбца
 
     }
 
