@@ -780,7 +780,7 @@ def send_push_notification_by_normativ():
                 flag_update_task = True
                 text_push_notify.append({'title': 'Внимание!',
                                          'body': 'По задаче ' + tasks_by_family[index_task].title
-                                                 + ' истекло время на её выполнение:('
+                                                 + ' истекло время на её выполнение :('
                                          })
 
             if flag_update_task:
