@@ -14,6 +14,7 @@ from flask_babel import _, lazy_gettext as _l
 from logging.handlers import SMTPHandler, RotatingFileHandler
 from flask_babel import _, lazy_gettext as _l
 import os
+from flask_apscheduler import APScheduler
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -28,6 +29,9 @@ moment = Moment(app)
 photos = UploadSet('photos', IMAGES)
 configure_uploads(app, photos)
 babel = Babel(app)
+scheduler = APScheduler()
+scheduler.init_app(app)
+scheduler.start()
 
 if not app.debug:
     if app.config['MAIL_SERVER']:

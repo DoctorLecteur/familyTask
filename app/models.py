@@ -67,6 +67,9 @@ class Users(UserMixin, db.Model):
     def get_email_by_username(self, username):
         return self.query.filter_by(username=username).first_or_404().email
 
+    def get_id_partner_by_id_user(self, id):
+        return self.families.filter(family.c.id_user == id).first_or_404().id
+
     def get_reset_password_token(self, expires_in=600):
         return jwt.encode(
             {'reset_password': self.id, 'exp': time() + expires_in},
