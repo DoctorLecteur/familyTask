@@ -55,7 +55,6 @@
 {% endblock %}
 
 {% block scripts %}
-    <script src="{{ url_for('static', filename='UpdateTask.js') }}"></script>
     {{ super() }}
     {{ moment.include_moment() }}
     {{ moment.lang(g.locale) }}
@@ -152,6 +151,7 @@
                     console.log('ServiceWorker registration failed: ', err);
                     return;
                 });
+
             });
             return true;
         }
@@ -221,22 +221,6 @@
             });
 
         }
-
-        //отправка уведомлений о нормативе
-        {% if current_user.is_authenticated %}
-        $(function() {
-            setInterval(function() {
-                $.ajax({
-                    type: 'POST',
-                    url: '/send_push_by_normativ',
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    dataType: 'json'
-                })
-            }, 30000);
-        });
-        {% endif %}
 
     </script>
 {% endblock %}

@@ -1,3 +1,4 @@
+"use strict";
 function doShowHideBtn(divTask) {
 
     const nTaskId = divTask.getAttribute("id");
