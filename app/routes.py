@@ -817,6 +817,7 @@ def send_push_notification_by_normativ():
                 all_subscr_by_user.append(item_subscr)
 
         for item_notify in text_push_notify:
+            flag_user_email = False
             for index_subscr in range(0, len(all_subscr_by_user)):
                 if (all_subscr_by_user[index_subscr].id_users in item_notify['recepients']):
                     push_param = json.loads(
@@ -853,10 +854,11 @@ def send_push_notification_by_normativ():
                     # дублирование оповещения на почту
                     user = Users.query.filter_by(id=all_subscr_by_user[index_subscr].id_users).first()
                     if user is not None:
-                        if user.is_send_email != 'f':
+                        if user.is_send_email != 'f' and flag_user_email == False:
                             send_email(item_notify['message']['title'],
                                        sender=app.config['ADMINS'][0],
                                        recipients=[user.email],
                                        text_body=item_notify['message']['body'],
                                        html_body=""
                                        )
+                            flag_user_email = True
