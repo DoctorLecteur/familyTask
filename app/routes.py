@@ -513,6 +513,11 @@ def edit_task(id_task):
                     task.id_users = None
 
                 task.id_priority = form.priority.data
+                if (task.deadline.strftime('%Y-%m-%d')) != form.deadline.data.strftime('%Y-%m-%d'):
+                    task.deadline_25_percent = None
+                    task.deadline_50_percent = None
+                    task.deadline_75_percent = None
+                    task.deadline_100_percent = None
                 task.deadline = form.deadline.data
                 task.id_complexity = form.complexity.data
                 task.id_category = form.category.data
@@ -787,7 +792,6 @@ def send_push_notification_by_normativ():
 
             if flag_update_task:
                 info_push_notify = {'message': [], 'recepients': []}
-                #if info_push_notify['message'] not in param_push_notify['body']:
                 info_push_notify['message'] = param_push_notify
                 if tasks[index_task].create_user not in info_push_notify['recepients']:
                     info_push_notify['recepients'].append(tasks[index_task].create_user)
