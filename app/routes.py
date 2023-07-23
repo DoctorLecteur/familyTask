@@ -786,9 +786,9 @@ def send_push_notification_by_normativ():
                                     }
 
             if flag_update_task:
-                info_push_notify = {}
+                info_push_notify = {'message': [], 'recepients': []}
+                #if info_push_notify['message'] not in param_push_notify['body']:
                 info_push_notify['message'] = param_push_notify
-                info_push_notify['recepients'] = []
                 if tasks[index_task].create_user not in info_push_notify['recepients']:
                     info_push_notify['recepients'].append(tasks[index_task].create_user)
                     if tasks[index_task].create_user not in ids_recipients:
@@ -807,7 +807,12 @@ def send_push_notification_by_normativ():
                         if partner_user_id not in ids_recipients:
                             ids_recipients.append(partner_user_id)
 
-                text_push_notify.append(info_push_notify)
+                if len(text_push_notify) > 0:
+                    for notify in text_push_notify:
+                        if notify != info_push_notify:
+                            text_push_notify.append(info_push_notify)
+                else:
+                    text_push_notify.append(info_push_notify)
                 db.session.commit()
 
         all_subscr_by_user = []
