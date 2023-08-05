@@ -112,11 +112,14 @@ class NotifySend(object):
             self.task.deadline_100_percent = 't'
 
     def get_text_notify(self, notify_time):
-        remains_days = int((self.task.deadline - notify_time).total_seconds() / 60 / 60 / 24)
-        if remains_days >= 1:
-            return 'Остался(-ось) ' + str(remains_days) + ' день(дней) на ' + 'выполнение задачи ' + self.task.title
+        if notify_time >= self.task.deadline:
+            return 'По задаче ' + self.task.title + ' истекло время на её выполнение :('
         else:
-            return 'На выполнение задачи ' + self.task.title + ' осталось меньше 24 часов'
+            remains_days = int((self.task.deadline - notify_time).total_seconds() / 60 / 60 / 24)
+            if remains_days >= 1:
+                return 'Остался(-ось) ' + str(remains_days) + ' день(дней) на ' + 'выполнение задачи ' + self.task.title
+            else:
+                return 'На выполнение задачи ' + self.task.title + ' осталось меньше 24 часов'
 
     def send_webpush_by_user(self, data_push, arr_subscr_by_user):
         for subscr_by_user in arr_subscr_by_user:
