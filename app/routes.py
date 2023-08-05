@@ -759,3 +759,4 @@ def send_push_notification_by_normativ():
                 notify_obj = NotifySend(task.id, current_user)
                 notify_obj.send_webpush_notify()
                 notify_obj.send_email_notify()
+                notify_obj.update_notify()
