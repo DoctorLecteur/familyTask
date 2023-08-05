@@ -756,7 +756,6 @@ def send_push_notification_by_normativ():
         tasks = Tasks.query.filter(Tasks.id_status != 3).all()
         if tasks is not None:
             for task in tasks:
-                if task.id == 89:
-                    notify_obj = NotifySend(task.id, current_user)
-                    notify_obj.send_webpush_notify()
-                    notify_obj.send_email_notify()
+                notify_obj = NotifySend(task.id, current_user)
+                notify_obj.send_webpush_notify()
+                notify_obj.send_email_notify()
