@@ -530,11 +530,11 @@ def edit_task(id_task):
                     task.deadline_50_percent = None
                     task.deadline_75_percent = None
                     task.deadline_100_percent = None
+                    task.deadline = form.deadline.data
                     #обновляем время отправки оповещений
                     notify_obj = NotifySend(task.id, current_user)
                     notify_obj.update_notify()
 
-                task.deadline = form.deadline.data
                 task.id_complexity = form.complexity.data
                 task.id_category = form.category.data
                 if int(task.id_type_task) == 3:
