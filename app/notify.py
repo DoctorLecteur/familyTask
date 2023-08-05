@@ -160,7 +160,7 @@ class NotifySend(object):
         if arr_webpush_notify is not None:
             for webpush_notify in arr_webpush_notify:
                 if datetime.strptime(webpush_notify.time.strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S') < \
-                        datetime.strptime(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'):
+                        datetime.strptime(datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'):
                     text_notify = self.get_text_notify(webpush_notify.time)
                     self.send_webpush(text_notify, webpush_notify.id_recipient)
                     self.update_task_deadline_by_notify(webpush_notify.type)
@@ -171,7 +171,7 @@ class NotifySend(object):
         if arr_email_notify is not None:
             for email_notify in arr_email_notify:
                 if datetime.strptime(email_notify.time.strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S') < \
-                        datetime.strptime(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'):
+                        datetime.strptime(datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'):
                     text_notify = self.get_text_notify(email_notify.time)
 
                     if email_notify.id_recipient == self.id_current_user:
