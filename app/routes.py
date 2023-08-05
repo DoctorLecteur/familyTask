@@ -17,6 +17,7 @@ import jwt
 from time import time
 import os
 from bs4 import BeautifulSoup
+from app.notify import NotifySend
 
 @app.before_request
 def before_request():
@@ -366,6 +367,9 @@ def add_task():
                         id_complexity=form.complexity.data, id_category=form.category.data)
        db.session.add(task)
        db.session.commit()
+       #созданием оповещения для задачи
+       notify_obj = NotifySend(task.id, current_user)
+       notify_obj.add_notify()
        flash(_('Task success added.'))
        return jsonify(status='ok', title_task=form.title.data)
     elif request.method == 'GET':
@@ -394,6 +398,8 @@ def add_subtask(task_id):
        current_task = Tasks.query.filter_by(id=task_id).first()
        current_task.create_subtask(subtask)
        db.session.commit()
+       notify_obj = NotifySend(subtask.id, current_user)
+       notify_obj.add_notify()
        flash(_('Subtask success added.'))
        return jsonify(status='ok', title_task=form.title.data)
     elif request.method == 'GET':
@@ -427,6 +433,9 @@ def next_status():
         task.id_users = current_user.id
     elif old_id_status == 2 and task.id_status == 3:
         task.date_completion = datetime.utcnow()
+        #если перевели задачу в статус "Готово", то удаляем оповещения
+        notify_obj = NotifySend(task.id, current_user)
+        notify_obj.delete_notify()
         if task.id_type_task == 3:
             duplicate_task(task, status)
     db.session.commit()
@@ -453,6 +462,9 @@ def previous_status():
     task.id_status = task.id_status - 1
     if old_id_status == 3 and task.id_status == 2:
         task.date_completion = None
+        #если вернули задачу из статуса готово, то создаем оповещения
+        notify_obj = NotifySend(task.id, current_user)
+        notify_obj.add_notify()
     db.session.commit()
     flash(_('Task %(title)s success update', title=task.title))
     status = get_status()
@@ -518,6 +530,10 @@ def edit_task(id_task):
                     task.deadline_50_percent = None
                     task.deadline_75_percent = None
                     task.deadline_100_percent = None
+                    #обновляем время отправки оповещений
+                    notify_obj = NotifySend(task.id, current_user)
+                    notify_obj.update_notify()
+
                 task.deadline = form.deadline.data
                 task.id_complexity = form.complexity.data
                 task.id_category = form.category.data
@@ -694,11 +710,18 @@ def duplicate_task(task, status):
                  id_category=task.id_category, period=task.period, period_type=task.period_type)
     db.session.add(task)
     db.session.commit()
+    notify_obj = NotifySend(task.id, current_user)
+    notify_obj.add_notify()
     flash(_('Task success added.'))
 
 @app.route('/delete_task', methods=['GET', 'POST'])
 @login_required
 def delete_task():
+    # сначала удаляем оповещения, а потом задачу
+    if request.json.get('id_task', None) is not None:
+        notify_obj = NotifySend(request.json.get('id_task', None), current_user)
+        notify_obj.delete_notify()
+
     task = Tasks.query.filter_by(id=request.json.get('id_task', None)).first()
     if task is not None:
         db.session.delete(task)
@@ -731,143 +754,9 @@ def check_subtask():
 def send_push_notification_by_normativ():
     with scheduler.app.app_context():
         tasks = Tasks.query.filter(Tasks.id_status != 3).all()
-        flag_update_task = False  # флаг для обновления задачи
-        text_push_notify = []
-        ids_recipients = []
-        for index_task in range(0, len(tasks), 1):
-            percent_after_create_date = int(
-                (1 - ((tasks[index_task].deadline - (datetime.now() - timedelta(hours=3))).total_seconds() /
-                      (tasks[index_task].deadline - tasks[index_task].create_date).total_seconds())) * 100)
-            remains_days = int((tasks[index_task].deadline - (
-                    datetime.now() - timedelta(hours=3))).total_seconds() / 60 / 60 / 24)
-            if percent_after_create_date >= 25 and percent_after_create_date < 50 \
-                    and tasks[index_task].deadline_25_percent != 't':
-                tasks[index_task].deadline_25_percent = 't'
-                flag_update_task = True
-                if remains_days >= 1:
-                    param_push_notify = {'title': 'Внимание!',
-                                         'body': 'Остался(-ось) ' + str(remains_days) + ' день(дней) на '
-                                                 + 'выполнение задачи ' + tasks[index_task].title
-                                        }
-                else:
-                    param_push_notify = {'title': 'Внимание!',
-                                         'body': 'На выполнение задачи ' + tasks[index_task].title
-                                                 + ' осталось меньше 24 часов'
-                                        }
-            elif percent_after_create_date >= 50 and percent_after_create_date < 75 \
-                    and tasks[index_task].deadline_50_percent != 't':
-                tasks[index_task].deadline_50_percent = 't'
-                flag_update_task = True
-                if remains_days >= 1:
-                    param_push_notify = {'title': 'Внимание!',
-                                         'body': 'Остался(-ось) ' + str(remains_days) + ' день(дней) на '
-                                                 + 'выполнение задачи ' + tasks[index_task].title
-                                        }
-                else:
-                    param_push_notify = {'title': 'Внимание!',
-                                        'body': 'На выполнение задачи ' + tasks[index_task].title
-                                                 + ' осталось меньше 24 часов'
-                                        }
-            elif percent_after_create_date >= 75 and percent_after_create_date < 100 \
-                    and tasks[index_task].deadline_75_percent != 't':
-                tasks[index_task].deadline_75_percent = 't'
-                flag_update_task = True
-                if remains_days >= 1:
-                    param_push_notify = {'title': 'Внимание!',
-                                        'body': 'Остался(-ось) ' + str(remains_days) + ' день(дней) на '
-                                                 + 'выполнение задачи ' + tasks[index_task].title
-                                        }
-                else:
-                    param_push_notify = {'title': 'Внимание!',
-                                         'body': 'На выполнение задачи ' + tasks[index_task].title
-                                                 + ' осталось меньше 24 часов'
-                                        }
-            elif percent_after_create_date >= 100 and tasks[index_task].deadline_100_percent != 't':
-                tasks[index_task].deadline_100_percent = 't'
-                flag_update_task = True
-                param_push_notify = {'title': 'Внимание!',
-                                         'body': 'По задаче ' + tasks[index_task].title
-                                                 + ' истекло время на её выполнение :('
-                                    }
-
-            if flag_update_task:
-                info_push_notify = {'message': [], 'recepients': []}
-                info_push_notify['message'] = param_push_notify
-                if tasks[index_task].create_user not in info_push_notify['recepients']:
-                    info_push_notify['recepients'].append(tasks[index_task].create_user)
-                    if tasks[index_task].create_user not in ids_recipients:
-                        ids_recipients.append(tasks[index_task].create_user)
-
-                if tasks[index_task].id_users is not None and tasks[index_task].create_user != tasks[index_task].id_users:
-                    if tasks[index_task].id_users not in info_push_notify['recepients']:
-                        info_push_notify['recepients'].append(tasks[index_task].id_users)
-                        if tasks[index_task].id_users not in ids_recipients:
-                            ids_recipients.append(tasks[index_task].id_users)
-                else:
-                    current_user = Users.query.filter_by(id=tasks[index_task].create_user).first()
-                    partner_user_id = current_user.get_id_partner_by_id_user(current_user.id)
-                    if partner_user_id not in info_push_notify['recepients']:
-                        info_push_notify['recepients'].append(partner_user_id)
-                        if partner_user_id not in ids_recipients:
-                            ids_recipients.append(partner_user_id)
-
-                if len(text_push_notify) > 0:
-                    for notify in text_push_notify:
-                        if notify != info_push_notify:
-                            text_push_notify.append(info_push_notify)
-                else:
-                    text_push_notify.append(info_push_notify)
-                db.session.commit()
-
-        all_subscr_by_user = []
-        for id_recipients in ids_recipients:
-            subscr_by_user = Subscription.query.filter_by(id_users=id_recipients).all()
-            for item_subscr in subscr_by_user:
-                all_subscr_by_user.append(item_subscr)
-
-        for item_notify in text_push_notify:
-            flag_user_email = False
-            for index_subscr in range(0, len(all_subscr_by_user)):
-                if (all_subscr_by_user[index_subscr].id_users in item_notify['recepients']):
-                    push_param = json.loads(
-                        (all_subscr_by_user[index_subscr].push_param).replace('\'', '\"').replace("None", "\"\""))
-                    data_push = json.dumps({
-                        'title': item_notify['message']['title'],
-                        'body': item_notify['message']['body']
-                    })
-                    try:
-                        webpush(
-                            subscription_info=push_param,
-                            data=data_push,
-                            vapid_private_key='./private_key.pem',
-                            vapid_claims={
-                                'sub': 'mailto:{}'.format(app.config['ADMINS'][0])
-                            }
-                        )
-                    except WebPushException as ex:
-                        print('I can\'t do that: {}'.format(repr(ex)))
-                        print(ex)
-                        if ex.response.status_code == 410:
-                            print('subscr 410 error', all_subscr_by_user[index_subscr].id_users,
-                                  all_subscr_by_user[index_subscr].push_param)
-                            #db.session.delete(all_subscr_by_user[index_subscr])
-                            #db.session.commit()
-                        # Mozilla returns additional information in the body of the response.
-                        if ex.response and ex.response.json():
-                            extra = ex.response.json()
-                            print('Remote service replied with a {}:{}, {}',
-                                  extra.code,
-                                  extra.errno,
-                                  extra.message)
-
-                    # дублирование оповещения на почту
-                    user = Users.query.filter_by(id=all_subscr_by_user[index_subscr].id_users).first()
-                    if user is not None:
-                        if user.is_send_email != 'f' and flag_user_email == False:
-                            send_email(item_notify['message']['title'],
-                                       sender=app.config['ADMINS'][0],
-                                       recipients=[user.email],
-                                       text_body=item_notify['message']['body'],
-                                       html_body=""
-                                       )
-                            flag_user_email = True
+        if tasks is not None:
+            for task in tasks:
+                if task.id == 89:
+                    notify_obj = NotifySend(task.id, current_user)
+                    notify_obj.send_webpush_notify()
+                    notify_obj.send_email_notify()

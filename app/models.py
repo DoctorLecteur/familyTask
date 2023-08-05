@@ -191,3 +191,11 @@ class Category(db.Model):
 
     def __repr__(self):
         return '<Category {}>'.format(self.name)
+
+class Notify(db.Model):
+    id = db.Column(db.Integer, primary_key=True, index=True)
+    type = db.Column(db.String(64))
+    method = db.Column(db.String(64))
+    time = db.Column(db.DateTime, default=datetime.utcnow)
+    id_recipient = db.Column(db.Integer, db.ForeignKey('users.id'))
+    id_task = db.Column(db.Integer, db.ForeignKey('tasks.id'))
