@@ -24,6 +24,10 @@ class NotifySend(object):
             self.is_send_email_partner_user = partner_user.is_send_email
 
     def add_notify(self):
+        self.task.create_date = datetime.strptime(self.task.create_date.strftime('%Y-%m-%d %H:%M:%S'),
+                                                  '%Y-%m-%d %H:%M:%S')
+        self.task.deadline = datetime.strptime(self.task.deadline.strftime('%Y-%m-%d %H:%M:%S'),
+                                               '%Y-%m-%d %H:%M:%S')
         date_deadline_25_percent = self.task.create_date + ((self.task.deadline - self.task.create_date) * 0.25)
         date_deadline_50_percent = self.task.create_date + ((self.task.deadline - self.task.create_date) * 0.5)
         date_deadline_75_percent = self.task.create_date + ((self.task.deadline - self.task.create_date) * 0.75)
@@ -155,7 +159,8 @@ class NotifySend(object):
         arr_webpush_notify = Notify.query.filter_by(method='webpush', id_task=self.task.id).all()
         if arr_webpush_notify is not None:
             for webpush_notify in arr_webpush_notify:
-                if webpush_notify.time.strftime('%Y-%m-%d %H:%M:%S') < datetime.now().strftime('%Y-%m-%d %H:%M:%S'):
+                if datetime.strptime(webpush_notify.time.strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S') < \
+                        datetime.strptime(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'):
                     text_notify = self.get_text_notify(webpush_notify.time)
                     self.send_webpush(text_notify, webpush_notify.id_recipient)
                     self.update_task_deadline_by_notify(webpush_notify.type)
@@ -165,7 +170,8 @@ class NotifySend(object):
         arr_email_notify = Notify.query.filter_by(method='email', id_task=self.task.id).all()
         if arr_email_notify is not None:
             for email_notify in arr_email_notify:
-                if email_notify.time.strftime('%Y-%m-%d %H:%M:%S') < datetime.now().strftime('%Y-%m-%d %H:%M:%S'):
+                if datetime.strptime(email_notify.time.strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S') < \
+                        datetime.strptime(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'):
                     text_notify = self.get_text_notify(email_notify.time)
 
                     if email_notify.id_recipient == self.id_current_user:
