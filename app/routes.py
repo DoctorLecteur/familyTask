@@ -433,13 +433,14 @@ def next_status():
         task.id_users = current_user.id
     elif old_id_status == 2 and task.id_status == 3:
         task.date_completion = datetime.utcnow()
-        #если перевели задачу в статус "Готово", то удаляем оповещения
-        notify_obj = NotifySend(task.id, current_user)
-        notify_obj.delete_notify()
         if task.id_type_task == 3:
             duplicate_task(task, status)
     db.session.commit()
     flash(_('Task %(title)s success update', title=task.title))
+    if old_id_status == 2 and task.id_status == 3:
+        # если перевели задачу в статус "Готово", то удаляем оповещения
+        notify_obj = NotifySend(task.id, current_user)
+        notify_obj.delete_notify()
     status_name = ""
     for s in range(0, len(status), 1):
         if status[s]["id"] == task.id_status:
@@ -462,11 +463,12 @@ def previous_status():
     task.id_status = task.id_status - 1
     if old_id_status == 3 and task.id_status == 2:
         task.date_completion = None
+    db.session.commit()
+    flash(_('Task %(title)s success update', title=task.title))
+    if old_id_status == 3 and task.id_status == 2:
         #если вернули задачу из статуса готово, то создаем оповещения
         notify_obj = NotifySend(task.id, current_user)
         notify_obj.add_notify()
-    db.session.commit()
-    flash(_('Task %(title)s success update', title=task.title))
     status = get_status()
     status_name = ""
     for s in range(0, len(status), 1):

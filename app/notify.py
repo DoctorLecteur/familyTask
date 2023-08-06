@@ -107,22 +107,24 @@ class NotifySend(object):
             db.session.add(notify_deadline_today_email_pu)
         #повторные оповещения о том, что задачу надо выполнить с истекшим дэдлайном
         if datetime.utcnow() > self.task.deadline:
-            date_deadline_repeat = datetime.strptime(datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S'),
-                                                     '%Y-%m-%d %H:%M:%S') + timedelta(days=1)
-            notify_deadline_repeat_webpush_cu = Notify(type='deadline_repeat', method='webpush',
-                                                       time=date_deadline_repeat, id_recipient=self.id_current_user,
-                                                       id_task=self.task.id)
-            notify_deadline_repeat_email_cu = Notify(type='deadline_repeat', method='email', time=date_deadline_repeat,
-                                                     id_recipient=self.id_current_user, id_task=self.task.id)
-            notify_deadline_repeat_webpush_pu = Notify(type='deadline_repeat', method='webpush',
-                                                       time=date_deadline_repeat, id_recipient=self.id_partner_user,
-                                                       id_task=self.task.id)
-            notify_deadline_repeat_email_pu = Notify(type='deadline_repeat', method='email', time=date_deadline_repeat,
-                                                     id_recipient=self.id_partner_user, id_task=self.task.id)
-            db.session.add(notify_deadline_repeat_webpush_cu)
-            db.session.add(notify_deadline_repeat_email_cu)
-            db.session.add(notify_deadline_repeat_webpush_pu)
-            db.session.add(notify_deadline_repeat_email_pu)
+            notify_repeat_cnt = Notify.query.filter_by(type='deadline_repeat', id_task=self.task.id).count()
+            if notify_repeat_cnt == 0:
+                date_deadline_repeat = datetime.strptime(datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S'),
+                                                         '%Y-%m-%d %H:%M:%S') + timedelta(days=1)
+                notify_deadline_repeat_webpush_cu = Notify(type='deadline_repeat', method='webpush',
+                                                           time=date_deadline_repeat, id_recipient=self.id_current_user,
+                                                           id_task=self.task.id)
+                notify_deadline_repeat_email_cu = Notify(type='deadline_repeat', method='email', time=date_deadline_repeat,
+                                                         id_recipient=self.id_current_user, id_task=self.task.id)
+                notify_deadline_repeat_webpush_pu = Notify(type='deadline_repeat', method='webpush',
+                                                           time=date_deadline_repeat, id_recipient=self.id_partner_user,
+                                                           id_task=self.task.id)
+                notify_deadline_repeat_email_pu = Notify(type='deadline_repeat', method='email', time=date_deadline_repeat,
+                                                         id_recipient=self.id_partner_user, id_task=self.task.id)
+                db.session.add(notify_deadline_repeat_webpush_cu)
+                db.session.add(notify_deadline_repeat_email_cu)
+                db.session.add(notify_deadline_repeat_webpush_pu)
+                db.session.add(notify_deadline_repeat_email_pu)
 
         db.session.commit()
 
@@ -130,8 +132,15 @@ class NotifySend(object):
         arr_notify = Notify.query.filter_by(id_task=self.task.id).all()
         if arr_notify is not None:
             for notify in arr_notify:
-                db.session.delete(notify)
-                db.session.commit()
+                if notify.type != 'deadline_repeat' and self.task.id_status != 3:
+                    db.session.delete(notify)
+                    db.session.commit()
+                elif notify.type == 'deadline_repeat' and (
+                        self.task.id_status == 3 or
+                        datetime.utcnow() < datetime.strptime(self.task.deadline.strftime('%Y-%m-%d %H:%M:%S'),
+                                                              '%Y-%m-%d %H:%M:%S')):
+                    db.session.delete(notify)
+                    db.session.commit()
 
     def update_notify(self):
         self.delete_notify()
@@ -147,13 +156,13 @@ class NotifySend(object):
         if type_notify == 'deadline_100':
             self.task.deadline_100_percent = 't'
 
-    def get_text_notify(self, notify_time, notify_method):
-        if notify_method == 'deadline_today' and notify_time < self.task.deadline:
+    def get_text_notify(self, notify_time, notify_type):
+        if notify_type == 'deadline_today' and notify_time < self.task.deadline:
             return 'По задаче ' + self.task.title + ' сегодня истекает время на её выполнение'
         else:
-            if notify_method == 'deadline_repeat':
+            if notify_type == 'deadline_repeat':
                 return 'По задаче ' + self.task.title \
-                    + ' ранее истекло время на её выполнение, необходимо выполнить задачу'
+                    + ' истекло время на её выполнение, необходимо выполнить задачу'
             elif notify_time >= self.task.deadline:
                 return 'По задаче ' + self.task.title + ' истекло время на её выполнение :('
             else:
@@ -207,7 +216,7 @@ class NotifySend(object):
             for webpush_notify in arr_webpush_notify:
                 if datetime.strptime(webpush_notify.time.strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S') < \
                         datetime.strptime(datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'):
-                    text_notify = self.get_text_notify(webpush_notify.time, webpush_notify.method)
+                    text_notify = self.get_text_notify(webpush_notify.time, webpush_notify.type)
                     self.send_webpush(text_notify, webpush_notify.id_recipient)
                     self.update_task_deadline_by_notify(webpush_notify.type)
                     db.session.delete(webpush_notify)
@@ -218,7 +227,7 @@ class NotifySend(object):
             for email_notify in arr_email_notify:
                 if datetime.strptime(email_notify.time.strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S') < \
                         datetime.strptime(datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S'):
-                    text_notify = self.get_text_notify(email_notify.time, email_notify.method)
+                    text_notify = self.get_text_notify(email_notify.time, email_notify.type)
 
                     if email_notify.id_recipient == self.id_current_user:
                         if self.is_send_email_current_user != 'f':
