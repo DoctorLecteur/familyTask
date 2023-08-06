@@ -23,6 +23,12 @@ class NotifySend(object):
             self.email_partner_user = partner_user.email
             self.is_send_email_partner_user = partner_user.is_send_email
 
+    def delete_notify_by_type(self, notify_type):
+        arr_notify = Notify.query.filter_by(type=notify_type, id_task=self.task.id).all()
+        for notify in arr_notify:
+            db.session.delete(notify)
+            db.session.commit()
+
     def add_notify(self):
         self.task.create_date = datetime.strptime(self.task.create_date.strftime('%Y-%m-%d %H:%M:%S'),
                                                   '%Y-%m-%d %H:%M:%S')
@@ -37,74 +43,111 @@ class NotifySend(object):
                               + timedelta(hours=delta)
 
         if datetime.utcnow() < date_deadline_25_percent:
-            notify_deadline_25_webpush_cu = Notify(type='deadline_25', method='webpush', time=date_deadline_25_percent,
-                                               id_recipient=self.id_current_user, id_task=self.task.id)
-            notify_deadline_25_email_cu = Notify(type='deadline_25', method='email', time=date_deadline_25_percent,
-                                              id_recipient=self.id_current_user, id_task=self.task.id)
-            notify_deadline_25_webpush_pu = Notify(type='deadline_25', method='webpush', time=date_deadline_25_percent,
-                                                  id_recipient=self.id_partner_user, id_task=self.task.id)
-            notify_deadline_25_email_pu = Notify(type='deadline_25', method='email', time=date_deadline_25_percent,
-                                                 id_recipient=self.id_partner_user, id_task=self.task.id)
-            db.session.add(notify_deadline_25_webpush_cu)
-            db.session.add(notify_deadline_25_email_cu)
-            db.session.add(notify_deadline_25_webpush_pu)
-            db.session.add(notify_deadline_25_email_pu)
+            notify_deadline_25_cnt = Notify.query.filter_by(type='deadline_25', id_task=self.task.id).count()
+            if notify_deadline_25_cnt == 0:
+                notify_deadline_25_webpush_cu = Notify(type='deadline_25', method='webpush',
+                                                       time=date_deadline_25_percent, id_recipient=self.id_current_user,
+                                                       id_task=self.task.id)
+                notify_deadline_25_email_cu = Notify(type='deadline_25', method='email', time=date_deadline_25_percent,
+                                                     id_recipient=self.id_current_user, id_task=self.task.id)
+                notify_deadline_25_webpush_pu = Notify(type='deadline_25', method='webpush',
+                                                       time=date_deadline_25_percent, id_recipient=self.id_partner_user,
+                                                       id_task=self.task.id)
+                notify_deadline_25_email_pu = Notify(type='deadline_25', method='email', time=date_deadline_25_percent,
+                                                     id_recipient=self.id_partner_user, id_task=self.task.id)
+                db.session.add(notify_deadline_25_webpush_cu)
+                db.session.add(notify_deadline_25_email_cu)
+                db.session.add(notify_deadline_25_webpush_pu)
+                db.session.add(notify_deadline_25_email_pu)
+        else:
+            notify_deadline_25_cnt = Notify.query.filter_by(type='deadline_25', id_task=self.task.id).count()
+            if notify_deadline_25_cnt != 0:
+                self.delete_notify_by_type('deadline_25')
 
         if datetime.utcnow() < date_deadline_50_percent:
-            notify_deadline_50_webpush_cu = Notify(type='deadline_50', method='webpush', time=date_deadline_50_percent,
-                                               id_recipient=self.id_current_user, id_task=self.task.id)
-            notify_deadline_50_email_cu = Notify(type='deadline_50', method='email', time=date_deadline_50_percent,
-                                              id_recipient=self.id_current_user, id_task=self.task.id)
-            notify_deadline_50_webpush_pu = Notify(type='deadline_50', method='webpush', time=date_deadline_50_percent,
-                                                  id_recipient=self.id_partner_user, id_task=self.task.id)
-            notify_deadline_50_email_pu = Notify(type='deadline_50', method='email', time=date_deadline_50_percent,
-                                                 id_recipient=self.id_partner_user, id_task=self.task.id)
-            db.session.add(notify_deadline_50_webpush_cu)
-            db.session.add(notify_deadline_50_email_cu)
-            db.session.add(notify_deadline_50_webpush_pu)
-            db.session.add(notify_deadline_50_email_pu)
+            notify_deadline_50_cnt = Notify.query.filter_by(type='deadline_50', id_task=self.task.id).count()
+            if notify_deadline_50_cnt == 0:
+                notify_deadline_50_webpush_cu = Notify(type='deadline_50', method='webpush',
+                                                       time=date_deadline_50_percent, id_recipient=self.id_current_user,
+                                                       id_task=self.task.id)
+                notify_deadline_50_email_cu = Notify(type='deadline_50', method='email', time=date_deadline_50_percent,
+                                                     id_recipient=self.id_current_user, id_task=self.task.id)
+                notify_deadline_50_webpush_pu = Notify(type='deadline_50', method='webpush',
+                                                       time=date_deadline_50_percent, id_recipient=self.id_partner_user,
+                                                       id_task=self.task.id)
+                notify_deadline_50_email_pu = Notify(type='deadline_50', method='email', time=date_deadline_50_percent,
+                                                     id_recipient=self.id_partner_user, id_task=self.task.id)
+                db.session.add(notify_deadline_50_webpush_cu)
+                db.session.add(notify_deadline_50_email_cu)
+                db.session.add(notify_deadline_50_webpush_pu)
+                db.session.add(notify_deadline_50_email_pu)
+        else:
+            notify_deadline_50_cnt = Notify.query.filter_by(type='deadline_50', id_task=self.task.id).count()
+            if notify_deadline_50_cnt != 0:
+                self.delete_notify_by_type('deadline_50')
 
         if datetime.utcnow() < date_deadline_75_percent:
-            notify_deadline_75_webpush_cu = Notify(type='deadline_75', method='webpush', time=date_deadline_75_percent,
-                                               id_recipient=self.id_current_user, id_task=self.task.id)
-            notify_deadline_75_email_cu = Notify(type='deadline_75', method='email', time=date_deadline_75_percent,
-                                              id_recipient=self.id_current_user, id_task=self.task.id)
-            notify_deadline_75_webpush_pu = Notify(type='deadline_75', method='webpush', time=date_deadline_75_percent,
-                                                   id_recipient=self.id_partner_user, id_task=self.task.id)
-            notify_deadline_75_email_pu = Notify(type='deadline_75', method='email', time=date_deadline_75_percent,
-                                                 id_recipient=self.id_partner_user, id_task=self.task.id)
-            db.session.add(notify_deadline_75_webpush_cu)
-            db.session.add(notify_deadline_75_email_cu)
-            db.session.add(notify_deadline_75_webpush_pu)
-            db.session.add(notify_deadline_75_email_pu)
+            notify_deadline_75_cnt = Notify.query.filter_by(type='deadline_75', id_task=self.task.id).count()
+            if notify_deadline_75_cnt == 0:
+                notify_deadline_75_webpush_cu = Notify(type='deadline_75', method='webpush',
+                                                       time=date_deadline_75_percent, id_recipient=self.id_current_user,
+                                                       id_task=self.task.id)
+                notify_deadline_75_email_cu = Notify(type='deadline_75', method='email', time=date_deadline_75_percent,
+                                                     id_recipient=self.id_current_user, id_task=self.task.id)
+                notify_deadline_75_webpush_pu = Notify(type='deadline_75', method='webpush',
+                                                       time=date_deadline_75_percent, id_recipient=self.id_partner_user,
+                                                       id_task=self.task.id)
+                notify_deadline_75_email_pu = Notify(type='deadline_75', method='email', time=date_deadline_75_percent,
+                                                     id_recipient=self.id_partner_user, id_task=self.task.id)
+                db.session.add(notify_deadline_75_webpush_cu)
+                db.session.add(notify_deadline_75_email_cu)
+                db.session.add(notify_deadline_75_webpush_pu)
+                db.session.add(notify_deadline_75_email_pu)
+        else:
+            notify_deadline_75_cnt = Notify.query.filter_by(type='deadline_75', id_task=self.task.id).count()
+            if notify_deadline_75_cnt != 0:
+                self.delete_notify_by_type('deadline_75')
 
         if datetime.utcnow() < self.task.deadline:
-            notify_deadline_100_webpush_cu = Notify(type='deadline_100', method='webpush', time=self.task.deadline,
-                                                id_recipient=self.id_current_user, id_task=self.task.id)
-            notify_deadline_100_email_cu = Notify(type='deadline_100', method='email', time=self.task.deadline,
-                                               id_recipient=self.id_current_user, id_task=self.task.id)
-            notify_deadline_100_webpush_pu = Notify(type='deadline_100', method='webpush', time=self.task.deadline,
-                                                    id_recipient=self.id_partner_user, id_task=self.task.id)
-            notify_deadline_100_email_pu = Notify(type='deadline_100', method='email', time=self.task.deadline,
-                                                  id_recipient=self.id_partner_user, id_task=self.task.id)
-            db.session.add(notify_deadline_100_webpush_cu)
-            db.session.add(notify_deadline_100_email_cu)
-            db.session.add(notify_deadline_100_webpush_pu)
-            db.session.add(notify_deadline_100_email_pu)
-
-            #оповещения в день дэдлайна
-            notify_deadline_today_webpush_cu = Notify(type='deadline_today', method='webpush', time=date_deadline_today,
-                                                      id_recipient=self.id_current_user, id_task=self.task.id)
-            notify_deadline_today_email_cu = Notify(type='deadline_today', method='email', time=date_deadline_today,
+            notify_deadline_100_cnt = Notify.query.filter_by(type='deadline_100', id_task=self.task.id).count()
+            if notify_deadline_100_cnt == 0:
+                notify_deadline_100_webpush_cu = Notify(type='deadline_100', method='webpush', time=self.task.deadline,
                                                     id_recipient=self.id_current_user, id_task=self.task.id)
-            notify_deadline_today_webpush_pu = Notify(type='deadline_today', method='webpush', time=date_deadline_today,
+                notify_deadline_100_email_cu = Notify(type='deadline_100', method='email', time=self.task.deadline,
+                                                   id_recipient=self.id_current_user, id_task=self.task.id)
+                notify_deadline_100_webpush_pu = Notify(type='deadline_100', method='webpush', time=self.task.deadline,
+                                                        id_recipient=self.id_partner_user, id_task=self.task.id)
+                notify_deadline_100_email_pu = Notify(type='deadline_100', method='email', time=self.task.deadline,
                                                       id_recipient=self.id_partner_user, id_task=self.task.id)
-            notify_deadline_today_email_pu = Notify(type='deadline_today', method='email', time=date_deadline_today,
-                                                    id_recipient=self.id_partner_user, id_task=self.task.id)
-            db.session.add(notify_deadline_today_webpush_cu)
-            db.session.add(notify_deadline_today_email_cu)
-            db.session.add(notify_deadline_today_webpush_pu)
-            db.session.add(notify_deadline_today_email_pu)
+                db.session.add(notify_deadline_100_webpush_cu)
+                db.session.add(notify_deadline_100_email_cu)
+                db.session.add(notify_deadline_100_webpush_pu)
+                db.session.add(notify_deadline_100_email_pu)
+
+            notify_deadline_today_cnt = Notify.query.filter_by(type='deadline_today', id_task=self.task.id).count()
+            if notify_deadline_today_cnt == 0:
+                #оповещения в день дэдлайна
+                notify_deadline_today_webpush_cu = Notify(type='deadline_today', method='webpush', time=date_deadline_today,
+                                                          id_recipient=self.id_current_user, id_task=self.task.id)
+                notify_deadline_today_email_cu = Notify(type='deadline_today', method='email', time=date_deadline_today,
+                                                        id_recipient=self.id_current_user, id_task=self.task.id)
+                notify_deadline_today_webpush_pu = Notify(type='deadline_today', method='webpush', time=date_deadline_today,
+                                                          id_recipient=self.id_partner_user, id_task=self.task.id)
+                notify_deadline_today_email_pu = Notify(type='deadline_today', method='email', time=date_deadline_today,
+                                                        id_recipient=self.id_partner_user, id_task=self.task.id)
+                db.session.add(notify_deadline_today_webpush_cu)
+                db.session.add(notify_deadline_today_email_cu)
+                db.session.add(notify_deadline_today_webpush_pu)
+                db.session.add(notify_deadline_today_email_pu)
+        else:
+            notify_deadline_100_cnt = Notify.query.filter_by(type='deadline_100', id_task=self.task.id).count()
+            if notify_deadline_100_cnt != 0:
+                self.delete_notify_by_type('deadline_100')
+
+            notify_deadline_today_cnt = Notify.query.filter_by(type='deadline_today', id_task=self.task.id).count()
+            if notify_deadline_today_cnt != 0:
+                self.delete_notify_by_type('deadline_today')
+
         #повторные оповещения о том, что задачу надо выполнить с истекшим дэдлайном
         if datetime.utcnow() > self.task.deadline:
             notify_repeat_cnt = Notify.query.filter_by(type='deadline_repeat', id_task=self.task.id).count()
@@ -125,6 +168,10 @@ class NotifySend(object):
                 db.session.add(notify_deadline_repeat_email_cu)
                 db.session.add(notify_deadline_repeat_webpush_pu)
                 db.session.add(notify_deadline_repeat_email_pu)
+        else:
+            notify_repeat_cnt = Notify.query.filter_by(type='deadline_repeat', id_task=self.task.id).count()
+            if notify_repeat_cnt != 0:
+                self.delete_notify_by_type('deadline_repeat')
 
         db.session.commit()
 
@@ -139,6 +186,9 @@ class NotifySend(object):
                         self.task.id_status == 3 or
                         datetime.utcnow() < datetime.strptime(self.task.deadline.strftime('%Y-%m-%d %H:%M:%S'),
                                                               '%Y-%m-%d %H:%M:%S')):
+                    db.session.delete(notify)
+                    db.session.commit()
+                elif notify.type != 'deadline_repeat' and self.task.id_status == 3:
                     db.session.delete(notify)
                     db.session.commit()
 
