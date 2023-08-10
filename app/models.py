@@ -136,8 +136,9 @@ class Tasks(db.Model):
     deadline_50_percent = db.Column(db.String(1))
     deadline_75_percent = db.Column(db.String(1))
     deadline_100_percent = db.Column(db.String(1))
+    deadline_today = db.Column(db.String(1))
 
-    subtask =  db.relationship(
+    subtask = db.relationship(
         'Tasks', secondary=subtasks,
         primaryjoin=(subtasks.c.id_task == id),
         secondaryjoin=(subtasks.c.id_subtask == id),
