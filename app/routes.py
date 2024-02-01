@@ -19,6 +19,7 @@ import os
 from bs4 import BeautifulSoup
 from app.notify import NotifySend
 
+
 @app.before_request
 def before_request():
     if current_user.is_authenticated:
